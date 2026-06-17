@@ -1,0 +1,31 @@
+{
+  "name": "sysmgm-team-capacity",
+  "version": "1.0.0",
+  "description": "Team Capacity Calculator (desktop app)",
+  "author": "IQSIGHT SysMgm",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "appId": "com.iqsight.sysmgm-team-capacity",
+    "productName": "Team Capacity Calculator",
+    "files": [
+      "main.js",
+      "preload.js",
+      "PI_SysMgm_Team_Capacity.html"
+    ],
+    "win": {
+      "target": "portable",
+      "signAndEditExecutable": false
+    },
+    "directories": {
+      "output": "dist"
+    }
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0"
+  }
+}

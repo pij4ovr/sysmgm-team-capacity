@@ -1,0 +1,2996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team Capacity Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --navy:#0f172a;
+    --blue:#2563eb;--blue-light:#dbeafe;--blue-dark:#1d4ed8;
+    --teal:#0d9488;--teal-light:#ccfbf1;
+    --amber:#b45309;--amber-light:#fef3c7;
+    --red:#dc2626;--red-light:#fee2e2;
+    --green:#16a34a;--green-light:#dcfce7;
+    --purple:#7c3aed;--purple-light:#ede9fe;
+    --slate-50:#f8fafc;--slate-100:#f1f5f9;--slate-200:#e2e8f0;
+    --slate-400:#94a3b8;--slate-500:#64748b;--slate-600:#475569;
+    --slate-700:#334155;--slate-800:#1e293b;
+    --white:#ffffff;--radius:8px;--radius-sm:4px;
+    --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+  }
+  body{font-family:'DM Sans',sans-serif;background:var(--slate-50);color:var(--slate-800);font-size:14px;line-height:1.5}
+  num,td.num,th.num,.mono{font-family:'DM Mono',monospace;font-size:13px}
+
+  /* ── HEADER ── */
+  .site-header{background:var(--navy);color:#fff;padding:0 32px;position:sticky;top:0;z-index:300;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+  .site-header-inner{display:flex;align-items:center;justify-content:space-between;max-width:1280px;margin:0 auto;height:56px}
+  .site-title{font-size:15px;font-weight:600;letter-spacing:.02em}
+  .site-subtitle{font-size:12px;color:#94a3b8;margin-top:1px}
+  .header-right{display:flex;align-items:center;gap:14px}
+
+  /* Save status */
+  @keyframes dot-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.75)}}
+  .save-status{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.03em;padding:4px 10px;border-radius:20px;cursor:pointer;transition:opacity .15s;border:1px solid transparent;white-space:nowrap}
+  .save-status:hover{opacity:.8}
+  .save-status .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+  .save-saved    {background:#064e3b22;color:#6ee7b7;border-color:#065f4622}.save-saved    .dot{background:#34d399}
+  .save-unsaved  {background:#78350f22;color:#fcd34d;border-color:#78350f22}.save-unsaved  .dot{background:#fcd34d;animation:dot-pulse 1.2s ease-in-out infinite}
+  .save-nofile   {background:#1e3a5f22;color:#93c5fd;border-color:#1e3a5f22}.save-nofile   .dot{background:#60a5fa}
+  .save-error    {background:#7f1d1d22;color:#fca5a5;border-color:#7f1d1d22}.save-error    .dot{background:#f87171;animation:dot-pulse 1.2s ease-in-out infinite}
+  .btn-save-manual{display:none;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:.03em;background:var(--blue);color:#fff;border:none;cursor:pointer;transition:all .15s}
+  .btn-save-manual:hover{opacity:.85}
+  .btn-save-manual.visible{display:inline-flex;align-items:center;gap:6px}
+  .btn-save-manual.state-unsaved{background:#d97706;box-shadow:0 0 0 0 #d9770660;animation:save-pulse 2s ease-in-out infinite}
+  @keyframes save-pulse{0%,100%{box-shadow:0 0 0 0 #d9770650}60%{box-shadow:0 0 0 6px #d9770600}}
+
+  /* ── SUMMARY BAR SAVE AREA ── */
+  .sum-save-area{display:flex;align-items:center;gap:8px;padding-left:12px;border-left:1px solid #ffffff15}
+  .sum-save-bar-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+  .sum-save-bar-dot.s-saved{background:#34d399}
+  .sum-save-bar-dot.s-unsaved{background:#fcd34d;animation:dot-pulse 1.2s ease-in-out infinite}
+  .sum-save-bar-dot.s-error{background:#f87171;animation:dot-pulse 1.2s ease-in-out infinite}
+  .sum-save-bar-text{font-size:11px;font-weight:600;color:#94a3b8;white-space:nowrap}
+  .sum-save-bar-text.t-unsaved{color:#fcd34d}
+  .sum-save-bar-text.t-error{color:#fca5a5}
+  .sum-save-bar-btn{padding:4px 13px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.04em;background:#d97706;color:#fff;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;display:none;transition:all .15s;animation:save-pulse 2s ease-in-out infinite}
+  .sum-save-bar-btn:hover{background:#b45309;animation:none}
+
+  /* ── LAYOUT ── */
+  .page{max-width:1280px;margin:0 auto;padding:24px 32px}
+  .section{background:var(--white);border:1px solid var(--slate-200);border-radius:var(--radius);margin-bottom:20px;overflow:hidden;box-shadow:var(--shadow)}
+  .section-header{padding:14px 20px;background:var(--slate-50);border-bottom:1px solid var(--slate-200);display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+  .section-header h2{font-size:13px;font-weight:600;color:var(--slate-700);letter-spacing:.03em;text-transform:uppercase}
+  .section-header .chevron{margin-left:auto;color:var(--slate-400);transition:transform .2s;font-size:16px}
+  .section-header.open .chevron{transform:rotate(180deg)}
+  .section-body{padding:20px;display:none}
+  .section-body.open{display:block}
+  .config-grid{display:grid;grid-template-columns:1fr 400px;gap:20px}
+  @media(max-width:1000px){.config-grid{grid-template-columns:1fr}}
+
+  /* ── TABLES ── */
+  table{width:100%;border-collapse:collapse}
+  th{font-size:11px;font-weight:600;color:var(--slate-500);text-transform:uppercase;letter-spacing:.05em;padding:8px 10px;text-align:left;background:var(--slate-50);border-bottom:1px solid var(--slate-200)}
+  td{padding:8px 10px;border-bottom:1px solid var(--slate-100);vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:var(--slate-50)}
+
+  /* ── INPUTS ── */
+  input[type=text],input[type=number],select{font-family:'DM Sans',sans-serif;font-size:13px;border:1px solid var(--slate-200);border-radius:var(--radius-sm);padding:4px 8px;color:var(--slate-800);background:#fff;outline:none;transition:border-color .15s}
+  input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--blue)}
+  input[type=number]{width:72px;text-align:right;font-family:'DM Mono',monospace}
+  .input-pct{width:58px}
+  .input-hpd{width:52px}
+  .input-name{width:160px}
+  select{padding:5px 8px}
+  td select{font-size:13px;padding:3px 6px}
+
+  /* ── BADGES / CHIPS ── */
+  .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.03em}
+  .badge-dev{background:var(--blue-light);color:var(--blue-dark)}
+  .badge-qa{background:var(--teal-light);color:var(--teal)}
+  .iter-chips{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+  .chip{padding:2px 7px;border-radius:20px;font-size:11px;cursor:pointer;border:1px solid var(--slate-200);background:#fff;color:var(--slate-500);transition:all .15s;user-select:none}
+  .chip.active-dev{background:var(--blue-light);border-color:var(--blue);color:var(--blue-dark)}
+  .chip.active-qa{background:var(--teal-light);border-color:var(--teal);color:var(--teal)}
+  .chip-with-pct{display:inline-flex;align-items:center;gap:3px;padding:2px 5px 2px 7px;cursor:default}
+  .chip-iter-id{cursor:pointer}
+  .chip-iter-id:hover{text-decoration:line-through;opacity:.7}
+  .chip-sep{opacity:.45;font-size:9px}
+  .chip-pct-inline{width:28px;font-size:10px;font-family:'DM Mono',monospace;text-align:right;border:none;background:transparent;padding:0;color:inherit;font-weight:600;cursor:text;outline:none;-moz-appearance:textfield;appearance:textfield}
+  .chip-pct-inline::-webkit-inner-spin-button,.chip-pct-inline::-webkit-outer-spin-button{-webkit-appearance:none}
+  .chip-pct-inline.pct-override{color:var(--amber)}
+
+  /* ── CAPACITY TABLE ── */
+  .cap-table th{font-size:11px}
+  .cap-table td{font-family:'DM Mono',monospace;font-size:13px}
+  .cap-table .iter-head{font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;color:var(--slate-800)}
+  .cap-table .iter-date{font-size:11px;color:var(--slate-400);font-family:'DM Sans',sans-serif;font-weight:400}
+  .cap-table .iter-days{font-size:11px;font-family:'DM Sans',sans-serif;margin-top:2px}
+  .cell-dev{color:var(--blue-dark);font-weight:500}
+  .cell-qa{color:var(--teal);font-weight:500}
+  .cell-sp{color:var(--amber);font-weight:600}
+  .row-total td{background:var(--navy);color:#fff;font-weight:600}
+  .row-total .cell-dev{color:#93c5fd}
+  .row-total .cell-qa{color:#5eead4}
+  .row-total .cell-sp{color:#fde68a}
+
+  /* ── SUMMARY CARDS ── */
+  .summary-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:20px}
+  @media(max-width:800px){.summary-cards{grid-template-columns:repeat(2,1fr)}}
+  .summary-card{padding:16px 20px;border-radius:var(--radius);border:1px solid var(--slate-200)}
+  .summary-card .card-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--slate-500);margin-bottom:6px}
+  .summary-card .card-value{font-family:'DM Mono',monospace;font-size:24px;font-weight:500;line-height:1}
+  .summary-card .card-sub{font-size:11px;color:var(--slate-400);margin-top:4px}
+  .card-dev{border-top:3px solid var(--blue)}.card-dev .card-value{color:var(--blue-dark)}
+  .card-qa{border-top:3px solid var(--teal)}.card-qa .card-value{color:var(--teal)}
+  .card-total{border-top:3px solid var(--amber)}.card-total .card-value{color:var(--amber)}
+  .card-ratio{border-top:3px solid var(--slate-400)}
+
+  /* ── OVERHEAD ── */
+  .overhead-total td{font-weight:600;border-top:2px solid var(--slate-200);background:var(--slate-50)!important}
+  .focus-summary{margin-top:12px;padding:10px 12px;background:var(--blue-light);border-radius:var(--radius-sm);font-size:12px;color:var(--blue-dark)}
+  .focus-summary strong{font-family:'DM Mono',monospace}
+  .ratio-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--slate-100)}
+  .ratio-row:last-child{border-bottom:none}
+  .ratio-label{flex:1;font-size:13px;color:var(--slate-700)}
+  .ratio-desc{font-size:11px;color:var(--slate-400)}
+
+  /* ── HISTORICAL ── */
+  .hist-grid-wrap{overflow-x:auto}
+  .hist-grid{display:flex;min-width:max-content;border:1px solid var(--slate-200);border-radius:var(--radius);overflow:hidden}
+  .hist-col{min-width:215px;padding:16px;border-right:1px solid var(--slate-200)}
+  .hist-col:last-child{border-right:none}
+  #hist-pi-selector{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:10px 16px 4px;border-bottom:1px solid var(--slate-100)}
+  .hist-pi-pill{border:1px solid var(--slate-200);background:#f8fafc;color:var(--slate-500);border-radius:20px;padding:3px 11px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;opacity:.45}
+  .hist-pi-pill.active{opacity:1;color:#fff}
+  .hist-pi-pill.active.s-hist{background:#475569;border-color:#475569}
+  .hist-pi-pill.active.s-cur {background:var(--teal);border-color:var(--teal)}
+  .hist-pi-pill.active.s-fut {background:var(--blue);border-color:var(--blue)}
+  .hist-sel-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--slate-400);white-space:nowrap}
+  .hist-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--slate-500);margin-bottom:12px}
+  .hist-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--slate-100)}
+  .hist-row:last-child{border-bottom:none}
+  .hist-row-label{font-size:12px;color:var(--slate-600)}
+  .hist-row-val{font-family:'DM Mono',monospace;font-size:13px;font-weight:500}
+  .hist-pi-title{font-size:15px;font-weight:600;color:var(--slate-800);margin-bottom:4px}
+
+  /* ── MEMBER HOURS ── */
+  .member-hours-grid{display:grid;gap:8px;margin-top:8px}
+  .mh-card{padding:10px 12px;border:1px solid var(--slate-200);border-radius:var(--radius-sm);background:#fff}
+  .mh-name{font-size:11px;font-weight:600;color:var(--slate-600);margin-bottom:2px}
+  .mh-val{font-family:'DM Mono',monospace;font-size:15px;font-weight:500}
+  .mh-sub{font-size:10px;color:var(--slate-400);margin-top:1px}
+
+  /* ── TIME OFF ── */
+  .to-grid-wrap{overflow-x:auto;margin-top:4px}
+  .to-grid{border-collapse:collapse;min-width:max-content}
+  .to-grid th{background:var(--slate-50);border:1px solid var(--slate-200);padding:7px 12px;font-size:11px;font-weight:600;color:var(--slate-500);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+  .to-grid td{border:1px solid var(--slate-200);padding:6px 10px;vertical-align:middle;font-size:13px}
+  .to-grid tr:hover td{background:var(--slate-50)}
+  .to-grid .member-cell{font-size:13px;font-weight:500;color:var(--slate-700);white-space:nowrap;background:var(--slate-50)}
+  .to-grid .days-input{width:52px;text-align:center;font-family:'DM Mono',monospace;font-size:13px;border:1px solid var(--slate-200);border-radius:var(--radius-sm);padding:3px 6px;background:#fff}
+  .to-grid .days-input:focus{border-color:var(--blue);outline:none}
+  .to-grid .days-input.has-days{background:#fef3c7;border-color:#fbbf24;color:#92400e;font-weight:600}
+  .to-grid .inactive-cell{color:var(--slate-300);text-align:center;font-size:13px}
+  .to-grid .footer-holidays{background:#fef9ee;font-family:'DM Mono',monospace;font-size:12px;color:#92400e;font-weight:600;text-align:center}
+  .to-grid .footer-workdays{background:var(--green-light);font-family:'DM Mono',monospace;font-size:12px;color:var(--green);font-weight:600;text-align:center}
+  .to-grid .footer-label{font-size:11px;font-weight:600;color:var(--slate-500);text-transform:uppercase;letter-spacing:.04em;background:var(--slate-50)}
+  .to-grid .iter-th{text-align:center;min-width:90px}
+  .to-grid .iter-th .th-id{font-size:12px;font-weight:700;color:var(--slate-700)}
+  .to-grid .iter-th .th-days{font-size:10px;color:var(--slate-400);margin-top:2px;font-weight:400;text-transform:none;letter-spacing:0}
+  .to-grid .iter-th .th-dates{font-size:10px;color:var(--slate-300);margin-top:3px;font-weight:400;font-family:'DM Mono',monospace;text-transform:none;letter-spacing:0}
+
+  .holiday-table{margin-bottom:0}
+  .holiday-tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;background:#fef3c7;color:#92400e;font-weight:600;margin-right:4px}
+  .days-off-note{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:2px 7px;border-radius:3px;background:#fef3c7;color:#92400e;font-weight:600;white-space:nowrap}
+  .member-note-row td{padding:0 8px 8px 8px;border-top:none}
+  .member-note-input{width:100%;font-size:11px;font-style:italic;color:var(--slate-500);background:transparent;border:none;border-bottom:1px dashed var(--slate-200);outline:none;padding:2px 0}
+  .member-note-input:focus{border-bottom-color:var(--blue);font-style:normal;color:var(--slate-700)}
+  .member-note-input::placeholder{color:var(--slate-300)}
+  .workdays-note{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:2px 7px;border-radius:3px;background:var(--green-light);color:var(--green);font-weight:600}
+
+  /* ── BUTTONS ── */
+  .btn{font-family:'DM Sans',sans-serif;font-size:12px;padding:5px 12px;border-radius:var(--radius-sm);cursor:pointer;border:1px solid var(--slate-200);background:#fff;color:var(--slate-700);transition:all .15s}
+  .btn:hover{background:var(--slate-50);border-color:var(--slate-300)}
+  .btn-danger{color:var(--red);border-color:var(--red-light)}.btn-danger:hover{background:var(--red-light)}
+  .btn-primary{background:var(--blue);color:#fff;border-color:var(--blue)}.btn-primary:hover{background:var(--blue-dark)}
+  .btn-sm{padding:3px 8px;font-size:11px}
+
+  /* ── MISC ── */
+  .add-row{display:flex;gap:8px;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--slate-100);flex-wrap:wrap}
+  .tag{display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;font-weight:600;letter-spacing:.03em}
+  .tag-plan{background:var(--blue-light);color:var(--blue-dark)}
+  .tag-cur{background:var(--green-light);color:var(--green)}
+  .tag-hist{background:var(--slate-100);color:var(--slate-600)}
+  .tag-fut{background:#fef3c7;color:#92400e}
+  .sub-label{font-size:11px;font-weight:600;color:var(--slate-500);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+  .pi-section-divider{margin-bottom:24px;padding-bottom:20px;border-bottom:2px solid var(--slate-100)}
+  .hist-edit-grid label{display:flex;flex-direction:column;gap:3px;font-size:11px;color:var(--slate-500);font-weight:600}
+  .hist-edit-grid input{font-family:'DM Mono',monospace;width:100%}
+  .empty-note{font-size:12px;color:var(--slate-400);padding:16px 0}
+  .section-split{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  @media(max-width:900px){.section-split{grid-template-columns:1fr}}
+
+  /* ── FILE BANNER ── */
+  .file-banner{background:linear-gradient(135deg,#1e3a5f,#0f172a);color:#fff;padding:14px 32px;display:flex;align-items:center;gap:16px;border-bottom:1px solid #1e293b}
+  .file-banner-icon{font-size:22px}
+  .file-banner-text{flex:1}
+  .file-banner-title{font-size:14px;font-weight:600;margin-bottom:2px}
+  .file-banner-sub{font-size:12px;color:#94a3b8}
+  .file-banner-btns{display:flex;gap:8px}
+  .banner-btn{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;padding:7px 16px;border-radius:var(--radius-sm);cursor:pointer;border:none;transition:all .15s}
+  .banner-btn-primary{background:var(--blue);color:#fff}.banner-btn-primary:hover{background:var(--blue-dark)}
+  .banner-btn-secondary{background:#ffffff22;color:#fff;border:1px solid #ffffff33}.banner-btn-secondary:hover{background:#ffffff33}
+
+  /* ── HISTORY / BACKUP PANEL ── */
+  .btn-history{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;padding:6px 12px;border-radius:var(--radius-sm);cursor:pointer;border:1px solid var(--slate-200);background:#fff;color:var(--slate-600)}
+  .btn-history:hover{background:var(--slate-50)}
+  .history-overlay{position:fixed;inset:0;background:#0f172acc;display:none;align-items:center;justify-content:center;z-index:1000}
+  .history-panel{background:#fff;border-radius:var(--radius-sm);width:min(560px,92vw);max-height:80vh;overflow:auto;padding:20px 22px;box-shadow:0 20px 50px #0f172a55}
+  .history-panel-title{font-size:15px;font-weight:700;color:var(--slate-700);margin-bottom:4px}
+  .history-panel-sub{font-size:12px;color:var(--slate-400);margin-bottom:14px}
+  .history-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--slate-100)}
+  .history-item:last-child{border-bottom:none}
+  .history-item-date{font-size:13px;font-weight:600;color:var(--slate-700)}
+  .history-item-sub{font-size:11px;color:var(--slate-400)}
+  .history-panel-close{margin-top:14px;float:right}
+
+  /* ── RATIO SUGGESTIONS ── */
+  .ratio-suggestion{background:var(--slate-50);border:1px solid var(--slate-200);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:10px}
+  .ratio-suggestion-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--slate-500);margin-bottom:8px}
+  .ratio-suggest-row{display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid var(--slate-100);font-size:12px;flex-wrap:wrap}
+  .ratio-suggest-row:last-child{border-bottom:none}
+  .ratio-source{font-size:11px;font-weight:600;color:var(--slate-700);min-width:140px}
+  .ratio-suggest-val{font-family:'DM Mono',monospace;font-weight:600}
+  .ratio-suggest-val.dev{color:var(--blue-dark)}
+  .ratio-suggest-val.qa{color:var(--teal)}
+  .ratio-active-badge{font-size:10px;font-weight:600;background:var(--green-light);color:var(--green);padding:2px 6px;border-radius:3px;white-space:nowrap}
+  .ratio-manual-badge{font-size:10px;font-weight:600;background:var(--amber-light);color:var(--amber);padding:2px 6px;border-radius:3px;white-space:nowrap}
+
+  /* ── COMPUTED RATIO HIGHLIGHT ── */
+  .hist-ratio-computed{color:var(--green);font-weight:700}
+  .hist-ratio-note{font-size:10px;color:var(--slate-400);margin-left:4px}
+
+  /* ── SPRINT ACTUALS TABLE ── */
+  .actuals-table th{font-size:11px;text-align:right}
+  .actuals-table th:first-child{text-align:left}
+  .actuals-table td{text-align:right;font-family:'DM Mono',monospace;font-size:13px}
+  .actuals-table td:first-child{text-align:left;font-family:'DM Sans',sans-serif}
+  .actuals-input{width:82px;text-align:center;font-family:'DM Mono',monospace;font-size:13px;border:1px solid var(--slate-200);border-radius:var(--radius-sm);padding:4px 8px;background:#fff;outline:none;transition:border-color .15s;-moz-appearance:textfield;appearance:textfield}
+  .actuals-input::-webkit-inner-spin-button,.actuals-input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+  .actuals-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-light)}
+  .actuals-input.has-val{background:var(--blue-light);border-color:var(--blue);color:var(--blue-dark);font-weight:600}
+  .delta-pos{color:var(--green);font-weight:600}
+  .delta-neg{color:var(--red);font-weight:600}
+  .ratio-actual-dev{color:var(--green);font-weight:600}
+  .ratio-actual-qa{color:var(--green);font-weight:600}
+  .actuals-total-row td{background:var(--navy)!important;color:#fff;font-weight:600;border-top:2px solid var(--slate-700)}
+  .actuals-total-row .cell-dev{color:#93c5fd}
+  .actuals-total-row .cell-qa{color:#5eead4}
+  .actuals-total-row .cell-sp{color:#fde68a}
+  .actuals-total-row .delta-pos{color:#86efac}
+  .actuals-total-row .delta-neg{color:#fca5a5}
+  .accuracy-bar-wrap{height:6px;background:var(--slate-100);border-radius:3px;margin-top:4px;overflow:hidden;min-width:40px}
+  .accuracy-bar{height:100%;border-radius:3px;transition:width .3s}
+
+  /* ── PI SWITCHER ── */
+  .pi-switcher-bar{background:var(--white);border-bottom:1px solid var(--slate-200);position:sticky;top:56px;z-index:200;box-shadow:0 2px 4px rgba(0,0,0,.06)}
+  .pi-switcher-inner{display:flex;align-items:center;max-width:1280px;margin:0 auto;padding:0 32px;overflow-x:auto}
+  .pi-tab{padding:10px 16px;font-size:12px;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;color:var(--slate-400);transition:color .15s,background .15s;user-select:none;display:flex;align-items:center;gap:6px}
+  .pi-tab:hover{color:var(--slate-700);background:var(--slate-50)}
+  .pi-tab.pi-tab-active{color:var(--blue-dark);border-bottom-color:var(--blue);background:#eff6ff;font-size:13px}
+  .pi-tab-badge{font-size:10px;font-weight:600;padding:1px 5px;border-radius:3px}
+  .pi-tab-badge.s-plan{background:var(--blue-light);color:var(--blue-dark)}
+  .pi-tab-badge.s-cur{background:var(--green-light);color:var(--green)}
+  .pi-tab-badge.s-hist{background:var(--slate-100);color:var(--slate-600)}
+  .pi-tab-badge.s-fut{background:#fef3c7;color:#92400e}
+  .viewing-notice{background:var(--amber-light);color:var(--amber);padding:6px 32px;font-size:12px;font-weight:600;border-bottom:1px solid #fde68a;display:none}
+
+  /* ── SUMMARY BAR ── */
+  #pi-summary-bar{position:sticky;top:56px;z-index:100;background:var(--navy);border-bottom:2px solid #1e3a5f;display:none}
+  .sum-bar-inner{display:flex;align-items:center;gap:8px;max-width:1280px;margin:0 auto;padding:7px 32px;flex-wrap:wrap}
+  .sum-pill{display:flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px}
+  .sum-label{text-transform:uppercase;letter-spacing:.07em;font-size:10px;font-weight:700;margin-right:2px}
+  .sum-val{font-family:'DM Mono',monospace;font-size:13px;font-weight:500}
+  .sum-unit{font-size:10px;opacity:.7}
+  .sum-sep{opacity:.35;margin:0 2px;font-size:11px}
+  .sum-pill-dev{background:#1e3a5f33}.sum-pill-dev .sum-label,.sum-pill-dev .sum-val,.sum-pill-dev .sum-unit{color:#93c5fd}
+  .sum-pill-qa{background:#0d948833}.sum-pill-qa .sum-label,.sum-pill-qa .sum-val,.sum-pill-qa .sum-unit{color:#5eead4}
+  .sum-pill-total{background:#b4530933}.sum-pill-total .sum-label,.sum-pill-total .sum-val,.sum-pill-total .sum-unit{color:#fde68a}
+  .sum-bar-divider{width:1px;height:18px;background:#ffffff18;margin:0 4px;flex-shrink:0}
+  .sum-pi-label{margin-left:auto;font-size:11px;color:#475569;font-weight:500}
+
+  /* ── TOAST ── */
+  #toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;align-items:flex-end;gap:8px;pointer-events:none}
+  .toast{padding:14px 22px;border-radius:var(--radius);font-size:14px;font-weight:600;box-shadow:0 6px 24px rgba(0,0,0,.25);transform:translateY(12px);opacity:0;transition:transform .28s cubic-bezier(.16,1,.3,1),opacity .2s ease;pointer-events:none;white-space:nowrap;letter-spacing:.01em}
+  .toast.visible{transform:translateY(0);opacity:1}
+  .toast-success{background:#064e3b;color:#6ee7b7;border:1px solid #065f46}
+  .toast-error{background:#7f1d1d;color:#fca5a5;border:1px solid #991b1b}
+
+  /* ── CAPACITY COLOUR CODING ── */
+  .cap-row-amber td{background:#fef3c718!important}
+  .cap-row-red   td{background:#fee2e218!important}
+  .cap-row-amber>td:first-child{border-left:3px solid var(--amber)}
+  .cap-row-red>td:first-child{border-left:3px solid var(--red)}
+  .util-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;vertical-align:middle;flex-shrink:0}
+  .util-dot-good{background:var(--green)}.util-dot-amber{background:var(--amber)}.util-dot-red{background:var(--red)}
+
+  /* ── MEMBER CARDS ── */
+  .member-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px;margin-bottom:4px}
+  .member-card{border:1px solid var(--slate-200);border-radius:var(--radius);background:#fff;overflow:hidden;transition:box-shadow .15s}
+  .member-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
+  .member-card-dev{border-top:3px solid var(--blue)}.member-card-qa{border-top:3px solid var(--teal)}
+  .member-card-header{display:flex;align-items:center;gap:8px;padding:10px 12px 6px}
+  .member-card-name{flex:1;font-size:13px;font-weight:500;border:1px solid transparent;border-radius:var(--radius-sm);padding:3px 5px;background:transparent;outline:none;color:var(--slate-800);min-width:0;transition:border-color .15s;font-family:'DM Sans',sans-serif}
+  .member-card-name:hover,.member-card-name:focus{border-color:var(--slate-200);background:#fff}
+  .member-card-meta{display:flex;align-items:center;gap:6px;padding:2px 12px 8px;flex-wrap:wrap;font-size:11px;color:var(--slate-500)}
+  .member-card-iters{padding:0 12px 8px}
+  .member-card-note{padding:7px 12px;border-top:1px solid var(--slate-100)}
+  .member-role-select{border:none;padding:2px 7px 2px 6px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.03em;cursor:pointer;outline:none;font-family:'DM Sans',sans-serif}
+  .member-role-dev{background:var(--blue-light);color:var(--blue-dark)}
+  .member-role-qa{background:var(--teal-light);color:var(--teal)}
+
+  /* ── CAPACITY CHART ── */
+  #cap-chart-wrap{padding:16px 20px;border-top:1px solid var(--slate-100)}
+  .cap-chart-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--slate-400);margin-bottom:10px}
+  #cap-chart-svg{width:100%;display:block;overflow:visible}
+
+  /* ── CHART TOOLTIP ── */
+  #chart-tooltip{position:fixed;pointer-events:none;display:none;background:rgba(15,23,42,.92);color:#fff;border-radius:7px;padding:8px 12px;font-size:12px;line-height:1.7;box-shadow:0 4px 16px rgba(0,0,0,.3);z-index:9999;min-width:120px}
+  #chart-tooltip .tt-iter{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;margin-bottom:2px}
+  #chart-tooltip .tt-dev{color:#93c5fd}.tt-qa{color:#5eead4}.tt-sep{border-top:1px solid rgba(255,255,255,.1);margin:4px 0}
+  #chart-tooltip .tt-total{color:#fcd34d;font-weight:600}
+
+  /* ── HEADER PI LABEL ── */
+  #header-pi-label{font-size:12px;font-weight:700;letter-spacing:.04em;padding:4px 12px;border-radius:20px;margin-right:10px;white-space:nowrap;display:none;background:var(--blue);color:#fff}
+  #header-pi-label.visible{display:inline-block}
+
+  /* ── GLOBAL PI PANEL ── */
+  #pi-global-panel{background:#fff;border-bottom:2px solid var(--slate-200);padding:14px 24px 10px}
+  .pi-global-inner{max-width:1200px;margin:0 auto}
+  .pi-global-title{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--slate-400);margin-bottom:10px;display:flex;align-items:center;gap:10px}
+  .pi-global-title::after{content:'';flex:1;height:1px;background:var(--slate-100)}
+  .pi-list-row{cursor:pointer;transition:background .12s}
+  .pi-list-row:hover td{background:#f1f5f9}
+  .pi-list-row.pi-row-active td{background:#dbeafe}
+  .pi-list-row.pi-row-active td:first-child{border-left:4px solid #1d4ed8;font-weight:700;color:#1e40af}
+  .pi-list-row td:first-child{border-left:4px solid transparent}
+
+</style>
+</head>
+<body>
+
+<!-- FILE BANNER -->
+<div class="file-banner" id="file-banner" style="display:none">
+  <div class="file-banner-icon">📂</div>
+  <div class="file-banner-text">
+    <div class="file-banner-title" id="file-banner-title">Connect a data file to persist your data</div>
+    <div class="file-banner-sub" id="file-banner-sub">PI data is saved to a JSON file on disk when you click Save or press Ctrl+S. Changes are also kept in browser storage as a backup.</div>
+  </div>
+  <div class="file-banner-btns">
+    <button class="banner-btn banner-btn-primary" id="file-banner-btn-primary" onclick="pickExistingFile()">Open existing file</button>
+    <button class="banner-btn banner-btn-secondary" id="file-banner-btn-secondary" onclick="createNewFile()">Create new file</button>
+    <button class="banner-btn banner-btn-secondary" onclick="dismissBanner()">Not now</button>
+  </div>
+</div>
+
+<div class="history-overlay" id="history-panel">
+  <div class="history-panel">
+    <div class="history-panel-title">Saved versions</div>
+    <div class="history-panel-sub">Every save keeps a copy of the previous version inside the file itself, so you can recover data even after an accidental overwrite. Restoring loads it into your current session — click Save afterwards to write it to disk.</div>
+    <div id="history-list"></div>
+    <button class="banner-btn banner-btn-secondary history-panel-close" style="background:var(--slate-100);color:var(--slate-700)" onclick="hideHistoryPanel()">Close</button>
+  </div>
+</div>
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <div>
+      <div class="site-title">Team Capacity Calculator</div>
+    </div>
+    <div class="header-right">
+      <span id="header-pi-label"></span>
+<span class="save-status save-nofile" id="save-status" onclick="handleSaveStatusClick()" title="Click to connect a file">
+        <span class="dot"></span><span id="save-status-text">No file</span>
+      </span>
+      <span class="save-status save-saved" id="backup-status" style="display:none" onclick="configureBackup()" title="Click to change backup location">
+        <span class="dot"></span><span id="backup-status-text">Backed up</span>
+      </span>
+      <button class="btn-save-manual" id="btn-save-manual" onclick="manualSave()" title="Changes auto-save a moment after you stop editing — click to save immediately">
+        &#8681; Save
+      </button>
+      <button class="btn-history" id="btn-history" onclick="showHistoryPanel()" title="View saved versions / restore a backup">🕑 History</button>
+      <button class="btn-history" id="btn-open-file" onclick="openDifferentFile()" title="Connect to a different .json save file">📂 Open File</button>
+      <button class="btn-history" id="btn-backup" onclick="configureBackup()" title="Set or change a backup location (e.g. a network folder) every save also mirrors to">🗄 Backup</button>
+    </div>
+  </div>
+</header>
+
+<!-- PI SWITCHER -->
+<div class="pi-switcher-bar" id="pi-switcher-bar" style="display:none">
+  <div class="pi-switcher-inner" id="pi-switcher"></div>
+</div>
+<div class="viewing-notice" id="viewing-notice"></div>
+
+<!-- SUMMARY BAR -->
+<div id="pi-summary-bar">
+  <div class="sum-bar-inner">
+    <div class="sum-pill sum-pill-dev">
+      <span class="sum-label">DEV</span>
+      <span id="sum-dev-h" class="sum-val">—</span><span class="sum-unit">h</span>
+      <span class="sum-sep">·</span>
+      <span id="sum-dev-sp" class="sum-val">—</span><span class="sum-unit">SP</span>
+    </div>
+    <div class="sum-bar-divider"></div>
+    <div class="sum-pill sum-pill-qa">
+      <span class="sum-label">QA</span>
+      <span id="sum-qa-h" class="sum-val">—</span><span class="sum-unit">h</span>
+      <span class="sum-sep">·</span>
+      <span id="sum-qa-sp" class="sum-val">—</span><span class="sum-unit">SP</span>
+    </div>
+    <div class="sum-bar-divider"></div>
+    <div class="sum-pill sum-pill-total">
+      <span class="sum-label">Total</span>
+      <span id="sum-total-sp" class="sum-val">—</span><span class="sum-unit">SP</span>
+    </div>
+    <span id="sum-pi-label" class="sum-pi-label"></span>
+    <div class="sum-save-area" id="sum-save-area" style="display:none">
+      <span class="sum-save-bar-dot" id="sum-save-bar-dot"></span>
+      <span class="sum-save-bar-text" id="sum-save-bar-text"></span>
+      <button class="sum-save-bar-btn" id="sum-save-bar-btn" onclick="manualSave()" title="Save (Ctrl+S)">↙ Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- GLOBAL PI MANAGEMENT PANEL -->
+<div id="pi-global-panel">
+  <div class="pi-global-inner">
+    <div class="pi-global-title">🗂 PI Management</div>
+    <div id="pi-global-body"></div>
+  </div>
+</div>
+
+<div class="page">
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 1: ITERATIONS (per viewed PI)
+══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header open" id="hdr-iters" onclick="toggleSection(this)">
+    <h2 id="iters-section-title">📅 Iterations</h2>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="section-body open">
+    <div id="iter-mgmt-body"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 2: TEAM & CAPACITY SETUP
+══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header open" id="hdr-team" onclick="toggleSection(this)">
+    <h2>👥 Team — Allocation · Overhead · Ratios</h2>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="section-body open">
+    <div class="config-grid">
+      <div>
+        <div id="team-tbody" class="member-cards-grid"></div>
+        <div class="add-row">
+          <input type="text" id="new-name" placeholder="Name" class="input-name">
+          <select id="new-role">
+            <option value="Dev">Dev</option>
+            <option value="QA">QA</option>
+          </select>
+          <input type="number" id="new-hpd-pct" value="100" min="1" max="200" step="0.1" class="input-pct">%
+          <button class="btn btn-primary" onclick="addMember()">+ Add member</button>
+        </div>
+      </div>
+      <div>
+        <table>
+          <thead>
+            <tr>
+              <th>Ceremony / Activity</th>
+              <th class="num" style="width:76px">h/day</th>
+              <th class="num" style="width:76px">h/sprint</th>
+              <th style="width:28px"></th>
+            </tr>
+          </thead>
+          <tbody id="overhead-tbody"></tbody>
+          <tfoot>
+            <tr class="overhead-total">
+              <td><strong>Total overhead</strong></td>
+              <td class="num" id="oh-total-day">—</td>
+              <td class="num" id="oh-total-sprint">—</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td colspan="4" style="padding-top:10px">
+                <div style="display:flex;gap:6px;align-items:center">
+                  <input type="text"   id="new-oh-name" placeholder="Ceremony / activity name" style="flex:1;min-width:140px">
+                  <input type="number" id="new-oh-hpd"  placeholder="h/day" step="0.001" min="0" max="8" style="width:72px">
+                  <button class="btn btn-primary btn-sm" onclick="addOverhead()">+ Add</button>
+                </div>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+        <div class="focus-summary" id="focus-summary"></div>
+        <div style="margin-top:16px">
+          <div class="sub-label" style="margin-bottom:8px">Story Point Ratios — Current PI</div>
+          <div id="ratio-suggestion"></div>
+          <div class="ratio-row">
+            <span class="badge badge-dev">DEV</span>
+            <span class="ratio-label">SP per focus hour</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <input type="number" id="ratio-dev" value="0.42" step="0.01" min="0.01" max="2" style="width:70px" oninput="saveRatiosToPi();recalc();renderRatioSuggestion();scheduleSave()">
+              <span id="ratio-dev-status"></span>
+            </div>
+          </div>
+          <div class="ratio-row">
+            <span class="badge badge-qa">QA</span>
+            <span class="ratio-label">SP per focus hour</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <input type="number" id="ratio-qa" value="0.29" step="0.01" min="0.01" max="2" style="width:70px" oninput="saveRatiosToPi();recalc();renderRatioSuggestion();scheduleSave()">
+              <span id="ratio-qa-status"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 3: TIME OFF & ABSENCES
+══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header open" id="hdr-timeoff" onclick="toggleSection(this)">
+    <h2 id="timeoff-section-title">🗓 Time Off &amp; Absences</h2>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="section-body open" id="timeoff-section-body">
+
+    <div class="section-split">
+
+      <!-- LEFT: Public Holidays -->
+      <div>
+        <div class="sub-label">Shared Events <span style="font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--slate-400)">— deducts from all active members (public holidays, PI planning, team days, etc.)</span></div>
+        <table class="holiday-table" id="holiday-table">
+          <thead>
+            <tr>
+              <th>Iteration</th>
+              <th>Event</th>
+              <th class="num" style="width:80px">Days lost</th>
+              <th style="width:36px"></th>
+            </tr>
+          </thead>
+          <tbody id="holiday-tbody"></tbody>
+        </table>
+        <p id="holiday-empty" class="empty-note" style="display:none">No shared events added yet.</p>
+        <div class="add-row" id="add-holiday-row">
+          <select id="new-hol-iter" style="width:110px"></select>
+          <input type="text" id="new-hol-name" placeholder="Event name" style="width:180px">
+          <input type="number" id="new-hol-days" value="1" min="1" max="15" style="width:60px"> day(s)
+          <button class="btn btn-primary" onclick="addHoliday()">+ Add Event</button>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: Legend + totals summary -->
+      <div>
+        <div class="sub-label">How it works</div>
+        <div style="font-size:12px;color:var(--slate-600);line-height:1.8">
+          <div>Sprint has <strong>15 working days</strong> by default (configurable per iteration).</div>
+          <div>Shared events deduct from <em>all active members</em> in that iteration.</div>
+          <div>Personal leave deducts from <em>individual members</em> only.</div>
+          <div style="margin-top:8px">Remaining working days per member per iteration:</div>
+          <div style="margin-top:4px;font-family:'DM Mono',monospace;background:var(--slate-50);padding:8px;border-radius:var(--radius-sm);font-size:12px">
+            15 − shared events − personal leave
+          </div>
+          <div style="margin-top:8px;padding:8px 10px;background:var(--green-light);border-radius:var(--radius-sm);color:var(--green);font-size:12px">
+            Capacity table automatically reflects all time off.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Personal Leave Matrix -->
+    <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--slate-100)">
+      <div class="sub-label">Personal Leave <span style="font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--slate-400)">— days off per member per iteration (annual leave, sick days, etc.)</span></div>
+      <div class="to-grid-wrap">
+        <table class="to-grid" id="leave-matrix"></table>
+      </div>
+      <p id="leave-empty" class="empty-note" style="display:none">No current PI or no iterations configured.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 4: CAPACITY PER ITERATION
+══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header open" id="hdr-capacity" onclick="toggleSection(this)">
+    <h2 id="cap-section-title">📊 Capacity per iteration</h2>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="section-body open" style="padding:0">
+    <div style="padding:16px 20px 8px;background:var(--slate-50);border-bottom:1px solid var(--slate-200)">
+      <div style="font-size:12px;color:var(--slate-500)">
+        <span style="margin-right:16px"><span class="badge badge-dev">DEV</span> focus hours &amp; estimated SP</span>
+        <span style="margin-right:16px"><span class="badge badge-qa">QA</span> focus hours &amp; estimated SP</span>
+        <span style="color:var(--amber);font-weight:600">■</span> <span style="font-size:11px">Total SP estimate</span>
+        <span style="margin-left:16px;color:var(--slate-400);font-size:11px">· Hours account for all time off</span>
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="cap-table">
+        <thead>
+          <tr>
+            <th style="width:220px">Iteration</th>
+            <th class="num">DEV hours</th>
+            <th class="num">DEV SP est.</th>
+            <th class="num">QA hours</th>
+            <th class="num">QA SP est.</th>
+            <th class="num">Total SP est.</th>
+          </tr>
+        </thead>
+        <tbody id="cap-tbody"></tbody>
+        <tfoot id="cap-tfoot"></tfoot>
+      </table>
+    </div>
+    <!-- CAPACITY CHART -->
+    <div id="cap-chart-wrap">
+      <div class="cap-chart-title">Capacity overview — focus hours per iteration</div>
+      <svg id="cap-chart-svg"></svg>
+    </div>
+
+    <!-- Sprint Actuals Tracking -->
+    <div style="padding:16px 20px;border-top:2px solid var(--slate-100)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+        <div class="sub-label" style="margin-bottom:0">Sprint Actuals</div>
+        <span style="font-size:11px;color:var(--slate-400)">— enter executed SP per sprint as they complete · delta and actual ratio are computed automatically</span>
+      </div>
+      <div id="sprint-actuals-wrap"></div>
+    </div>
+
+    <div style="padding:16px 20px;border-top:1px solid var(--slate-100)">
+      <div class="sub-label" style="margin-bottom:8px">Focus hours per member per iteration <span style="font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--slate-400)">— baseline, no time off · <span style="color:var(--amber)">amber</span> = per-iteration override</span></div>
+      <div class="member-hours-grid" id="member-hours-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 5: PI SUMMARY CARDS
+══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header open" id="hdr-totals" onclick="toggleSection(this)">
+    <h2 id="cards-section-title">📋 PI Totals</h2>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="section-body open" style="padding:0">
+    <div class="summary-cards" id="summary-cards"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 6: HISTORICAL COMPARISON
+══════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header open" id="hdr-history" onclick="toggleSection(this)">
+    <h2 id="hist-section-title">📈 Historical comparison</h2>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="section-body open">
+    <div id="hist-pi-selector"></div>
+    <div class="hist-grid-wrap">
+      <div class="hist-grid" id="hist-grid"></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /page -->
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// DEFAULT DATA
+// ══════════════════════════════════════════════════════════════
+
+const DEFAULTS = {
+  version: 1,
+  piList: [
+    {
+      id: 17, status: 'historical', iterations: [],
+      actual: {devH:345,devSPest:145,devSPexec:154,devRatio:0.45,qaH:871,qaSPest:253,qaSPexec:213,qaRatio:0.25}
+    },
+    {
+      id: 18, status: 'historical', iterations: [],
+      actual: {devH:337,devSPest:151,devSPexec:223,devRatio:0.45,qaH:554,qaSPest:139,qaSPexec:117,qaRatio:0.25}
+    },
+    {
+      id: 19, status: 'future', actual: null, ratios: {dev:0.42, qa:0.29},
+      iterations: [
+        {id:'19.1',sprint:157,days:15,label:'19.1 — Sprint 157',dateStart:'2026-06-24',dateEnd:'2026-07-14',dates:'24 Jun → 14 Jul 2026',holidays:[],devSPexec:null,qaSPexec:null},
+        {id:'19.2',sprint:158,days:15,label:'19.2 — Sprint 158',dateStart:'2026-07-15',dateEnd:'2026-08-04',dates:'15 Jul → 4 Aug 2026',holidays:[],devSPexec:null,qaSPexec:null},
+        {id:'19.3',sprint:159,days:15,label:'19.3 — Sprint 159',dateStart:'2026-08-05',dateEnd:'2026-08-25',dates:'5 Aug → 25 Aug 2026',holidays:[],devSPexec:null,qaSPexec:null},
+        {id:'19.4',sprint:160,days:15,label:'19.4 — Sprint 160',dateStart:'2026-08-26',dateEnd:'2026-09-15',dates:'26 Aug → 15 Sep 2026',holidays:[],devSPexec:null,qaSPexec:null},
+        {id:'19.5',sprint:161,days:15,label:'19.5 — Sprint 161',dateStart:'2026-09-16',dateEnd:'2026-10-06',dates:'16 Sep → 6 Oct 2026',holidays:[],devSPexec:null,qaSPexec:null},
+      ],
+      team: [
+        {name:'João Botelho',     role:'Dev', focusHpd:3.5, activeIter:['19.1','19.2','19.3','19.4','19.5'], daysOff:{}, focusHpdByIter:{}},
+        {name:'João Oliveira',    role:'Dev', focusHpd:3.5, activeIter:['19.1','19.2','19.3'],               daysOff:{}, focusHpdByIter:{}},
+        {name:'João Pires',       role:'QA',  focusHpd:1.5, activeIter:['19.1','19.2','19.3','19.4','19.5'], daysOff:{}, focusHpdByIter:{}},
+        {name:'Wanderson Coelho', role:'QA',  focusHpd:5.5, activeIter:['19.1','19.2','19.3','19.4','19.5'], daysOff:{}, focusHpdByIter:{}},
+      ]
+    }
+  ],
+  overhead: [
+    {name:'Daily Meeting',         hpd:0.250},
+    {name:'Sprint Planning Pt 1',  hpd:0.100},
+    {name:'Sprint Planning Pt 2',  hpd:0.067},
+    {name:'DIP-SW Sprint Review',  hpd:0.100},
+    {name:'DIP-SW Retrospective',  hpd:0.100},
+    {name:'Sysmgm Retro / Review', hpd:0.067},
+    {name:'Sysmgm Weekly Sync',    hpd:0.200},
+    {name:'Brainstorming',         hpd:0.067},
+    {name:'1-on-1',                hpd:0.000},
+    {name:'Internal Activities',   hpd:1.000},
+    {name:'Coffee Breaks',         hpd:0.750},
+  ],
+  ratios: {dev:0.42, qa:0.29}
+};
+
+// ══════════════════════════════════════════════════════════════
+// LIVE DATA
+// ══════════════════════════════════════════════════════════════
+
+let piList   = JSON.parse(JSON.stringify(DEFAULTS.piList));
+let overhead = JSON.parse(JSON.stringify(DEFAULTS.overhead));
+// Ensure every PI in the default list has its own team array
+piList.forEach(pi => { if (!pi.team) pi.team = []; });
+// `team` always points to the viewed PI's team array (updated by setViewedPI / applyState)
+let team     = (piList.find(p => p.status === 'current') || piList.find(p => p.status === 'future'))?.team || [];
+
+let viewedPIId = null;
+let _proj = {devH:0,qaH:0,devSP:0,qaSP:0,devR:0.42,qaR:0.29};
+
+const FULL_H = 8;
+const DAYS   = 15;
+
+// ══════════════════════════════════════════════════════════════
+// FILE SYSTEM  +  INDEXEDDB  +  LOCALSTORAGE
+// ══════════════════════════════════════════════════════════════
+
+// Desktop (Electron) build: persistence uses plain OS file paths via
+// window.electronAPI (see preload.js), not the browser File System Access
+// API — that API refuses to grant write permission to files on a network
+// share, which is exactly where this file needs to live for the team.
+let primaryPath     = null; // local file this machine reads/writes every save
+let backupPath       = null; // optional mirror copy (e.g. the team's network share)
+let bannerDismissed = false;
+
+const LS_KEY   = 'sysmgm-pi-capacity-v1';
+const VIEW_KEY = 'sysmgm-viewed-pi-v1';
+
+function getState() {
+  saveRatiosToPi(); // ensure current DOM values are flushed to the viewed PI before saving
+  return { version: 1, savedAt: new Date().toISOString(), piList, overhead };
+}
+
+function applyState(data) {
+  if (!data || data.version !== 1) return false;
+  piList   = data.piList   || piList;
+  overhead = data.overhead || overhead;
+  // Migrate old saves: copy global team into each PI, resetting activeIter to that PI's own iterations
+  if (data.team && data.team.length) {
+    piList.forEach(pi => {
+      if (!pi.team) {
+        pi.team = JSON.parse(JSON.stringify(data.team));
+        const piIterIds = (pi.iterations || []).map(it => it.id);
+        pi.team.forEach(m => { m.activeIter = [...piIterIds]; m.daysOff = {}; m.focusHpdByIter = {}; });
+      }
+    });
+  }
+  // Ensure each PI has a team array and backfill member fields
+  piList.forEach(pi => {
+    if (!pi.team) pi.team = [];
+    // If all members have activeIter pointing to a different PI's iterations, auto-fix
+    const piIterIds = (pi.iterations || []).map(it => it.id);
+    if (piIterIds.length && pi.team.length) {
+      const anyMatch = pi.team.some(m => (m.activeIter||[]).some(id => piIterIds.includes(id)));
+      if (!anyMatch) {
+        pi.team.forEach(m => { m.activeIter = [...piIterIds]; m.daysOff = {}; m.focusHpdByIter = {}; });
+      }
+    }
+    (pi.iterations || []).forEach(it => {
+      if (!it.holidays)               it.holidays   = [];
+      if (!('devSPexec' in it))       it.devSPexec  = null;
+      if (!('qaSPexec'  in it))       it.qaSPexec   = null;
+      if (!('dateStart' in it))       it.dateStart  = '';
+      if (!('dateEnd'   in it))       it.dateEnd    = '';
+      if (!('days'      in it))       it.days       = DAYS;
+    });
+    pi.team.forEach(m => {
+      if (!m.daysOff)        m.daysOff        = {};
+      if (!m.focusHpdByIter) m.focusHpdByIter = {};
+      if (!('focusHpd' in m)) m.focusHpd = +((m.avail || 100) / 100 * focusStd()).toFixed(2);
+      if (!('notes' in m))   m.notes          = '';
+    });
+  });
+  // Migrate old global ratios into each PI that has none
+  if (data.ratios) {
+    piList.forEach(pi => { if (!pi.ratios) pi.ratios = { dev: data.ratios.dev, qa: data.ratios.qa }; });
+  }
+  // Ensure every PI has a ratios object
+  piList.forEach(pi => { if (!pi.ratios) pi.ratios = { dev: 0.42, qa: 0.29 }; });
+  // Migrate legacy 'planning' status → 'future'
+  piList.forEach(pi => { if (pi.status === 'planning') pi.status = 'future'; });
+
+  team = getViewedPI()?.team || getCurrentPI()?.team || [];
+  syncRatiosFromPi();
+  return true;
+}
+
+function lsSave() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(getState())); } catch {}
+}
+function lsLoad() {
+  try { const r = localStorage.getItem(LS_KEY); return r ? JSON.parse(r) : null; } catch { return null; }
+}
+async function readPath(p) {
+  if (!p) return null;
+  const res = await window.electronAPI.readFile(p);
+  if (!res.ok) throw new Error(res.error || 'Read failed');
+  return res.text && res.text.trim() ? JSON.parse(res.text) : null;
+}
+async function writePath(p, text) {
+  const res = await window.electronAPI.writeFile(p, text);
+  if (!res.ok) throw new Error(res.error || 'Write failed');
+}
+
+// ── Embedded backup history: every write keeps a rolling copy of the
+// previous on-disk version *inside the saved JSON itself*, so recovery
+// works no matter how the file is opened (double-click, local server, a
+// different computer, etc.) — unlike localStorage/IndexedDB, which are
+// tied to the browser origin used to open the file.
+const MAX_BACKUPS = 10;
+
+function piSummary(piList) {
+  const map = {};
+  (piList || []).forEach(pi => { map[pi.id] = { iterations: (pi.iterations||[]).length, team: (pi.team||[]).length }; });
+  return map;
+}
+function isDataShrinking(prev, next) {
+  if (!prev || !prev.piList) return false;
+  const prevMap = piSummary(prev.piList), nextMap = piSummary(next.piList);
+  for (const id in prevMap) {
+    const p = prevMap[id], n = nextMap[id];
+    if (!n) { if (p.iterations > 0 || p.team > 0) return true; continue; }
+    if (n.iterations < p.iterations || n.team < p.team) return true;
+  }
+  return false;
+}
+function describeShrink(prev, next) {
+  const prevMap = piSummary(prev.piList), nextMap = piSummary(next.piList);
+  const lines = [];
+  for (const id in prevMap) {
+    const p = prevMap[id], n = nextMap[id] || {iterations:0, team:0};
+    if (n.iterations < p.iterations || n.team < p.team) {
+      lines.push(`• PI ${id}: file currently has ${p.iterations} iteration(s) / ${p.team} member(s) — about to save ${n.iterations} / ${n.team}`);
+    }
+  }
+  return '⚠ This save would remove or reduce existing data:\n' + lines.join('\n');
+}
+function withBackupHistory(newState, previousData) {
+  if (!previousData || !previousData.piList) return { ...newState, backups: (previousData && previousData.backups) || [] };
+  const prevSnapshot = { savedAt: previousData.savedAt, piList: previousData.piList, overhead: previousData.overhead };
+  const prevBackups  = Array.isArray(previousData.backups) ? previousData.backups : [];
+  return { ...newState, backups: [prevSnapshot, ...prevBackups].slice(0, MAX_BACKUPS) };
+}
+// Tracks the `savedAt` of the file content this session last read/wrote, so
+// we can tell if someone else (another person on the shared drive) saved a
+// newer version in the meantime — multiple people may have this file open
+// at once, and File System Access has no locking/merge of its own.
+let lastKnownSavedAt = null;
+
+// Reads the primary file fresh, warns about conflicting edits from someone/
+// something else and about any data-shrinking overwrite, then writes the new
+// state (with the previous version folded into its backups) to the primary
+// path, and mirrors the same bytes to the backup path if one is configured.
+async function safeWriteFile() {
+  if (!primaryPath) return false;
+  let previousData = null;
+  try { previousData = await readPath(primaryPath); } catch {}
+
+  if (previousData && lastKnownSavedAt && previousData.savedAt && previousData.savedAt !== lastKnownSavedAt) {
+    const when = new Date(previousData.savedAt).toLocaleString();
+    const overwrite = confirm(
+      'This file was saved by someone/something else at ' + when + ' — after this session last loaded it.\n\n' +
+      'Click OK to overwrite those changes with yours.\n' +
+      'Click Cancel to discard your local changes and load the latest version instead.'
+    );
+    if (!overwrite) {
+      applyState(previousData);
+      lsSave();
+      restoreViewedPI();
+      renderAll();
+      lastKnownSavedAt = previousData.savedAt;
+      setSaveStatus('saved', 'local file');
+      showToast('Loaded the latest version from disk — your local changes were discarded', 'error');
+      return false;
+    }
+  }
+
+  const newState = getState();
+  if (previousData && isDataShrinking(previousData, newState)) {
+    if (!confirm(describeShrink(previousData, newState) + '\n\nSave anyway? (A copy of the current file content will still be kept in its backup history.)')) {
+      return false;
+    }
+  }
+  const text = JSON.stringify(withBackupHistory(newState, previousData), null, 2);
+  await writePath(primaryPath, text);
+  lastKnownSavedAt = newState.savedAt;
+  lsSave();
+
+  if (backupPath) {
+    try { await writePath(backupPath, text); setBackupStatus('saved'); }
+    catch (e) { console.error('Backup mirror failed:', e); setBackupStatus('error', e.message); }
+  }
+  return true;
+}
+
+function setBackupStatus(state, detail) {
+  const el = document.getElementById('backup-status');
+  if (!el) return;
+  if (!backupPath) { el.style.display = 'none'; return; }
+  el.style.display = '';
+  el.className = 'save-status save-' + (state === 'saved' ? 'saved' : 'error');
+  el.title = state === 'saved' ? 'Backup copy mirrored to: ' + backupPath : 'Backup mirror failed: ' + (detail || 'unknown error');
+  el.querySelector('#backup-status-text').textContent = state === 'saved' ? 'Backed up' : 'Backup failed';
+}
+
+function setSaveStatus(state, text) {
+  document.getElementById('save-status').className = 'save-status save-' + state;
+  document.getElementById('save-status-text').textContent = text;
+
+  // Header save button — amber + pulse when unsaved
+  const btn = document.getElementById('btn-save-manual');
+  if (btn) {
+    const show = !!(primaryPath && state !== 'saved');
+    btn.className = 'btn-save-manual' + (show ? ' visible' : '') + (state === 'unsaved' ? ' state-unsaved' : '');
+    if (show) btn.innerHTML = '&#8681; Save';
+  }
+
+  // Sticky summary bar save indicator
+  const area = document.getElementById('sum-save-area');
+  const dot  = document.getElementById('sum-save-bar-dot');
+  const lbl  = document.getElementById('sum-save-bar-text');
+  const sBtn = document.getElementById('sum-save-bar-btn');
+  if (!area) return;
+  if (state === 'nofile') { area.style.display = 'none'; return; }
+  area.style.display = '';
+  if (dot) dot.className = `sum-save-bar-dot s-${state}`;
+  if (lbl) {
+    lbl.className = `sum-save-bar-text t-${state}`;
+    lbl.textContent = state === 'saved' ? 'Saved' : state === 'unsaved' ? 'Unsaved changes' : state === 'error' ? 'Save error' : '';
+  }
+  if (sBtn) sBtn.style.display = (primaryPath && state !== 'saved') ? '' : 'none';
+}
+
+let _autoSaveTimer = null;
+const AUTOSAVE_DELAY_MS = 1200;
+
+// Every change auto-saves to the connected file ~1.2s after the last edit
+// (debounced so rapid typing doesn't trigger a write per keystroke). Nobody
+// should depend on remembering to click Save.
+function scheduleSave() {
+  lsSave();
+  if (!primaryPath) return;
+  setSaveStatus('unsaved', 'Unsaved changes');
+  clearTimeout(_autoSaveTimer);
+  _autoSaveTimer = setTimeout(autoSaveToFile, AUTOSAVE_DELAY_MS);
+}
+
+async function autoSaveToFile() {
+  if (!primaryPath) return;
+  try {
+    const ok = await safeWriteFile();
+    setSaveStatus(ok ? 'saved' : 'unsaved', ok ? 'local file' : 'Unsaved changes');
+  } catch (e) {
+    console.error(e);
+    setSaveStatus('error', 'Save error (' + (e.name || 'unknown') + ') — click to retry');
+  }
+}
+
+
+function showToast(msg, type='success') {
+  const ct = document.getElementById('toast-container');
+  if (!ct) return;
+  const el = document.createElement('div');
+  el.className = `toast toast-${type}`;
+  el.textContent = msg;
+  ct.appendChild(el);
+  requestAnimationFrame(() => { el.offsetHeight; el.classList.add('visible'); });
+  setTimeout(() => {
+    el.classList.remove('visible');
+    setTimeout(() => el.remove(), 300);
+  }, 3500);
+}
+
+async function manualSave() {
+  if (!primaryPath) { showBanner('connect'); return; }
+  clearTimeout(_autoSaveTimer);
+  const btn = document.getElementById('btn-save-manual');
+  if (btn) btn.textContent = 'Saving…';
+  try {
+    const ok = await safeWriteFile();
+    if (btn) btn.innerHTML = '&#8681; Save';
+    if (!ok) { setSaveStatus('unsaved', 'Unsaved changes'); return; }
+    setSaveStatus('saved', 'local file');
+    showToast('✓  Saved' + (backupPath ? ' (and mirrored to backup)' : ''));
+  } catch (e) {
+    console.error(e);
+    setSaveStatus('error', 'Save error (' + (e.name || 'unknown') + ') — click to retry');
+    showToast('Save failed: ' + (e.message || e.name || 'unknown error'), 'error');
+  }
+}
+
+async function pickExistingFile() {
+  const p = await window.electronAPI.pickOpenPath();
+  if (!p) return;
+  await connectPrimary(p, true); hideBanner();
+}
+// Lets the user switch to a different primary file even when one is already
+// connected — the banner only ever offers this when none is connected, so
+// without this there was no way to fix a wrongly-connected file.
+async function openDifferentFile() {
+  if (primaryPath) {
+    const status = document.getElementById('save-status-text')?.textContent || '';
+    const warn = status.toLowerCase().includes('unsaved')
+      ? 'You have unsaved changes that will be lost if you switch files without saving first.\n\n'
+      : '';
+    if (!confirm(warn + 'Currently connected to "' + primaryPath + '".\n\nOpen a different file instead? This replaces the data shown on screen with the contents of the file you pick.')) return;
+  }
+  await pickExistingFile();
+}
+async function createNewFile() {
+  const p = await window.electronAPI.pickSavePath('PI_SysMgm_Capacity.json');
+  if (!p) return;
+  primaryPath = p;
+  await window.electronAPI.setConfig({ primaryPath: p });
+  try {
+    const ok = await safeWriteFile();
+    if (!ok) { setSaveStatus('unsaved', 'Unsaved changes'); return; }
+    setSaveStatus('saved', 'local file'); hideBanner();
+  } catch (e) {
+    console.error(e);
+    setSaveStatus('error', 'Could not create file (' + (e.message || 'unknown') + ')');
+  }
+}
+async function connectPrimary(p, loadData) {
+  primaryPath = p;
+  await window.electronAPI.setConfig({ primaryPath: p });
+  if (loadData) {
+    let data = null, parseOk = true;
+    try { data = await readPath(p); } catch { parseOk = false; }
+    if (!parseOk) {
+      if (!confirm('The selected file contains invalid data and cannot be read.\nOverwrite it with the current session data?')) {
+        primaryPath = null; await window.electronAPI.setConfig({ primaryPath: null }); setSaveStatus('nofile','No file'); return;
+      }
+      await safeWriteFile();
+    } else if (data && applyState(data)) {
+      lastKnownSavedAt = data.savedAt;
+      lsSave();
+      renderAll();
+    } else {
+      await safeWriteFile();
+    }
+  }
+  setSaveStatus('saved', 'local file');
+}
+async function handleSaveStatusClick() {
+  if (!primaryPath) showBanner();
+  else manualSave();
+}
+function showBanner(mode, name) {
+  mode = mode || 'connect';
+  if (mode === 'connect' && bannerDismissed) return;
+  const title = document.getElementById('file-banner-title');
+  const sub   = document.getElementById('file-banner-sub');
+  const btnP  = document.getElementById('file-banner-btn-primary');
+  const btnS  = document.getElementById('file-banner-btn-secondary');
+  title.textContent = 'Connect a data file to persist your data';
+  sub.textContent = 'Once connected, every change auto-saves to that local JSON file a moment after you stop editing (no need to click Save). Use the "Backup" button afterwards to also mirror saves to a network folder.';
+  btnP.textContent = 'Open existing file';
+  btnP.onclick = pickExistingFile;
+  btnS.style.display = '';
+  btnS.textContent = 'Create new file';
+  btnS.onclick = createNewFile;
+  document.getElementById('file-banner').style.display = 'flex';
+}
+function hideBanner()   { document.getElementById('file-banner').style.display = 'none'; }
+function dismissBanner(){ bannerDismissed = true; hideBanner(); setSaveStatus('nofile','No file — click to connect'); }
+
+// Lets the user set/change/clear the optional mirror copy (typically the
+// team's network share) that every save also gets written to, in addition
+// to the local primaryPath save that always happens first.
+async function configureBackup() {
+  const action = confirm(
+    backupPath
+      ? 'Backup location is currently:\n' + backupPath + '\n\nClick OK to choose a different backup file, or Cancel to remove the backup mirror entirely.'
+      : 'Choose a file (e.g. on a network/shared folder) that every save will also be mirrored to.\n\nClick OK to pick a location, or Cancel to skip.'
+  );
+  if (!action) {
+    if (backupPath) {
+      backupPath = null;
+      await window.electronAPI.setConfig({ backupPath: null });
+      setBackupStatus('saved');
+      document.getElementById('backup-status').style.display = 'none';
+      showToast('Backup mirror removed');
+    }
+    return;
+  }
+  const p = await window.electronAPI.pickSavePath('PI_SysMgm_Capacity.json');
+  if (!p) return;
+  backupPath = p;
+  await window.electronAPI.setConfig({ backupPath: p });
+  if (primaryPath) {
+    try { await safeWriteFile(); showToast('Backup configured and synced'); }
+    catch (e) { showToast('Backup configured, but the first sync failed: ' + e.message, 'error'); }
+  } else {
+    showToast('Backup location saved — it will sync once a primary file is connected');
+  }
+}
+
+async function showHistoryPanel() {
+  if (!primaryPath) { showToast('Connect a file first to view its saved history', 'error'); return; }
+  let data;
+  try { data = await readPath(primaryPath); } catch { showToast('Could not read the connected file', 'error'); return; }
+  if (!data) { showToast('The connected file is empty', 'error'); return; }
+  const entries = [{ label: 'Current (on disk)', savedAt: data.savedAt, piList: data.piList, isCurrent: true }]
+    .concat((data.backups || []).map(b => ({ savedAt: b.savedAt, piList: b.piList, overhead: b.overhead })));
+  window._historyEntries = entries;
+  document.getElementById('history-list').innerHTML = entries.map((e, i) => {
+    const piCount   = (e.piList || []).length;
+    const teamCount = (e.piList || []).reduce((s, p) => s + ((p.team || []).length), 0);
+    const date = e.savedAt ? new Date(e.savedAt).toLocaleString() : 'Unknown date';
+    return `<div class="history-item">
+      <div>
+        <div class="history-item-date">${date}${e.isCurrent ? ' — current' : ''}</div>
+        <div class="history-item-sub">${piCount} PI(s), ${teamCount} team member-record(s)</div>
+      </div>
+      ${e.isCurrent ? '' : `<button class="banner-btn banner-btn-primary btn-sm" onclick="restoreBackup(${i})">Restore</button>`}
+    </div>`;
+  }).join('');
+  document.getElementById('history-panel').style.display = 'flex';
+}
+function hideHistoryPanel() { document.getElementById('history-panel').style.display = 'none'; }
+async function restoreBackup(i) {
+  const entry = (window._historyEntries || [])[i];
+  if (!entry) return;
+  const date = entry.savedAt ? new Date(entry.savedAt).toLocaleString() : 'unknown date';
+  if (!confirm('Restore the version from ' + date + '?\n\nThis replaces your current in-memory session. You still need to click Save afterwards to write it back to the file.')) return;
+  applyState({ version: 1, savedAt: entry.savedAt, piList: entry.piList, overhead: entry.overhead });
+  restoreViewedPI();
+  renderAll();
+  scheduleSave();
+  hideHistoryPanel();
+  showToast('Restored version from ' + date);
+}
+
+function restoreViewedPI() {
+  try {
+    const saved = sessionStorage.getItem(VIEW_KEY);
+    if (saved !== null) {
+      const id = parseInt(saved, 10);
+      if (!isNaN(id) && piList.some(p => p.id === id)) {
+        viewedPIId = id;
+        team = getViewedPI()?.team || getCurrentPI()?.team || [];
+        syncRatiosFromPi();
+      }
+    }
+  } catch {}
+}
+
+async function initStorage() {
+  const lsData = lsLoad();
+  if (lsData && applyState(lsData));
+  restoreViewedPI();
+  renderAll();
+  const config = await window.electronAPI.getConfig();
+  backupPath = config.backupPath || null;
+  if (backupPath) { document.getElementById('backup-status').style.display = ''; setBackupStatus('saved'); }
+  if (!config.primaryPath) { showBanner('connect'); setSaveStatus('nofile','No file'); return; }
+  primaryPath = config.primaryPath;
+  try {
+    const data = await readPath(primaryPath);
+    if (data) {
+      lastKnownSavedAt = data.savedAt;
+      const newer = !lsData || new Date(data.savedAt) >= new Date(lsData.savedAt||0);
+      if (newer && applyState(data)) { lsSave(); restoreViewedPI(); renderAll(); }
+    }
+    setSaveStatus('saved', 'local file');
+  } catch (e) {
+    console.error(e);
+    setSaveStatus('error', 'Could not read connected file (' + (e.message || 'unknown') + ') — click to retry');
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════════════
+
+function getCurrentPI()         { return piList.find(p => p.status === 'current') || [...piList].filter(p => p.status === 'future').sort((a,b)=>a.id-b.id)[0] || null; }
+function getCurrentIterations() { const pi = getCurrentPI(); return pi ? pi.iterations : []; }
+function getViewedPI()          { if (viewedPIId !== null) { const p = piList.find(p => p.id === viewedPIId); if (p) return p; } return getCurrentPI(); }
+function getViewedIterations()  { const p = getViewedPI(); return p ? (p.iterations || []) : []; }
+function totalOverhead()        { return overhead.reduce((s,o) => s + o.hpd, 0); }
+function focusStd()             { return FULL_H - totalOverhead(); }
+function spDev()                { return parseFloat(document.getElementById('ratio-dev').value) || 0.42; }
+function spQa()                 { return parseFloat(document.getElementById('ratio-qa').value) || 0.29; }
+
+function syncRatiosFromPi() {
+  const pi = getViewedPI() || getCurrentPI();
+  if (!pi?.ratios) return;
+  document.getElementById('ratio-dev').value = pi.ratios.dev;
+  document.getElementById('ratio-qa').value  = pi.ratios.qa;
+}
+function saveRatiosToPi() {
+  const pi = getViewedPI();
+  if (pi) pi.ratios = { dev: spDev(), qa: spQa() };
+}
+
+function setViewedPI(id) {
+  viewedPIId = id;
+  try { sessionStorage.setItem(VIEW_KEY, String(id)); } catch {}
+  team = getViewedPI()?.team || getCurrentPI()?.team || [];
+  syncRatiosFromPi();
+  renderAll();
+}
+
+function renderPISwitcher() {
+  const bar    = document.getElementById('pi-switcher-bar');
+  const notice = document.getElementById('viewing-notice');
+  if (bar)    bar.style.display    = 'none';
+  if (notice) notice.style.display = 'none';
+
+  // Update the header context label
+  const viewPI = getViewedPI();
+  const lbl    = document.getElementById('header-pi-label');
+  if (!lbl) return;
+  if (viewPI) {
+    const statusTxt = viewPI.status === 'current'    ? 'ongoing'
+                    : viewPI.status === 'historical' ? 'historical' : 'future';
+    lbl.textContent = `PI ${viewPI.id}  ·  ${statusTxt}`;
+    lbl.className   = 'visible';
+  } else {
+    lbl.className = '';
+  }
+}
+
+function iterHolidayDays(it) {
+  return (it.holidays || []).reduce((s,h) => s + (h.days||0), 0);
+}
+
+function memberFocusInIteration(m, it) {
+  const sprintDays  = it.days || DAYS;
+  const holidays    = iterHolidayDays(it);
+  const personal    = (m.daysOff || {})[it.id] || 0;
+  const workingDays = Math.max(0, sprintDays - holidays - personal);
+  const hpd = (m.focusHpdByIter && m.focusHpdByIter[it.id] != null)
+    ? m.focusHpdByIter[it.id]
+    : m.focusHpd;
+  return hpd * workingDays;
+}
+
+function memberBaselineFocus(m) {
+  return m.focusHpd * DAYS;
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ══════════════════════════════════════════════════════════════
+// PI MANAGEMENT — ACTIONS
+// ══════════════════════════════════════════════════════════════
+
+function localIso(d) {
+  const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+
+function piDateRange(pi) {
+  const dates = (pi.iterations||[]).flatMap(it => [it.dateStart, it.dateEnd].filter(Boolean));
+  if (!dates.length) return null;
+  return { start: dates.reduce((a,b)=>a<b?a:b), end: dates.reduce((a,b)=>a>b?a:b) };
+}
+
+function inferStatusFromDates(pi) {
+  const range = piDateRange(pi);
+  if (!range) return null;
+  const today = localIso(new Date());
+  if (range.end   < today) return 'historical';
+  if (range.start > today) return 'future';
+  return 'current';
+}
+
+function autoGenerateIterations(piId, startIso, endIso) {
+  const iters = [];
+  let cur = new Date(startIso + 'T00:00:00');
+  const end = new Date(endIso  + 'T00:00:00');
+  let n = 1;
+  while (cur <= end) {
+    const iterEnd = new Date(cur);
+    iterEnd.setDate(iterEnd.getDate() + 20);   // 21 calendar days total (Wed → Tue)
+    const ds = localIso(cur);
+    const de = localIso(iterEnd);
+    iters.push({
+      id: `${piId}.${n}`, sprint: 0, days: 15, label: `${piId}.${n}`,
+      dateStart: ds, dateEnd: de, dates: formatIterDates(ds, de),
+      holidays: [], devSPexec: null, qaSPexec: null
+    });
+    cur.setDate(cur.getDate() + 21);
+    n++;
+  }
+  return iters;
+}
+
+function updateNewPIPreview() {
+  const s = document.getElementById('new-pi-start');
+  const e = document.getElementById('new-pi-end');
+  const p = document.getElementById('new-pi-iter-preview');
+  if (!s || !e || !p) return;
+  if (s.value && e.value && s.value <= e.value) {
+    const iters = autoGenerateIterations(0, s.value, e.value);
+    p.textContent = '→ ' + iters.length + ' iteration' + (iters.length !== 1 ? 's' : '');
+  } else {
+    p.textContent = '';
+  }
+}
+
+function addPIFromForm() {
+  const num = parseInt(document.getElementById('new-pi-num').value);
+  if (!num || num < 1) return;
+  if (piList.find(p => p.id === num)) { alert('PI ' + num + ' already exists.'); return; }
+  const startIso = document.getElementById('new-pi-start').value;
+  const endIso   = document.getElementById('new-pi-end').value;
+  const iterations = (startIso && endIso && startIso <= endIso)
+    ? autoGenerateIterations(num, startIso, endIso)
+    : [];
+
+  // Infer status from dates; fall back to 'future'
+  const inferred = inferStatusFromDates({iterations}) || 'future';
+
+  // Copy team from planning PI with all new iterations active for every member
+  const iterIds   = iterations.map(it => it.id);
+  const srcTeam   = getCurrentPI()?.team || [];
+  const newTeam   = JSON.parse(JSON.stringify(srcTeam));
+  newTeam.forEach(m => { m.activeIter = [...iterIds]; m.daysOff = {}; m.focusHpdByIter = {}; });
+
+  const srcRatios = getCurrentPI()?.ratios || {dev: spDev(), qa: spQa()};
+  const newPI = {id: num, status: inferred, iterations, actual: null, team: newTeam, ratios: {...srcRatios}};
+
+  if (inferred === 'historical') {
+    newPI.actual = {devH:0,devSPest:0,devSPexec:null,devRatio:null,qaH:0,qaSPest:0,qaSPexec:null,qaRatio:null};
+  }
+
+  piList.push(newPI);
+  piList.sort((a,b) => a.id - b.id);
+  ['new-pi-num','new-pi-start','new-pi-end'].forEach(id => { document.getElementById(id).value = ''; });
+  document.getElementById('new-pi-iter-preview').textContent = '';
+  renderAll(); scheduleSave();
+}
+
+function markFuture(piId) {
+  const pi = piList.find(p => p.id === piId);
+  if (!pi) return;
+  const v = validateStatusTransition(pi, 'future');
+  if (!v.ok) { showToast(v.msg, 'error'); renderGlobalPIPanel(); return; }
+  pi.status = 'future';
+  renderAll(); scheduleSave();
+}
+
+function removePI(piId) {
+  if (!confirm('Remove PI ' + piId + '?')) return;
+  piList = piList.filter(p => p.id !== piId);
+
+  renderAll(); scheduleSave();
+}
+
+
+function markAsCurrent(piId) {
+  const pi = piList.find(p => p.id === piId);
+  if (!pi || pi.status === 'current') return;
+  const v = validateStatusTransition(pi, 'current');
+  if (!v.ok) { showToast(v.msg, 'error'); renderGlobalPIPanel(); return; }
+  // Demote any existing 'current' PI to its date-inferred status
+  piList.forEach(p => { if (p.status === 'current' && p !== pi) p.status = inferStatusFromDates(p) || 'historical'; });
+  pi.status = 'current';
+  renderAll(); scheduleSave();
+}
+
+function validateStatusTransition(pi, newStatus) {
+  const range = piDateRange(pi);
+  if (!range) return { ok: true };
+  const today = localIso(new Date());
+  if (newStatus === 'historical' && range.end >= today)
+    return { ok: false, msg: `PI ${pi.id} ends ${range.end} — can only be marked Historical after it finishes.` };
+  if (newStatus === 'current' && range.end < today)
+    return { ok: false, msg: `PI ${pi.id} ended ${range.end} — it's in the past, mark it Historical instead.` };
+  if (newStatus === 'current' && range.start > today)
+    return { ok: false, msg: `PI ${pi.id} starts ${range.start} — it hasn't begun yet, keep it as Future.` };
+  if (newStatus === 'future' && range.start <= today)
+    return { ok: false, msg: `PI ${pi.id} started ${range.start} — it's already underway, can't mark as Future.` };
+  return { ok: true };
+}
+
+function setPIStatus(piId, newStatus) {
+  if (newStatus === 'current')    { markAsCurrent(piId);  return; }
+  if (newStatus === 'historical') { markHistorical(piId); return; }
+  if (newStatus === 'future')     { markFuture(piId);     return; }
+}
+
+function markHistorical(piId) {
+  const pi = piList.find(p => p.id === piId);
+  if (!pi) return;
+  const v = validateStatusTransition(pi, 'historical');
+  if (!v.ok) { showToast(v.msg, 'error'); renderGlobalPIPanel(); return; }
+  pi.status = 'historical';
+  if (!pi.actual) pi.actual = {devH:0,devSPest:0,devSPexec:null,devRatio:0.45,qaH:0,qaSPest:0,qaSPexec:null,qaRatio:0.25};
+  // Auto-aggregate sprint actuals from iterations into the historical actual record
+  const iters = pi.iterations || [];
+  const devExecs = iters.map(it => it.devSPexec).filter(v => v != null);
+  const qaExecs  = iters.map(it => it.qaSPexec).filter(v => v != null);
+  if (devExecs.length > 0) pi.actual.devSPexec = devExecs.reduce((s,v) => s+v, 0);
+  if (qaExecs.length  > 0) pi.actual.qaSPexec  = qaExecs.reduce((s,v) => s+v, 0);
+  renderAll(); scheduleSave();
+}
+
+
+function updateHistActual(piId, field, val) {
+  const pi = piList.find(p => p.id === piId);
+  if (!pi || !pi.actual) return;
+  pi.actual[field] = val === '' ? null : parseFloat(val);
+  recalc();
+  scheduleSave();
+}
+
+function addIterFromForm() {
+  const pi = getViewedPI();
+  if (!pi) { alert('No PI selected.'); return; }
+  const id        = document.getElementById('new-iter-id').value.trim();
+  const label     = document.getElementById('new-iter-label').value.trim();
+  const dateStart = document.getElementById('new-iter-start').value;
+  const dateEnd   = document.getElementById('new-iter-end').value;
+  const days      = parseInt(document.getElementById('new-iter-days').value) || DAYS;
+  if (!id) return;
+  if (pi.iterations.find(it => it.id === id)) { alert('Iteration ' + id + ' already exists.'); return; }
+  const dates = formatIterDates(dateStart, dateEnd);
+  pi.iterations.push({id, sprint:0, days, label:label||id, dateStart, dateEnd, dates, holidays:[], devSPexec:null, qaSPexec:null});
+  team.forEach(m => { if (!m.activeIter.includes(id)) m.activeIter.push(id); });
+  ['new-iter-id','new-iter-label','new-iter-start','new-iter-end'].forEach(fid => document.getElementById(fid).value = '');
+  document.getElementById('new-iter-days').value = '15';
+  renderAll(); scheduleSave();
+}
+
+function removeIteration(iterId) {
+  const pi = getViewedPI();
+  if (!pi) return;
+  pi.iterations = pi.iterations.filter(it => it.id !== iterId);
+  team.forEach(m => {
+    m.activeIter = m.activeIter.filter(id => id !== iterId);
+    if (m.daysOff)        delete m.daysOff[iterId];
+    if (m.focusHpdByIter) delete m.focusHpdByIter[iterId];
+  });
+  renderAll(); scheduleSave();
+}
+
+function formatIterDates(start, end) {
+  const fmt = iso => {
+    const d = new Date(iso + 'T00:00:00');
+    return d.toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
+  };
+  if (start && end)   return fmt(start) + ' → ' + fmt(end);
+  if (start)          return fmt(start) + ' → ?';
+  if (end)            return '? → ' + fmt(end);
+  return '';
+}
+
+function updateIterDates(iterId, field, val) {
+  const pi = getViewedPI();
+  if (!pi) return;
+  const it = pi.iterations.find(i => i.id === iterId);
+  if (!it) return;
+  it[field] = val;
+  it.dates = formatIterDates(it.dateStart, it.dateEnd);
+  renderAll(); scheduleSave();
+}
+
+function updateIterField(iterId, field, val) {
+  const pi = getViewedPI();
+  if (!pi) return;
+  const it = pi.iterations.find(i => i.id === iterId);
+  if (it) it[field] = val;
+  recalc(); scheduleSave();
+}
+
+// ══════════════════════════════════════════════════════════════
+// TIME OFF — ACTIONS
+// ══════════════════════════════════════════════════════════════
+
+function addHoliday() {
+  const pi     = getViewedPI();
+  if (!pi) return;
+  const iterId = document.getElementById('new-hol-iter').value;
+  const name   = document.getElementById('new-hol-name').value.trim();
+  const days   = parseInt(document.getElementById('new-hol-days').value) || 1;
+  if (!iterId || !name) return;
+  const it = pi.iterations.find(i => i.id === iterId);
+  if (!it) return;
+  if (!it.holidays) it.holidays = [];
+  it.holidays.push({name, days});
+  document.getElementById('new-hol-name').value = '';
+  document.getElementById('new-hol-days').value = '1';
+  renderTimeOffSection(); recalc(); scheduleSave();
+}
+
+function removeHoliday(iterId, idx) {
+  const pi = getViewedPI();
+  if (!pi) return;
+  const it = pi.iterations.find(i => i.id === iterId);
+  if (!it || !it.holidays) return;
+  it.holidays.splice(idx, 1);
+  renderTimeOffSection(); recalc(); scheduleSave();
+}
+
+function updatePersonalLeave(mIdx, iterId, val) {
+  const m = team[mIdx];
+  if (!m) return;
+  if (!m.daysOff) m.daysOff = {};
+  const it = getCurrentIterations().find(i => i.id === iterId);
+  const maxDays = it ? Math.max(0, (it.days || DAYS) - iterHolidayDays(it)) : DAYS;
+  let days = Math.min(Math.max(parseInt(val) || 0, 0), maxDays);
+  if (days > 0) m.daysOff[iterId] = days;
+  else          delete m.daysOff[iterId];
+  const input = document.getElementById('leave-' + mIdx + '-' + iterId);
+  if (input) {
+    if (parseInt(val) > maxDays) input.value = maxDays;
+    input.className = 'days-input' + (days > 0 ? ' has-days' : '');
+  }
+  recalc(); scheduleSave();
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDER: PI MANAGEMENT
+// ══════════════════════════════════════════════════════════════
+
+function renderGlobalPIPanel() {
+  const viewPI = getViewedPI();
+  let html = `<table style="margin-bottom:4px">
+    <thead><tr>
+      <th style="width:70px">PI</th><th style="width:110px">Status</th>
+      <th class="num" style="width:55px">Iters</th><th>Summary</th>
+      <th style="width:160px">Change status</th>
+    </tr></thead><tbody>`;
+
+  piList.forEach(pi => {
+    const isHist   = pi.status === 'historical';
+    const isCur    = pi.status === 'current';
+    const isViewed = viewPI && pi.id === viewPI.id;
+
+    const badge = isCur  ? '<span class="tag tag-cur">ongoing</span>'
+                : isHist ? '<span class="tag tag-hist">historical</span>'
+                         : '<span class="tag tag-fut">future</span>';
+
+    const piRange    = piDateRange(pi);
+    const piRangeTxt = piRange ? ` &nbsp;·&nbsp; <span style="font-family:'DM Mono',monospace;font-size:11px">${formatIterDates(piRange.start,piRange.end)}</span>` : '';
+    const inferred   = inferStatusFromDates(pi);
+
+    const count = (pi.iterations||[]).length;
+    let summary = isHist && pi.actual
+      ? (() => { const dsp = pi.actual.devSPexec ?? pi.actual.devSPest ?? '—'; const qsp = pi.actual.qaSPexec ?? pi.actual.qaSPest ?? '—'; return `DEV ${pi.actual.devH}h / ${dsp} SP &nbsp;·&nbsp; QA ${pi.actual.qaH}h / ${qsp} SP${piRangeTxt}`; })()
+      : `${count} iteration${count!==1?'s':''} planned${piRangeTxt}`;
+    if (inferred && inferred !== pi.status) {
+      const hintColor = inferred==='current'?'var(--teal)':inferred==='historical'?'var(--slate-500)':'var(--amber)';
+      const hintLabel = inferred==='current'?'ongoing':inferred;
+      summary += ` &nbsp;<span style="font-size:10px;font-weight:600;color:${hintColor}">(dates → ${hintLabel})</span>`;
+    }
+
+    const LABELS = {historical:'Historical', current:'Ongoing', future:'Future'};
+    const statusOpts = ['historical','current','future']
+      .map(s => `<option value="${s}"${pi.status===s?' selected':''}>${LABELS[s]}</option>`).join('');
+    const actions = `<select style="font-size:12px;padding:3px 6px;border:1px solid var(--slate-200);border-radius:4px;cursor:pointer;margin-right:6px"
+        onclick="event.stopPropagation()" onchange="setPIStatus(${pi.id},this.value)">${statusOpts}</select>
+      <button class="btn btn-sm btn-danger" onclick="event.stopPropagation();removePI(${pi.id})">✕</button>`;
+
+    html += `<tr class="pi-list-row${isViewed ? ' pi-row-active' : ''}" onclick="setViewedPI(${pi.id})">
+      <td><strong>PI ${pi.id}</strong></td><td>${badge}</td>
+      <td class="num">${count}</td>
+      <td style="font-size:12px;color:var(--slate-600)">${summary}</td>
+      <td style="white-space:nowrap">${actions}</td></tr>`;
+  });
+
+  html += `</tbody></table>
+    <div class="add-row" style="flex-wrap:wrap;align-items:center">
+      <span style="font-size:12px;color:var(--slate-600);font-weight:600">Add PI:</span>
+      <input type="number" id="new-pi-num" placeholder="PI number" style="width:120px" min="1" max="99">
+      <span style="font-size:11px;color:var(--slate-400);margin:0 2px">starts</span>
+      <input type="date" id="new-pi-start" style="width:148px" title="First day of first iteration (ideally a Wednesday)" onchange="updateNewPIPreview()">
+      <span style="color:var(--slate-400);font-size:13px">→</span>
+      <input type="date" id="new-pi-end"   style="width:148px" title="Last day of last iteration (ideally a Tuesday)" onchange="updateNewPIPreview()">
+      <span style="font-size:11px;color:var(--slate-400)" id="new-pi-iter-preview"></span>
+      <button class="btn btn-primary" onclick="addPIFromForm()">+ Add PI</button>
+    </div>`;
+
+  document.getElementById('pi-global-body').innerHTML = html;
+}
+
+function renderIterSection() {
+  const viewPI = getViewedPI();
+  const title  = viewPI ? `📅 Iterations — PI ${viewPI.id}` : '📅 Iterations';
+  document.getElementById('iters-section-title').textContent = title;
+
+  let html = '';
+  if (!viewPI) {
+    html = `<p class="empty-note">No PI selected.</p>`;
+  } else {
+    if (viewPI.iterations && viewPI.iterations.length) {
+      html += `<table><thead><tr>
+        <th style="width:80px">ID</th><th>Iteration</th><th>Dates</th>
+        <th class="num" style="width:65px" title="Working days in this sprint">Days</th>
+        <th style="width:40px"></th>
+      </tr></thead><tbody>`;
+      viewPI.iterations.forEach(it => {
+        const itDays = it.days || DAYS;
+        html += `<tr>
+          <td style="font-family:'DM Mono',monospace;font-size:12px">${esc(it.id)}</td>
+          <td><input type="text" value="${esc(it.label)}" style="width:300px" oninput="updateIterField('${it.id}','label',this.value)"></td>
+          <td>
+            <div style="display:flex;align-items:center;gap:6px">
+              <input type="date" value="${it.dateStart||''}" style="width:148px" onchange="updateIterDates('${it.id}','dateStart',this.value)">
+              <span style="color:var(--slate-400);font-size:13px">→</span>
+              <input type="date" value="${it.dateEnd||''}" style="width:148px" onchange="updateIterDates('${it.id}','dateEnd',this.value)">
+            </div>
+          </td>
+          <td class="num"><input type="number" value="${itDays}" min="1" max="30" style="width:55px" title="Working days" oninput="updateIterField('${it.id}','days',+this.value);recalc()"></td>
+          <td><button class="btn btn-sm btn-danger" onclick="removeIteration('${it.id}')">✕</button></td>
+        </tr>`;
+      });
+      html += `</tbody></table>`;
+    } else {
+      html += `<p class="empty-note">No iterations yet.</p>`;
+    }
+    html += `<div class="add-row" style="flex-wrap:wrap">
+      <input type="text" id="new-iter-id"    placeholder="ID (e.g. ${viewPI.id}.6)" style="width:95px">
+      <input type="text" id="new-iter-label" placeholder="Label" style="width:280px">
+      <div style="display:flex;align-items:center;gap:6px">
+        <input type="date" id="new-iter-start" style="width:148px">
+        <span style="color:var(--slate-400);font-size:13px">→</span>
+        <input type="date" id="new-iter-end"   style="width:148px">
+      </div>
+      <input type="number" id="new-iter-days" value="15" min="1" max="30" title="Working days" placeholder="Days" style="width:60px">
+      <button class="btn btn-primary" onclick="addIterFromForm()">+ Add Iteration</button>
+    </div>`;
+  }
+  document.getElementById('iter-mgmt-body').innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDER: TIME OFF SECTION
+// ══════════════════════════════════════════════════════════════
+
+function renderTimeOffSection() {
+  const curPI = getCurrentPI();
+  const pi    = getViewedPI();
+  const iters = pi ? (pi.iterations || []) : [];
+  const isCurrentView = !curPI || !pi || curPI.id === pi.id;
+
+  // Update section title
+  document.getElementById('timeoff-section-title').textContent =
+    '🗓 Time Off & Absences' + (pi ? ' — PI ' + pi.id : '');
+
+  // Add Holiday form: available for all PIs
+  const addHolRow = document.getElementById('add-holiday-row');
+  if (addHolRow) addHolRow.style.display = iters.length ? '' : 'none';
+
+  // Populate holiday iteration selector
+  const holIterSel = document.getElementById('new-hol-iter');
+  if (holIterSel) {
+    holIterSel.innerHTML = iters.map(it => `<option value="${esc(it.id)}">${esc(it.id)}</option>`).join('');
+  }
+
+  // ── Public holidays table ──────────────────────────────────
+  const holTbody = document.getElementById('holiday-tbody');
+  const holEmpty = document.getElementById('holiday-empty');
+  let allHolidays = [];
+  iters.forEach(it => (it.holidays||[]).forEach((h,idx) => allHolidays.push({it, h, idx})));
+
+  if (!allHolidays.length) {
+    holTbody.innerHTML = '';
+    holEmpty.style.display = 'block';
+  } else {
+    holEmpty.style.display = 'none';
+    holTbody.innerHTML = allHolidays.map(({it, h, idx}) => `
+      <tr>
+        <td><span class="holiday-tag">${esc(it.id)}</span></td>
+        <td>${esc(h.name)}</td>
+        <td class="num" style="color:var(--amber);font-weight:600">${h.days}</td>
+        <td><button class="btn btn-sm btn-danger" onclick="removeHoliday('${it.id}',${idx})">✕</button></td>
+      </tr>`).join('');
+  }
+
+  // ── Personal leave matrix ──────────────────────────────────
+  const matrixEl  = document.getElementById('leave-matrix');
+  const leaveEmpty = document.getElementById('leave-empty');
+
+  if (!iters.length || !team.length) {
+    matrixEl.innerHTML = '';
+    leaveEmpty.style.display = 'block';
+    leaveEmpty.innerHTML = 'No current PI or no iterations configured.';
+  } else {
+    leaveEmpty.style.display = 'none';
+
+    let html = '<thead><tr><th class="to-grid" style="min-width:150px">Member</th>';
+    iters.forEach(it => {
+      const sprintDays = it.days || DAYS;
+      const wd = sprintDays - iterHolidayDays(it);
+      const datesLine = it.dates ? `<div class="th-dates">${esc(it.dates)}</div>` : '';
+      const daysLabel = sprintDays !== DAYS ? `${wd}/${sprintDays} days` : `${wd} working days`;
+      html += `<th class="iter-th"><div class="th-id">${esc(it.id)}</div><div class="th-days">${daysLabel}</div>${datesLine}</th>`;
+    });
+    html += '</tr></thead><tbody>';
+
+    team.forEach((m, mIdx) => {
+      const roleClass = m.role === 'Dev' ? 'badge-dev' : 'badge-qa';
+      html += `<tr><td class="member-cell"><span class="badge ${roleClass}" style="font-size:9px;margin-right:5px">${m.role}</span>${esc(m.name)}</td>`;
+      iters.forEach(it => {
+        if (!m.activeIter.includes(it.id)) {
+          html += `<td class="inactive-cell">—</td>`;
+        } else {
+          const val  = (m.daysOff || {})[it.id] || 0;
+          const hasCls = val > 0 ? ' has-days' : '';
+          const maxDays = Math.max(0, (it.days || DAYS) - iterHolidayDays(it));
+          html += `<td style="text-align:center">
+            <input type="number" id="leave-${mIdx}-${it.id}"
+              class="days-input${hasCls}" value="${val||''}"
+              min="0" max="${maxDays}" placeholder="0"
+              oninput="updatePersonalLeave(${mIdx},'${it.id}',this.value)">
+          </td>`;
+        }
+      });
+      html += '</tr>';
+    });
+
+    html += '</tbody><tfoot>';
+
+    // Public holidays row
+    html += `<tr><td class="footer-label">📅 Shared events</td>`;
+    iters.forEach(it => {
+      const h = iterHolidayDays(it);
+      html += `<td class="footer-holidays">${h > 0 ? h + ' day' + (h>1?'s':'') : '—'}</td>`;
+    });
+    html += '</tr>';
+
+    // Working days row
+    html += `<tr><td class="footer-label">✅ Working days</td>`;
+    iters.forEach(it => {
+      const wd = Math.max(0, (it.days || DAYS) - iterHolidayDays(it));
+      html += `<td class="footer-workdays">${wd}</td>`;
+    });
+    html += '</tr></tfoot>';
+
+    matrixEl.innerHTML = html;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDER: TEAM TABLE
+// ══════════════════════════════════════════════════════════════
+
+function renderTeam() {
+  const iters = getViewedIterations();
+  const container = document.getElementById('team-tbody');
+  container.innerHTML = '';
+  team.forEach((m, i) => {
+    const roleLC = m.role.toLowerCase();
+    const pct = (m.focusHpd/focusStd()*100).toFixed(1);
+    const card = document.createElement('div');
+    card.className = `member-card member-card-${roleLC}`;
+    card.innerHTML = `
+      <div class="member-card-header">
+        <select class="member-role-select member-role-${roleLC}"
+          onchange="team[${i}].role=this.value;renderTeam();recalc();scheduleSave()">
+          <option value="Dev" ${m.role==='Dev'?'selected':''}>Dev</option>
+          <option value="QA"  ${m.role==='QA' ?'selected':''}>QA</option>
+        </select>
+        <input type="text" class="member-card-name" value="${esc(m.name)}"
+          onchange="team[${i}].name=this.value;recalc();scheduleSave()">
+        <button class="btn btn-sm btn-danger" onclick="removeMember(${i})" title="Remove member">✕</button>
+      </div>
+      <div class="member-card-meta">
+        <span>Focus:</span>
+        <input type="number" id="inp-pct-${i}" class="input-pct" value="${pct}" min="1" max="200" step="0.1"
+          onchange="team[${i}].focusHpd=(+this.value/100)*focusStd();renderTeam();recalc();scheduleSave()">
+        <span>%</span>
+        <span style="color:var(--slate-400);margin-left:2px">(${m.focusHpd.toFixed(1)} h/day)</span>
+      </div>
+      <div class="member-card-iters">${iterChips(i, iters)}</div>
+      <div class="member-card-note">
+        <input type="text" class="member-note-input" value="${esc(m.notes||'')}"
+          placeholder="💬 Add a note… (e.g. 80% due to knowledge ramp-up)"
+          oninput="team[${i}].notes=this.value;scheduleSave()">
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+function iterChips(idx, iters) {
+  const m = team[idx];
+  if (!iters.length) return '<span style="font-size:11px;color:var(--slate-400)">no iterations</span>';
+  return `<div class="iter-chips">` + iters.map(it => {
+    const active = m.activeIter.includes(it.id);
+    if (!active) {
+      return `<span class="chip" onclick="toggleIter(${idx},'${it.id}')">${esc(it.id)}</span>`;
+    }
+    const roleClass = m.role === 'Dev' ? 'active-dev' : 'active-qa';
+    const override = m.focusHpdByIter && m.focusHpdByIter[it.id] != null;
+    const effectiveHpd = override ? m.focusHpdByIter[it.id] : m.focusHpd;
+    const pct = (effectiveHpd / focusStd() * 100).toFixed(0);
+    const pctCls = override ? ' pct-override' : '';
+    return `<span class="chip ${roleClass} chip-with-pct">
+      <span class="chip-iter-id" onclick="toggleIter(${idx},'${it.id}')" title="Click to deactivate">${esc(it.id)}</span>
+      <span class="chip-sep">·</span>
+      <input type="number" class="chip-pct-inline${pctCls}" value="${pct}" min="1" max="200" step="1"
+        title="Focus % in ${esc(it.id)} — type to override, clear to reset"
+        onfocus="this.select()"
+        onchange="setMemberIterFocusPct(${idx},'${it.id}',this.value)"
+        onclick="event.stopPropagation()">
+    </span>`;
+  }).join('') + '</div>';
+}
+
+function toggleIter(mIdx, iterId) {
+  const m = team[mIdx], pos = m.activeIter.indexOf(iterId);
+  if (pos >= 0) m.activeIter.splice(pos,1); else m.activeIter.push(iterId);
+  renderTeam(); renderTimeOffSection(); recalc(); scheduleSave();
+}
+
+function setMemberIterFocusPct(mIdx, iterId, pctVal) {
+  const m = team[mIdx];
+  if (!m) return;
+  if (!m.focusHpdByIter) m.focusHpdByIter = {};
+  const pct = parseFloat(pctVal);
+  const defaultPct = m.focusHpd / focusStd() * 100;
+  if (!pctVal || isNaN(pct) || pct <= 0 || Math.abs(pct - defaultPct) < 0.5) {
+    delete m.focusHpdByIter[iterId];
+  } else {
+    m.focusHpdByIter[iterId] = +((pct / 100) * focusStd()).toFixed(3);
+  }
+  renderTeam();
+  recalc();
+  scheduleSave();
+}
+
+function addMember() {
+  const name = document.getElementById('new-name').value.trim();
+  if (!name) return;
+  const viewPI = getViewedPI();
+  team.push({name, role:document.getElementById('new-role').value,
+    focusHpd:Math.max(0.001, ((+document.getElementById('new-hpd-pct').value||100)/100) * focusStd()),
+    activeIter:(viewPI?.iterations||[]).map(it=>it.id), daysOff:{}, focusHpdByIter:{}, notes:''});
+  document.getElementById('new-name').value = '';
+  renderTeam(); renderTimeOffSection(); recalc(); scheduleSave();
+}
+
+function removeMember(i) { team.splice(i,1); renderTeam(); renderTimeOffSection(); recalc(); scheduleSave(); }
+
+// ══════════════════════════════════════════════════════════════
+// RENDER: OVERHEAD TABLE
+// ══════════════════════════════════════════════════════════════
+
+function addOverhead() {
+  const name = document.getElementById('new-oh-name').value.trim();
+  const hpd  = parseFloat(document.getElementById('new-oh-hpd').value) || 0;
+  if (!name) return;
+  overhead.push({name, hpd});
+  document.getElementById('new-oh-name').value = '';
+  document.getElementById('new-oh-hpd').value  = '';
+  renderOverhead(); renderTeam(); recalc(); scheduleSave();
+}
+
+function removeOverhead(i) {
+  overhead.splice(i, 1);
+  renderOverhead(); renderTeam(); recalc(); scheduleSave();
+}
+
+function renderOverhead() {
+  const tbody = document.getElementById('overhead-tbody');
+  tbody.innerHTML = '';
+  overhead.forEach((o,i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="width:99%"><input type="text" value="${esc(o.name)}" style="width:100%;box-sizing:border-box"
+        oninput="overhead[${i}].name=this.value;scheduleSave()"></td>
+      <td class="num"><input type="number" id="oh-hpd-${i}" value="${o.hpd.toFixed(3)}" step="0.001" min="0" max="8" style="width:72px"
+        onchange="overhead[${i}].hpd=+this.value;document.getElementById('oh-spr-${i}').value=(+this.value*DAYS).toFixed(2);renderTeam();recalc();scheduleSave()"></td>
+      <td class="num"><input type="number" id="oh-spr-${i}" value="${(o.hpd*DAYS).toFixed(2)}" step="0.25" min="0" max="${FULL_H*DAYS}" style="width:72px"
+        onchange="var _h=+this.value/DAYS;overhead[${i}].hpd=_h;document.getElementById('oh-hpd-${i}').value=_h.toFixed(3);renderTeam();recalc();scheduleSave()"></td>
+      <td><button class="btn btn-sm btn-danger" onclick="removeOverhead(${i})">✕</button></td>`;
+    tbody.appendChild(tr);
+  });
+  const tot=totalOverhead(), f=focusStd();
+  document.getElementById('oh-total-day').textContent    = tot.toFixed(3);
+  document.getElementById('oh-total-sprint').textContent = (tot*DAYS).toFixed(2);
+  document.getElementById('focus-summary').innerHTML =
+    `Standard focus hours: <strong>${FULL_H}h</strong> full day − <strong>${tot.toFixed(2)}h</strong> overhead = <strong>${f.toFixed(2)}h / day</strong> &nbsp;·&nbsp; <strong>${(f*DAYS).toFixed(1)}h / sprint</strong>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+// RECALC
+// ══════════════════════════════════════════════════════════════
+
+function recalc() {
+  const devR  = spDev(), qaR = spQa();
+  const curPI  = getCurrentPI();
+  const viewPI = getViewedPI();
+  const iters  = viewPI ? (viewPI.iterations || []) : [];
+  const piLabel = viewPI ? 'PI ' + viewPI.id : (curPI ? 'PI ' + curPI.id : 'No current PI');
+
+  document.getElementById('cap-section-title').textContent   = '📊 Capacity per iteration — ' + piLabel;
+  document.getElementById('cards-section-title').textContent = '📋 ' + piLabel + ' Totals';
+
+  // Always compute _proj from the actual planning PI's own team
+  { let cDev=0, cQa=0;
+    const planTeam = curPI?.team || [];
+    (curPI ? curPI.iterations||[] : []).forEach(it => { planTeam.forEach(m => { if (m.activeIter.includes(it.id)) { const h=memberFocusInIteration(m,it); if(m.role==='Dev') cDev+=h; else cQa+=h; } }); });
+    _proj = {devH:cDev, qaH:cQa, devSP:cDev*devR, qaSP:cQa*qaR, devR, qaR};
+  }
+
+  let piDevH=0, piQaH=0, piDevSP=0, piQaSP=0;
+  const devHArr=[], qaHArr=[];
+  const tbody = document.getElementById('cap-tbody');
+  tbody.innerHTML = '';
+
+  if (!iters.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--slate-400);padding:28px;font-size:13px">
+      ${curPI ? 'No iterations configured — add iterations in PI Management above.' : 'No current PI — set one in PI Management above.'}
+    </td></tr>`;
+  } else {
+    iters.forEach(it => {
+      let devH=0, qaH=0;
+      team.forEach(m => {
+        if (m.activeIter.includes(it.id)) {
+          const h = memberFocusInIteration(m, it);
+          if (m.role==='Dev') devH+=h; else qaH+=h;
+        }
+      });
+      const devSP=devH*devR, qaSP=qaH*qaR;
+      piDevH+=devH; piQaH+=qaH; piDevSP+=devSP; piQaSP+=qaSP;
+      devHArr.push(devH); qaHArr.push(qaH);
+
+      // Utilisation: actual vs baseline (full sprint, no leave)
+      let baseH=0;
+      team.forEach(m => {
+        if (m.activeIter.includes(it.id)) {
+          const hpd = (m.focusHpdByIter && m.focusHpdByIter[it.id] != null) ? m.focusHpdByIter[it.id] : m.focusHpd;
+          baseH += hpd * (it.days || DAYS);
+        }
+      });
+      const util = baseH > 0 ? (devH+qaH)/baseH : 1;
+      const rowCls = util < 0.75 ? 'cap-row-red' : util < 0.90 ? 'cap-row-amber' : '';
+      const dotCls = util < 0.75 ? 'util-dot-red' : util < 0.90 ? 'util-dot-amber' : 'util-dot-good';
+
+      // Build days-off indicator
+      const sprintDays = it.days || DAYS;
+      const holDays  = iterHolidayDays(it);
+      const workDays = Math.max(0, sprintDays - holDays);
+      let daysNote = '';
+      if (holDays > 0) {
+        daysNote = `<span class="days-off-note">📅 ${holDays} shared event day${holDays>1?'s':''}</span>`;
+      }
+      const wdNote = `<span class="workdays-note" style="margin-left:${holDays>0?'4px':'0'}">✅ ${workDays}${sprintDays !== DAYS ? '/'+sprintDays : ''} working days</span>`;
+
+      const tr = document.createElement('tr');
+      if (rowCls) tr.className = rowCls;
+      tr.innerHTML = `
+        <td>
+          <div class="iter-head"><span class="util-dot ${dotCls}"></span>${esc(it.label)}</div>
+          <div class="iter-date">${esc(it.dates)}</div>
+          <div class="iter-days" style="margin-top:4px">${daysNote}${wdNote}</div>
+        </td>
+        <td class="num cell-dev">${devH.toFixed(1)}</td>
+        <td class="num cell-dev">${devSP.toFixed(1)}</td>
+        <td class="num cell-qa">${qaH.toFixed(1)}</td>
+        <td class="num cell-qa">${qaSP.toFixed(1)}</td>
+        <td class="num cell-sp">${(devSP+qaSP).toFixed(1)}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  document.getElementById('cap-tfoot').innerHTML = `<tr class="row-total">
+    <td><strong>${piLabel} Total</strong></td>
+    <td class="num cell-dev"><strong>${piDevH.toFixed(1)}</strong></td>
+    <td class="num cell-dev"><strong>${piDevSP.toFixed(1)}</strong></td>
+    <td class="num cell-qa"><strong>${piQaH.toFixed(1)}</strong></td>
+    <td class="num cell-qa"><strong>${piQaSP.toFixed(1)}</strong></td>
+    <td class="num cell-sp"><strong>${(piDevSP+piQaSP).toFixed(1)}</strong></td>
+  </tr>`;
+
+  // Update always-visible summary bar
+  const sumBar = document.getElementById('pi-summary-bar');
+  if (sumBar) {
+    sumBar.style.display = iters.length ? '' : 'none';
+    if (iters.length) {
+      document.getElementById('sum-dev-h').textContent   = piDevH.toFixed(0);
+      document.getElementById('sum-dev-sp').textContent  = piDevSP.toFixed(0);
+      document.getElementById('sum-qa-h').textContent    = piQaH.toFixed(0);
+      document.getElementById('sum-qa-sp').textContent   = piQaSP.toFixed(0);
+      document.getElementById('sum-total-sp').textContent = (piDevSP+piQaSP).toFixed(0);
+      document.getElementById('sum-pi-label').textContent = piLabel;
+    }
+  }
+  renderCapacityChart(iters, devHArr, qaHArr);
+
+  renderCards(piDevH, piQaH, piDevSP, piQaSP);
+  renderMemberHours();
+  renderHistoricalSection();
+  renderRatioSuggestion();
+  renderSprintActuals();
+}
+
+// ══════════════════════════════════════════════════════════════
+// CHART TOOLTIP
+// ══════════════════════════════════════════════════════════════
+
+function showChartTip(evt, itId, devH, qaH) {
+  const tt = document.getElementById('chart-tooltip');
+  document.getElementById('tt-iter').textContent  = itId;
+  document.getElementById('tt-dev').textContent   = `DEV  ${devH.toFixed(1)} h`;
+  document.getElementById('tt-qa').textContent    = `QA   ${qaH.toFixed(1)} h`;
+  document.getElementById('tt-total').textContent = `Total  ${(devH+qaH).toFixed(1)} h`;
+  tt.style.display = 'block';
+  posChartTip(evt);
+}
+function hideChartTip() { document.getElementById('chart-tooltip').style.display = 'none'; }
+function posChartTip(evt) {
+  const tt = document.getElementById('chart-tooltip');
+  const x = evt.clientX + 14, y = evt.clientY - 10;
+  const vw = window.innerWidth, tw = tt.offsetWidth;
+  tt.style.left = (x + tw > vw - 8 ? evt.clientX - tw - 10 : x) + 'px';
+  tt.style.top  = y + 'px';
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDER: CAPACITY CHART
+// ══════════════════════════════════════════════════════════════
+
+function renderCapacityChart(iters, devHArr, qaHArr) {
+  const wrap = document.getElementById('cap-chart-wrap');
+  if (!wrap) return;
+  if (!iters.length) { wrap.style.display = 'none'; return; }
+  wrap.style.display = '';
+  const svg = document.getElementById('cap-chart-svg');
+  if (!svg) return;
+
+  const n = iters.length;
+  const chartH=240, topPad=28, leftPad=40, rightPad=44, labelH=28;
+  const svgH = chartH + topPad + labelH;
+
+  // Left axis scale: focus hours
+  const maxTotal = Math.max(...devHArr.map((d,i)=>d+qaHArr[i]), 1);
+  const niceMax = Math.ceil(maxTotal/50)*50 || 50;
+  const scaleY = v => topPad + chartH - (v/niceMax)*chartH;
+  const baseY = scaleY(0);
+
+  // Right axis scale: Story Points
+  const devR = spDev(), qaR = spQa();
+  const spEstArr = devHArr.map((d,i) => d*devR + qaHArr[i]*qaR);
+  const spExecArr = iters.map(it => {
+    const d = it.devSPexec, q = it.qaSPexec;
+    if (d == null && q == null) return null;
+    return (d||0) + (q||0);
+  });
+  const hasExec = spExecArr.some(v => v != null);
+  const maxSP = Math.max(...spEstArr, ...spExecArr.filter(v=>v!=null), 1);
+  const niceMaxSP = Math.ceil(maxSP/20)*20 || 20;
+  const spScaleY = v => topPad + chartH - (v/niceMaxSP)*chartH;
+
+  const svgW = 800;
+  const slotW = (svgW - leftPad - rightPad) / n;
+  const barW = Math.min(56, slotW * 0.55);
+
+  let grid='', bars='', spLines='', spDots='', xLbls='', legend='';
+
+  // Left grid + axis labels (h)
+  for (let i=0; i<=4; i++) {
+    const v = (niceMax/4)*i, y = scaleY(v);
+    grid += `<line x1="${leftPad}" y1="${y.toFixed(1)}" x2="${(svgW-rightPad).toFixed(1)}" y2="${y.toFixed(1)}" stroke="${i===0?'#cbd5e1':'#e2e8f0'}" stroke-width="1"/>`;
+    grid += `<text x="${(leftPad-6).toFixed(1)}" y="${(y+3.5).toFixed(1)}" text-anchor="end" font-size="9" fill="#94a3b8" font-family="'DM Mono',monospace">${Math.round(v)}</text>`;
+  }
+  grid += `<text x="${(leftPad-6).toFixed(1)}" y="${(topPad-10).toFixed(1)}" text-anchor="end" font-size="9" fill="#94a3b8" font-weight="600" font-family="'DM Sans',sans-serif">h</text>`;
+
+  // Right axis labels (SP)
+  for (let i=0; i<=4; i++) {
+    const v = (niceMaxSP/4)*i, y = spScaleY(v);
+    grid += `<text x="${(svgW-rightPad+6).toFixed(1)}" y="${(y+3.5).toFixed(1)}" text-anchor="start" font-size="9" fill="#b4530988" font-family="'DM Mono',monospace">${Math.round(v)}</text>`;
+  }
+  grid += `<text x="${(svgW-rightPad+6).toFixed(1)}" y="${(topPad-10).toFixed(1)}" text-anchor="start" font-size="9" fill="#b45309" font-weight="700" font-family="'DM Sans',sans-serif">SP</text>`;
+
+  // Bars (DEV bottom, QA on top)
+  iters.forEach((it, idx) => {
+    const devH=devHArr[idx], qaH=qaHArr[idx], totalH=devH+qaH;
+    const xCenter = leftPad + idx*slotW + slotW/2;
+    const xBar = (xCenter - barW/2).toFixed(1);
+
+    if (devH > 0) {
+      const y = scaleY(devH), h = baseY - scaleY(devH);
+      bars += `<rect x="${xBar}" y="${y.toFixed(1)}" width="${barW}" height="${h.toFixed(1)}" fill="#2563eb" opacity=".75"/>`;
+    }
+    if (qaH > 0) {
+      const yTop = scaleY(devH+qaH), h = scaleY(devH)-yTop;
+      bars += `<rect x="${xBar}" y="${yTop.toFixed(1)}" width="${barW}" height="${Math.max(1,h).toFixed(1)}" fill="#0d9488" opacity=".8" rx="2"/>`;
+    }
+    // Transparent overlay rect — captures hover for the full bar height
+    if (totalH > 0) {
+      const tipY = scaleY(totalH), tipH = baseY - tipY;
+      bars += `<rect x="${xBar}" y="${tipY.toFixed(1)}" width="${barW}" height="${tipH.toFixed(1)}" fill="transparent" style="cursor:crosshair"
+        onmouseenter="showChartTip(event,'${esc(it.id)}',${devH},${qaH})"
+        onmousemove="posChartTip(event)"
+        onmouseleave="hideChartTip()"/>`;
+    }
+    xLbls += `<text x="${xCenter.toFixed(1)}" y="${(baseY+16).toFixed(1)}" text-anchor="middle" font-size="10" fill="#64748b" font-family="'DM Sans',sans-serif">${esc(it.id)}</text>`;
+  });
+
+  // SP estimated — dashed amber line + filled circles
+  // Offset left by 8px so est and exec never share the same x when values are close
+  const estOff = hasExec ? -8 : 0;
+  const execOff = 8;
+  if (n > 1) {
+    const pts = iters.map((_,idx) => {
+      const xc = leftPad + idx*slotW + slotW/2 + estOff;
+      return `${xc.toFixed(1)},${spScaleY(spEstArr[idx]).toFixed(1)}`;
+    }).join(' ');
+    spLines += `<polyline points="${pts}" fill="none" stroke="#b45309" stroke-width="1.5" stroke-dasharray="5,3" opacity=".65"/>`;
+  }
+  iters.forEach((_,idx) => {
+    const xc = leftPad + idx*slotW + slotW/2 + estOff;
+    const y = spScaleY(spEstArr[idx]);
+    spDots += `<circle cx="${xc.toFixed(1)}" cy="${y.toFixed(1)}" r="3.5" fill="#b45309" opacity=".9"/>`;
+    spDots += `<text x="${xc.toFixed(1)}" y="${(y-7).toFixed(1)}" text-anchor="middle" font-size="9" fill="#b45309" font-weight="600" font-family="'DM Mono',monospace">${spEstArr[idx].toFixed(0)}</text>`;
+  });
+
+  // SP executed — solid purple line + diamond markers, offset right
+  if (hasExec) {
+    const execPts = iters.map((_,idx) => {
+      const v = spExecArr[idx];
+      if (v == null) return null;
+      const xc = leftPad + idx*slotW + slotW/2 + execOff;
+      return `${xc.toFixed(1)},${spScaleY(v).toFixed(1)}`;
+    }).filter(Boolean);
+    if (execPts.length > 1) {
+      spLines += `<polyline points="${execPts.join(' ')}" fill="none" stroke="#7c3aed" stroke-width="2" opacity=".75"/>`;
+    }
+    iters.forEach((_,idx) => {
+      const v = spExecArr[idx];
+      if (v == null) return;
+      const xc = leftPad + idx*slotW + slotW/2 + execOff;
+      const y = spScaleY(v);
+      const s = 5;
+      spDots += `<polygon points="${xc.toFixed(1)},${(y-s).toFixed(1)} ${(xc+s).toFixed(1)},${y.toFixed(1)} ${xc.toFixed(1)},${(y+s).toFixed(1)} ${(xc-s).toFixed(1)},${y.toFixed(1)}" fill="#7c3aed" opacity=".9"/>`;
+      spDots += `<text x="${xc.toFixed(1)}" y="${(y+s+9).toFixed(1)}" text-anchor="middle" font-size="9" fill="#7c3aed" font-weight="600" font-family="'DM Mono',monospace">${v.toFixed(0)}</text>`;
+    });
+  }
+
+  // Legend
+  const lx = leftPad, ly = topPad - 8;
+  legend += `<rect x="${lx}"    y="${ly-7}" width="8" height="8" rx="1" fill="#2563eb" opacity=".75"/>`;
+  legend += `<text x="${lx+11}" y="${ly}"   font-size="9" fill="#64748b" font-family="'DM Sans',sans-serif">DEV (h)</text>`;
+  legend += `<rect x="${lx+57}" y="${ly-7}" width="8" height="8" rx="1" fill="#0d9488" opacity=".8"/>`;
+  legend += `<text x="${lx+68}" y="${ly}"   font-size="9" fill="#64748b" font-family="'DM Sans',sans-serif">QA  (h)</text>`;
+  // SP est: dashed line + circle swatch
+  legend += `<line x1="${lx+118}" y1="${ly-3}" x2="${lx+131}" y2="${ly-3}" stroke="#b45309" stroke-width="1.5" stroke-dasharray="4,2" opacity=".7"/>`;
+  legend += `<circle cx="${lx+124}" cy="${ly-3}" r="3.5" fill="#b45309" opacity=".9"/>`;
+  legend += `<text   x="${lx+135}" y="${ly}"  font-size="9" fill="#b45309" font-family="'DM Sans',sans-serif">SP est.</text>`;
+  if (hasExec) {
+    // SP exec: solid line + diamond swatch
+    legend += `<line x1="${lx+180}" y1="${ly-3}" x2="${lx+193}" y2="${ly-3}" stroke="#7c3aed" stroke-width="2" opacity=".75"/>`;
+    const dx=lx+186, dy=ly-3, ds=4;
+    legend += `<polygon points="${dx},${dy-ds} ${dx+ds},${dy} ${dx},${dy+ds} ${dx-ds},${dy}" fill="#7c3aed" opacity=".9"/>`;
+    legend += `<text x="${lx+197}" y="${ly}" font-size="9" fill="#7c3aed" font-family="'DM Sans',sans-serif">SP exec.</text>`;
+  }
+
+  svg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
+  svg.setAttribute('height', svgH);
+  // Render in layers: grid → bars → lines → dots → labels
+  svg.innerHTML = grid + bars + spLines + spDots + xLbls + legend;
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDER: SUMMARY CARDS
+// ══════════════════════════════════════════════════════════════
+
+function renderCards(dh, qh, dsp, qsp) {
+  const iters      = getViewedIterations();
+  const nIters     = iters.length;
+  const devMembers = team.filter(m => m.role==='Dev' && m.activeIter.length > 0);
+  const qaMembers  = team.filter(m => m.role==='QA'  && m.activeIter.length > 0);
+  const devAvgH    = nIters > 0 ? (dh / nIters).toFixed(0) : '—';
+  const qaAvgH     = nIters > 0 ? (qh / nIters).toFixed(0) : '—';
+  const avgSP      = nIters > 0 ? ((dsp+qsp) / nIters).toFixed(0) : '—';
+
+  let timingHtml = `${nIters} iteration${nIters!==1?'s':''}`;
+  if (nIters > 0) {
+    const today     = new Date();
+    const firstIter = iters.find(it => it.dateStart);
+    const lastIter  = [...iters].reverse().find(it => it.dateEnd);
+    if (firstIter) {
+      const start       = new Date(firstIter.dateStart + 'T00:00:00');
+      const daysToStart = Math.ceil((start - today) / 86400000);
+      if (daysToStart > 1) {
+        timingHtml = `starts in <strong>${daysToStart}d</strong>`;
+      } else {
+        const active = iters.find(it => {
+          if (!it.dateStart || !it.dateEnd) return false;
+          return today >= new Date(it.dateStart+'T00:00:00') && today <= new Date(it.dateEnd+'T23:59:59');
+        });
+        if (active) {
+          timingHtml = `active: <strong>${esc(active.id)}</strong>`;
+        } else if (lastIter && today > new Date(lastIter.dateEnd+'T23:59:59')) {
+          timingHtml = `PI complete`;
+        }
+      }
+    }
+  }
+
+  document.getElementById('summary-cards').innerHTML = `
+    <div class="summary-card card-dev">
+      <div class="card-label">DEV focus hours</div>
+      <div class="card-value">${dh.toFixed(0)}</div>
+      <div class="card-sub">${dsp.toFixed(0)} SP est. · ${spDev()} SP/h</div>
+      <div class="card-sub" style="margin-top:3px">${devMembers.length} member${devMembers.length!==1?'s':''} · avg ${devAvgH}h/iter</div>
+    </div>
+    <div class="summary-card card-qa">
+      <div class="card-label">QA focus hours</div>
+      <div class="card-value">${qh.toFixed(0)}</div>
+      <div class="card-sub">${qsp.toFixed(0)} SP est. · ${spQa()} SP/h</div>
+      <div class="card-sub" style="margin-top:3px">${qaMembers.length} member${qaMembers.length!==1?'s':''} · avg ${qaAvgH}h/iter</div>
+    </div>
+    <div class="summary-card card-total">
+      <div class="card-label">Total SP estimate</div>
+      <div class="card-value">${(dsp+qsp).toFixed(0)}</div>
+      <div class="card-sub">DEV ${dsp.toFixed(0)} + QA ${qsp.toFixed(0)}</div>
+      <div class="card-sub" style="margin-top:3px">avg ${avgSP} SP/iter · ${(dh+qh).toFixed(0)}h total</div>
+    </div>
+    <div class="summary-card card-ratio">
+      <div class="card-label">Team</div>
+      <div class="card-value">${devMembers.length + qaMembers.length}</div>
+      <div class="card-sub">${devMembers.length} Dev · ${qaMembers.length} QA</div>
+      <div class="card-sub" style="margin-top:3px">${timingHtml}</div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDER: MEMBER HOURS GRID (baseline)
+// ══════════════════════════════════════════════════════════════
+
+function renderMemberHours() {
+  const grid  = document.getElementById('member-hours-grid');
+  const iters = getViewedIterations();
+
+  if (!team.length) { grid.innerHTML = ''; return; }
+
+  if (!iters.length) {
+    grid.style.gridTemplateColumns = `repeat(${Math.min(Math.max(team.length,1),6)},1fr)`;
+    grid.innerHTML = team.map(m => {
+      const badge = m.role==='Dev' ? 'badge-dev' : 'badge-qa';
+      return `<div class="mh-card">
+        <div class="mh-name">${esc(m.name)} <span class="badge ${badge}" style="font-size:9px">${m.role}</span></div>
+        <div class="mh-val">${(m.focusHpd * DAYS).toFixed(1)}h</div>
+        <div class="mh-sub">${(m.focusHpd/focusStd()*100).toFixed(0)}% default</div>
+      </div>`;
+    }).join('');
+    return;
+  }
+
+  grid.style.gridTemplateColumns = '';
+
+  let html = `<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">
+    <thead><tr>
+      <th style="text-align:left;padding:5px 10px;background:var(--slate-50);border-bottom:1px solid var(--slate-200);font-size:11px;font-weight:600;color:var(--slate-500);text-transform:uppercase;letter-spacing:.04em;min-width:140px">Member</th>`;
+
+  iters.forEach(it => {
+    html += `<th style="text-align:center;padding:5px 10px;background:var(--slate-50);border-bottom:1px solid var(--slate-200);font-size:11px;font-weight:600;color:var(--slate-700);white-space:nowrap">
+      ${esc(it.id)}<br><span style="font-size:10px;font-weight:400;color:var(--slate-400)">${it.days||DAYS}d</span>
+    </th>`;
+  });
+
+  html += '</tr></thead><tbody>';
+
+  team.forEach(m => {
+    const badgeCls  = m.role === 'Dev' ? 'badge-dev' : 'badge-qa';
+    const roleColor = m.role === 'Dev' ? 'var(--blue-dark)' : 'var(--teal)';
+    html += `<tr>
+      <td style="padding:7px 10px;border-bottom:1px solid var(--slate-100)">
+        <span style="font-size:12px;font-weight:500;color:var(--slate-700)">${esc(m.name)}</span>
+        <span class="badge ${badgeCls}" style="font-size:9px;margin-left:5px">${m.role}</span>
+      </td>`;
+
+    iters.forEach(it => {
+      if (!m.activeIter.includes(it.id)) {
+        html += `<td style="text-align:center;padding:7px 10px;border-bottom:1px solid var(--slate-100);color:var(--slate-300);font-size:13px">—</td>`;
+      } else {
+        const override = m.focusHpdByIter && m.focusHpdByIter[it.id] != null;
+        const hpd      = override ? m.focusHpdByIter[it.id] : m.focusHpd;
+        const pct      = Math.round(hpd / focusStd() * 100);
+        const h        = hpd * (it.days || DAYS);
+        const valColor = override ? 'var(--amber)' : roleColor;
+        const subColor = override ? 'var(--amber)' : 'var(--slate-400)';
+        html += `<td style="text-align:center;padding:7px 10px;border-bottom:1px solid var(--slate-100)">
+          <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:${valColor}">${h.toFixed(0)}h</div>
+          <div style="font-size:10px;color:${subColor}">${pct}%</div>
+        </td>`;
+      }
+    });
+
+    html += '</tr>';
+  });
+
+  html += '</tbody></table></div>';
+  grid.innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDER: HISTORICAL SECTION
+// ══════════════════════════════════════════════════════════════
+
+const PALETTES = [{bg:'#f8fafc'},{bg:'#ffffff'},{bg:'#f0fdf4'},{bg:'#fefce8'},{bg:'#fdf4ff'},{bg:'#fff7ed'}];
+
+// ── Historical comparison PI selection ──────────────────────────
+const HIST_SEL_KEY = 'sysmgm-hist-sel-v1';
+let _histSel = null; // null = uninitialized
+
+function getHistSel(eligible) {
+  if (_histSel !== null) return _histSel;
+  try {
+    const saved = JSON.parse(localStorage.getItem(HIST_SEL_KEY) || 'null');
+    if (Array.isArray(saved) && saved.length) { _histSel = new Set(saved); return _histSel; }
+  } catch {}
+  // Default: last 3 eligible PIs
+  _histSel = new Set(eligible.slice(-3).map(p => p.id));
+  return _histSel;
+}
+
+function toggleHistPI(id) {
+  const eligible = piList.filter(p => p.status==='historical'||p.status==='current'||p.status==='future');
+  const sel = getHistSel(eligible);
+  if (sel.has(id)) {
+    if (sel.size <= 1) return;
+    sel.delete(id);
+  } else {
+    sel.add(id);
+  }
+  try { localStorage.setItem(HIST_SEL_KEY, JSON.stringify([...sel])); } catch {}
+  renderHistoricalSection();
+}
+
+function projForPI(pi) {
+  const t = pi.team || [];
+  let devH = 0, qaH = 0;
+  (pi.iterations || []).forEach(it => {
+    t.forEach(m => {
+      if (m.activeIter && m.activeIter.includes(it.id)) {
+        const h = memberFocusInIteration(m, it);
+        if (m.role === 'Dev') devH += h; else qaH += h;
+      }
+    });
+  });
+  return {
+    devH, qaH,
+    devSP: devH * spDev(), qaSP: qaH * spQa(),
+    devR: spDev(), qaR: spQa(),
+    devCount: t.filter(m => m.role === 'Dev').length,
+    qaCount:  t.filter(m => m.role === 'QA').length,
+    nIters:   (pi.iterations || []).length
+  };
+}
+
+function renderHistoricalSection() {
+  const eligible = piList.filter(p => p.status==='historical'||p.status==='current'||p.status==='future');
+  const grid     = document.getElementById('hist-grid');
+  const selBox   = document.getElementById('hist-pi-selector');
+
+  if (!eligible.length) {
+    if (selBox) selBox.innerHTML = '';
+    grid.innerHTML = `<div style="padding:24px;color:var(--slate-400);font-size:13px">No historical or current PI data to display.</div>`;
+    document.getElementById('hist-section-title').textContent = '📈 Historical comparison';
+    return;
+  }
+
+  // Sync selection: purge IDs no longer in eligible, ensure at least 1 selected
+  const sel = getHistSel(eligible);
+  [...sel].forEach(id => { if (!eligible.find(p => p.id === id)) sel.delete(id); });
+  if (!sel.size) eligible.slice(-3).forEach(p => sel.add(p.id));
+
+  const display = eligible.filter(p => sel.has(p.id));
+
+  // Render PI toggle pills
+  if (selBox) {
+    let pills = `<span class="hist-sel-label">Compare:</span>`;
+    eligible.forEach(pi => {
+      const on  = sel.has(pi.id);
+      const cls = pi.status==='current' ? 's-cur' : pi.status==='future' ? 's-fut' : 's-hist';
+      pills += `<button class="hist-pi-pill ${cls}${on?' active':''}" onclick="toggleHistPI(${pi.id})">PI ${pi.id}</button>`;
+    });
+    selBox.innerHTML = pills;
+  }
+
+  document.getElementById('hist-section-title').textContent =
+    '📈 Historical comparison — ' + display.map(p=>'PI'+p.id).join(' · ');
+
+  function piTotalSP(p) {
+    if (p.actual) return (p.actual.devSPexec ?? p.actual.devSPest ?? 0) + (p.actual.qaSPexec ?? p.actual.qaSPest ?? 0);
+    const q = projForPI(p); return q.devSP + q.qaSP;
+  }
+  function piHours(p) {
+    if (p.actual) return {devH: p.actual.devH||0, qaH: p.actual.qaH||0};
+    const q = projForPI(p); return {devH: q.devH, qaH: q.qaH};
+  }
+
+  let palIdx = 0, html = '';
+  display.forEach((pi, idx) => {
+    const isCur  = pi.status === 'current' || pi.status === 'future';
+    const prevPI = idx > 0 ? display[idx - 1] : null;
+    const bg     = isCur ? '#eff6ff' : PALETTES[palIdx++ % PALETTES.length].bg;
+
+    html += `<div class="hist-col" style="background:${bg}">`;
+    const badge = pi.status === 'current' ? '<span class="tag tag-cur">ongoing</span>'
+                : pi.status === 'future'  ? '<span class="tag tag-fut">future</span>' : '';
+    html += `<div class="hist-pi-title">PI ${pi.id} ${badge}</div>`;
+
+    if (isCur) {
+      const p = projForPI(pi);
+      const {devH, qaH, devSP, qaSP, devR, qaR, devCount, qaCount, nIters} = p;
+      const totalH = devH + qaH, totalSP = devSP + qaSP;
+
+      html += `<div class="hist-label">Projected (${nIters} iter)</div>`;
+      if (devCount + qaCount > 0) html += hRow('Team', `${devCount} Dev · ${qaCount} QA`);
+      html += hRow('DEV hours', devH.toFixed(0));
+      html += hRow('DEV SP estimated', devSP.toFixed(0), 'var(--blue-dark)');
+      html += hRow('DEV ratio used', devR.toFixed(2)+' SP/h');
+      html += hRow('QA hours', qaH.toFixed(0));
+      html += hRow('QA SP estimated', qaSP.toFixed(0), 'var(--teal)');
+      html += hRow('QA ratio used', qaR.toFixed(2)+' SP/h');
+      if (totalH > 0) html += hRow('Total hours', totalH.toFixed(0));
+      html += hRowHtml('Total SP projected', `<strong style="color:var(--amber)">${totalSP.toFixed(0)} SP</strong>`);
+      if (nIters > 0) html += hRow('Avg SP / iter', (totalSP / nIters).toFixed(0));
+
+      // In-progress actuals for current-status PI
+      if (pi.status === 'current') {
+        const doneIts = (pi.iterations||[]).filter(it => it.devSPexec != null || it.qaSPexec != null);
+        if (doneIts.length > 0) {
+          const execDev   = doneIts.reduce((s,it) => s+(it.devSPexec||0), 0);
+          const execQA    = doneIts.reduce((s,it) => s+(it.qaSPexec||0), 0);
+          const execTotal = execDev + execQA;
+          const progPct   = totalSP > 0 ? Math.round(execTotal / totalSP * 100) : 0;
+          html += `<div class="hist-label" style="margin-top:8px">In progress (${doneIts.length}/${nIters} done)</div>`;
+          html += hRow('DEV SP done', execDev, 'var(--blue-dark)');
+          html += hRow('QA SP done', execQA, 'var(--teal)');
+          html += hRowHtml('SP delivered', `<strong style="color:var(--amber)">${execTotal} SP</strong>`);
+          html += hRowHtml('Progress', `<span style="color:${progPct>=75?'var(--green)':progPct>=40?'var(--amber)':'var(--red)'};font-weight:600">${progPct}%</span>`);
+        }
+      }
+
+      if (prevPI) {
+        const {devH:pH, qaH:qH} = piHours(prevPI);
+        const prevSP = piTotalSP(prevPI);
+        html += `<div class="hist-label" style="margin-top:8px">Δ vs PI ${prevPI.id}</div>`;
+        html += hRowHtml('DEV h Δ', delta(devH - pH));
+        html += hRowHtml('QA h Δ',  delta(qaH  - qH));
+        if (prevSP > 0) {
+          const dSP = totalSP - prevSP;
+          html += hRowHtml('SP Δ', `<span style="color:${dSP>=0?'var(--teal)':'var(--red)'};font-weight:600">${dSP>=0?'+':''}${dSP.toFixed(0)} SP</span>`);
+        }
+      }
+
+    } else if (pi.actual) {
+      const a        = pi.actual;
+      const hasExec  = a.devSPexec != null || a.qaSPexec != null;
+      const t        = pi.team || [];
+      const devCount = t.filter(m => m.role === 'Dev').length;
+      const qaCount  = t.filter(m => m.role === 'QA').length;
+      const nIters   = (pi.iterations || []).length;
+      const totalH   = (a.devH||0) + (a.qaH||0);
+      const devActR  = (a.devSPexec != null && a.devH > 0) ? a.devSPexec / a.devH : null;
+      const qaActR   = (a.qaSPexec  != null && a.qaH  > 0) ? a.qaSPexec  / a.qaH  : null;
+
+      html += `<div class="hist-label">${hasExec ? 'Actual (executed)' : 'Estimated'}</div>`;
+      if (devCount + qaCount > 0) html += hRow('Team', `${devCount} Dev · ${qaCount} QA`);
+      if (nIters > 0)             html += hRow('Iterations', nIters);
+
+      html += hRow('DEV hours', a.devH ?? '—');
+      if (a.devSPest  != null) html += hRow('DEV SP estimated', a.devSPest, 'var(--blue-dark)');
+      if (a.devSPexec != null) html += hRow('DEV SP executed',  a.devSPexec, 'var(--blue-dark)');
+      else if (a.devSPest != null) html += hRowHtml('DEV SP executed', '<span style="color:var(--slate-300)">in progress</span>');
+      if (devActR != null) {
+        html += hRowHtml('DEV ratio (actual)', `<span class="hist-ratio-computed">${devActR.toFixed(2)} SP/h</span><span class="hist-ratio-note">exec÷hours</span>`);
+      } else if (a.devRatio != null) {
+        html += hRow('DEV ratio (stored)', a.devRatio.toFixed(2) + ' SP/h');
+      }
+
+      html += hRow('QA hours', a.qaH ?? '—');
+      if (a.qaSPest  != null) html += hRow('QA SP estimated', a.qaSPest, 'var(--teal)');
+      if (a.qaSPexec != null) html += hRow('QA SP executed',  a.qaSPexec, 'var(--teal)');
+      else if (a.qaSPest != null) html += hRowHtml('QA SP executed', '<span style="color:var(--slate-300)">in progress</span>');
+      if (qaActR != null) {
+        html += hRowHtml('QA ratio (actual)', `<span class="hist-ratio-computed" style="color:var(--teal)">${qaActR.toFixed(2)} SP/h</span><span class="hist-ratio-note">exec÷hours</span>`);
+      } else if (a.qaRatio != null) {
+        html += hRow('QA ratio (stored)', a.qaRatio.toFixed(2) + ' SP/h');
+      }
+
+      if (a.devSPexec != null && a.devSPest != null && a.devSPest > 0) {
+        const acc = Math.round(a.devSPexec / a.devSPest * 100);
+        const ac  = acc >= 90 ? 'var(--green)' : acc >= 70 ? 'var(--amber)' : 'var(--red)';
+        html += hRowHtml('DEV accuracy', `<span style="color:${ac};font-weight:600">${acc}%</span>`);
+      }
+      if (a.qaSPexec != null && a.qaSPest != null && a.qaSPest > 0) {
+        const acc = Math.round(a.qaSPexec / a.qaSPest * 100);
+        const ac  = acc >= 90 ? 'var(--green)' : acc >= 70 ? 'var(--amber)' : 'var(--red)';
+        html += hRowHtml('QA accuracy', `<span style="color:${ac};font-weight:600">${acc}%</span>`);
+      }
+
+      if (totalH > 0) html += hRow('Total hours', totalH);
+      const totalSP = (a.devSPexec ?? a.devSPest ?? 0) + (a.qaSPexec ?? a.qaSPest ?? 0);
+      if (totalSP > 0) {
+        html += hRowHtml('Total SP', `<strong style="color:var(--amber)">${totalSP}</strong>`);
+        if (totalH > 0) html += hRow('SP efficiency', (totalSP / totalH).toFixed(2)+' SP/h');
+        if (nIters > 0) html += hRow('Avg SP / iter', (totalSP / nIters).toFixed(0));
+      }
+
+      if (prevPI) {
+        const {devH:pH, qaH:qH} = piHours(prevPI);
+        const prevSP = piTotalSP(prevPI);
+        html += `<div class="hist-label" style="margin-top:8px">Δ vs PI ${prevPI.id}</div>`;
+        html += hRowHtml('DEV h Δ', delta((a.devH||0) - pH));
+        html += hRowHtml('QA h Δ',  delta((a.qaH||0)  - qH));
+        if (prevSP > 0) {
+          const dSP = totalSP - prevSP;
+          html += hRowHtml('SP Δ', `<span style="color:${dSP>=0?'var(--teal)':'var(--red)'};font-weight:600">${dSP>=0?'+':''}${dSP.toFixed(0)} SP</span>`);
+        }
+      }
+
+    } else {
+      html += `<div class="hist-label">No data</div><p class="empty-note" style="padding:8px 0">No actuals recorded for this PI.</p>`;
+    }
+    html += `</div>`;
+  });
+  grid.innerHTML = html;
+}
+
+function hRow(label, val, color) {
+  return `<div class="hist-row"><span class="hist-row-label">${label}</span><span class="hist-row-val"${color?` style="color:${color}"`:''}>${val}</span></div>`;
+}
+function hRowHtml(label, valHtml) {
+  return `<div class="hist-row"><span class="hist-row-label">${label}</span><span class="hist-row-val">${valHtml}</span></div>`;
+}
+function delta(v) {
+  return `<span style="color:${v>=0?'var(--teal)':'var(--red)'}">${v>=0?'+':''}${v.toFixed(0)}h</span>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+// SPRINT ACTUALS TRACKING
+// ══════════════════════════════════════════════════════════════
+
+function updateIterActual(iterId, field, val) {
+  const pi = getViewedPI();
+  if (!pi) return;
+  const it = pi.iterations.find(i => i.id === iterId);
+  if (!it) return;
+  const num = val === '' ? null : parseInt(val, 10);
+  it[field] = (num != null && !isNaN(num)) ? num : null;
+  // Update input style live
+  const inputId = 'actual-' + iterId + '-' + field;
+  const input = document.getElementById(inputId);
+  if (input) input.className = 'actuals-input' + (it[field] != null ? ' has-val' : '');
+  renderSprintActuals();
+  renderRatioSuggestion();
+  scheduleSave();
+}
+
+function renderSprintActuals() {
+  const wrap = document.getElementById('sprint-actuals-wrap');
+  if (!wrap) return;
+
+  const pi    = getViewedPI();
+  const iters = pi ? (pi.iterations || []) : [];
+
+  if (!pi || !iters.length) {
+    wrap.innerHTML = '<p class="empty-note">No current PI or no iterations configured.</p>';
+    return;
+  }
+
+  const devR = spDev(), qaR = spQa();
+
+  // Compute planned hours per iteration (same logic as recalc)
+  const iterData = iters.map(it => {
+    let devH = 0, qaH = 0;
+    team.forEach(m => {
+      if (m.activeIter.includes(it.id)) {
+        const h = memberFocusInIteration(m, it);
+        if (m.role === 'Dev') devH += h; else qaH += h;
+      }
+    });
+    return {
+      it,
+      devH,    qaH,
+      devSPest: devH * devR,
+      qaSPest:  qaH  * qaR
+    };
+  });
+
+  const fmt1 = v => v.toFixed(1);
+
+  let totDevH=0, totQaH=0, totDevEst=0, totQaEst=0, totDevExec=0, totQaExec=0;
+  let execDevCount=0, execQaCount=0;
+
+  iterData.forEach(d => {
+    totDevH += d.devH; totQaH += d.qaH;
+    totDevEst += d.devSPest; totQaEst += d.qaSPest;
+    if (d.it.devSPexec != null) { totDevExec += d.it.devSPexec; execDevCount++; }
+    if (d.it.qaSPexec  != null) { totQaExec  += d.it.qaSPexec;  execQaCount++; }
+  });
+
+  const hasAny = execDevCount > 0 || execQaCount > 0;
+
+  const deltaHtml = (exec, est) => {
+    if (exec == null) return '<span style="color:var(--slate-300)">—</span>';
+    const d = exec - est;
+    const cls = d >= 0 ? 'delta-pos' : 'delta-neg';
+    return `<span class="${cls}">${d >= 0 ? '+' : ''}${d.toFixed(0)}</span>`;
+  };
+
+  const ratioHtml = (exec, hours, colorClass) => {
+    if (exec == null || hours === 0) return '<span style="color:var(--slate-300)">—</span>';
+    return `<span class="${colorClass}">${(exec / hours).toFixed(2)}</span>`;
+  };
+
+  // Build mini accuracy bar
+  const accuracyBar = (exec, est) => {
+    if (exec == null || est === 0) return '';
+    const pct = Math.min(100, Math.round((exec / est) * 100));
+    const color = pct >= 90 ? 'var(--green)' : pct >= 70 ? 'var(--amber)' : 'var(--red)';
+    return `<div class="accuracy-bar-wrap"><div class="accuracy-bar" style="width:${pct}%;background:${color}"></div></div>`;
+  };
+
+  let html = `<div style="overflow-x:auto">
+  <table class="actuals-table">
+    <thead>
+      <tr>
+        <th style="width:170px">Iteration</th>
+        <th class="num" style="color:var(--blue-dark)">DEV est. SP</th>
+        <th class="num" style="color:var(--blue-dark)">DEV exec. SP</th>
+        <th class="num">Δ DEV</th>
+        <th class="num">DEV ratio</th>
+        <th class="num" style="color:var(--teal)">QA est. SP</th>
+        <th class="num" style="color:var(--teal)">QA exec. SP</th>
+        <th class="num">Δ QA</th>
+        <th class="num">QA ratio</th>
+        <th class="num" style="color:var(--amber)">Total exec.</th>
+      </tr>
+    </thead>
+    <tbody>`;
+
+  iterData.forEach(({it, devH, qaH, devSPest, qaSPest}) => {
+    const devExec  = it.devSPexec;
+    const qaExec   = it.qaSPexec;
+    const totExec  = (devExec != null || qaExec != null) ? (devExec||0) + (qaExec||0) : null;
+    const devHasVal = devExec != null ? ' has-val' : '';
+    const qaHasVal  = qaExec  != null ? ' has-val' : '';
+
+    html += `<tr>
+      <td>
+        <div style="font-weight:600;font-size:13px;color:var(--slate-800)">${esc(it.id)}</div>
+        <div style="font-size:11px;color:var(--slate-400)">${esc(it.dates)}</div>
+      </td>
+      <td class="cell-dev">${fmt1(devSPest)}</td>
+      <td>
+        <input type="number" id="actual-${it.id}-devSPexec"
+          class="actuals-input${devHasVal}" value="${devExec ?? ''}"
+          min="0" step="1" placeholder="—"
+          onfocus="this.select()"
+          onchange="updateIterActual('${it.id}','devSPexec',this.value)">
+        ${accuracyBar(devExec, devSPest)}
+      </td>
+      <td>${deltaHtml(devExec, devSPest)}</td>
+      <td>${ratioHtml(devExec, devH, 'ratio-actual-dev')}</td>
+      <td class="cell-qa">${fmt1(qaSPest)}</td>
+      <td>
+        <input type="number" id="actual-${it.id}-qaSPexec"
+          class="actuals-input${qaHasVal}" value="${qaExec ?? ''}"
+          min="0" step="1" placeholder="—"
+          onfocus="this.select()"
+          onchange="updateIterActual('${it.id}','qaSPexec',this.value)">
+        ${accuracyBar(qaExec, qaSPest)}
+      </td>
+      <td>${deltaHtml(qaExec, qaSPest)}</td>
+      <td>${ratioHtml(qaExec, qaH, 'ratio-actual-qa')}</td>
+      <td style="color:var(--amber);font-weight:600">
+        ${totExec != null ? totExec : '<span style="color:var(--slate-300)">—</span>'}
+      </td>
+    </tr>`;
+  });
+
+  html += `</tbody>
+  <tfoot>
+    <tr class="actuals-total-row">
+      <td style="font-family:'DM Sans',sans-serif"><strong>PI ${pi.id} Total</strong></td>
+      <td class="cell-dev"><strong>${totDevEst.toFixed(0)}</strong></td>
+      <td class="cell-dev"><strong>${hasAny ? totDevExec : '—'}</strong></td>
+      <td>${deltaHtml(execDevCount > 0 ? totDevExec : null, totDevEst)}</td>
+      <td>${ratioHtml(execDevCount > 0 ? totDevExec : null, totDevH, 'ratio-actual-dev')}</td>
+      <td class="cell-qa"><strong>${totQaEst.toFixed(0)}</strong></td>
+      <td class="cell-qa"><strong>${hasAny ? totQaExec : '—'}</strong></td>
+      <td>${deltaHtml(execQaCount > 0 ? totQaExec : null, totQaEst)}</td>
+      <td>${ratioHtml(execQaCount > 0 ? totQaExec : null, totQaH, 'ratio-actual-qa')}</td>
+      <td class="cell-sp"><strong>${hasAny ? totDevExec + totQaExec : '—'}</strong></td>
+    </tr>
+  </tfoot>
+  </table></div>`;
+
+  // Accuracy summary if any data entered
+  if (hasAny) {
+    const devAcc  = execDevCount > 0 ? Math.round((totDevExec / totDevEst) * 100) : null;
+    const qaAcc   = execQaCount  > 0 ? Math.round((totQaExec  / totQaEst)  * 100) : null;
+    const devActR = execDevCount > 0 && totDevH > 0 ? (totDevExec / totDevH).toFixed(2) : null;
+    const qaActR  = execQaCount  > 0 && totQaH  > 0 ? (totQaExec  / totQaH).toFixed(2)  : null;
+    const accColor = v => v >= 90 ? 'var(--green)' : v >= 70 ? 'var(--amber)' : 'var(--red)';
+
+    html += `<div style="display:flex;gap:16px;margin-top:12px;flex-wrap:wrap">`;
+    if (devAcc != null) html += `
+      <div style="padding:10px 14px;background:var(--blue-light);border-radius:var(--radius-sm);font-size:12px;color:var(--blue-dark)">
+        <strong>DEV accuracy: <span style="color:${accColor(devAcc)}">${devAcc}%</span></strong>
+        ${devActR ? `&nbsp;·&nbsp; actual ratio: <strong style="font-family:'DM Mono',monospace">${devActR} SP/h</strong>` : ''}
+        &nbsp;·&nbsp; ${execDevCount}/${iters.length} sprint${execDevCount !== 1 ? 's' : ''} tracked
+      </div>`;
+    if (qaAcc != null) html += `
+      <div style="padding:10px 14px;background:var(--teal-light);border-radius:var(--radius-sm);font-size:12px;color:var(--teal)">
+        <strong>QA accuracy: <span style="color:${accColor(qaAcc)}">${qaAcc}%</span></strong>
+        ${qaActR ? `&nbsp;·&nbsp; actual ratio: <strong style="font-family:'DM Mono',monospace">${qaActR} SP/h</strong>` : ''}
+        &nbsp;·&nbsp; ${execQaCount}/${iters.length} sprint${execQaCount !== 1 ? 's' : ''} tracked
+      </div>`;
+    html += `</div>`;
+  }
+
+  wrap.innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════════════
+// RATIO SUGGESTIONS
+// ══════════════════════════════════════════════════════════════
+
+function computeActualRatios(pi) {
+  const a = pi.actual;
+  if (!a) return null;
+  const devRatio      = (a.devSPexec != null && a.devH > 0) ? a.devSPexec / a.devH : (a.devRatio || null);
+  const qaRatio       = (a.qaSPexec  != null && a.qaH  > 0) ? a.qaSPexec  / a.qaH  : (a.qaRatio  || null);
+  const devIsComputed = a.devSPexec != null && a.devH > 0;
+  const qaIsComputed  = a.qaSPexec  != null && a.qaH  > 0;
+  return {devRatio, qaRatio, devIsComputed, qaIsComputed};
+}
+
+function getSuggestedRatios() {
+  const histPIs = piList
+    .filter(p => p.status === 'historical' && p.actual)
+    .sort((a, b) => b.id - a.id);
+  if (!histPIs.length) return null;
+
+  // Most recent PI that has any ratio data
+  let mostRecent = null;
+  for (const pi of histPIs) {
+    const r = computeActualRatios(pi);
+    if (r && r.devRatio) { mostRecent = {piId: pi.id, ...r}; break; }
+  }
+
+  // Average only when at least 2 PIs have SP-executed-based ratios
+  const withExec = histPIs.filter(p => {
+    const a = p.actual;
+    return a && a.devSPexec != null && a.devH > 0 && a.qaSPexec != null && a.qaH > 0;
+  });
+  let average = null;
+  if (withExec.length >= 2) {
+    average = {
+      piCount:  withExec.length,
+      devRatio: withExec.reduce((s,p) => s + p.actual.devSPexec / p.actual.devH, 0) / withExec.length,
+      qaRatio:  withExec.reduce((s,p) => s + p.actual.qaSPexec  / p.actual.qaH,  0) / withExec.length
+    };
+  }
+
+  return {mostRecent, average};
+}
+
+function applyRatio(devRatio, qaRatio) {
+  document.getElementById('ratio-dev').value = devRatio.toFixed(2);
+  if (qaRatio != null) document.getElementById('ratio-qa').value = qaRatio.toFixed(2);
+  recalc();
+  renderRatioSuggestion();
+  scheduleSave();
+}
+
+function renderRatioSuggestion() {
+  const el = document.getElementById('ratio-suggestion');
+  if (!el) return;
+
+  const curDev = parseFloat(document.getElementById('ratio-dev').value) || 0;
+  const curQa  = parseFloat(document.getElementById('ratio-qa').value)  || 0;
+  const near   = (a, b) => b != null && Math.abs(a - b) < 0.005;
+
+  const suggestions = getSuggestedRatios();
+
+  if (!suggestions || !suggestions.mostRecent) {
+    el.innerHTML = `<div style="font-size:11px;color:var(--slate-400);padding:4px 0 8px">Enter SP Executed in historical PI data to get auto-calculated ratio suggestions.</div>`;
+    ['ratio-dev-status','ratio-qa-status'].forEach(id => { const e=document.getElementById(id); if(e) e.innerHTML=''; });
+    return;
+  }
+
+  const {mostRecent: mr, average: av} = suggestions;
+  const curPI = getCurrentPI();
+  const curLabel = curPI ? 'PI ' + curPI.id : 'current PI';
+
+  let html = `<div class="ratio-suggestion">
+    <div class="ratio-suggestion-title">Suggested ratios for ${curLabel}</div>`;
+
+  if (mr) {
+    const matches = near(curDev, mr.devRatio) && near(curQa, mr.qaRatio);
+    const srcLabel = mr.devIsComputed
+      ? `PI ${mr.piId} actual <span style="font-weight:400;color:var(--slate-400)">(SP exec ÷ hours)</span>`
+      : `PI ${mr.piId} stored`;
+    html += `<div class="ratio-suggest-row">
+      <span class="ratio-source">${srcLabel}</span>
+      <span>DEV <span class="ratio-suggest-val dev">${mr.devRatio ? mr.devRatio.toFixed(2) : '—'}</span> SP/h</span>
+      <span>QA <span class="ratio-suggest-val qa">${mr.qaRatio ? mr.qaRatio.toFixed(2) : '—'}</span> SP/h</span>
+      <span style="flex:1"></span>
+      ${matches
+        ? '<span class="ratio-active-badge">✓ in use</span>'
+        : `<button class="btn btn-sm" onclick="applyRatio(${mr.devRatio},${mr.qaRatio})">Apply</button>`}
+    </div>`;
+  }
+
+  if (av) {
+    const matches = near(curDev, av.devRatio) && near(curQa, av.qaRatio);
+    html += `<div class="ratio-suggest-row">
+      <span class="ratio-source">Average of ${av.piCount} PIs</span>
+      <span>DEV <span class="ratio-suggest-val dev">${av.devRatio.toFixed(2)}</span> SP/h</span>
+      <span>QA <span class="ratio-suggest-val qa">${av.qaRatio.toFixed(2)}</span> SP/h</span>
+      <span style="flex:1"></span>
+      ${matches
+        ? '<span class="ratio-active-badge">✓ in use</span>'
+        : `<button class="btn btn-sm" onclick="applyRatio(${av.devRatio},${av.qaRatio})">Apply</button>`}
+    </div>`;
+  }
+
+  html += '</div>';
+  el.innerHTML = html;
+
+  // Status badge next to each input
+  const badge = (cur, mrVal, avVal, piId) => {
+    if (near(cur, mrVal)) return `<span class="ratio-active-badge">from PI ${piId}</span>`;
+    if (avVal != null && near(cur, avVal)) return `<span class="ratio-active-badge">avg</span>`;
+    return `<span class="ratio-manual-badge">manual</span>`;
+  };
+  const devSt = document.getElementById('ratio-dev-status');
+  const qaSt  = document.getElementById('ratio-qa-status');
+  if (devSt) devSt.innerHTML = badge(curDev, mr?.devRatio, av?.devRatio, mr?.piId);
+  if (qaSt)  qaSt.innerHTML  = badge(curQa,  mr?.qaRatio,  av?.qaRatio,  mr?.piId);
+}
+
+// ══════════════════════════════════════════════════════════════
+// SECTION TOGGLE
+// ══════════════════════════════════════════════════════════════
+
+const SECTION_KEY = 'sysmgm-sections-v1';
+
+function toggleSection(header) {
+  const body = header.nextElementSibling;
+  const willOpen = !header.classList.contains('open');
+  header.classList.toggle('open');
+  saveSectionState();
+
+  if (willOpen) {
+    body.classList.add('open');
+    const targetH = body.scrollHeight;
+    body.style.cssText = 'overflow:hidden;max-height:0;opacity:0';
+    body.offsetHeight; // force reflow
+    body.style.transition = 'max-height .3s ease, opacity .22s ease';
+    body.style.maxHeight = targetH + 'px';
+    body.style.opacity = '1';
+    body.addEventListener('transitionend', function h(e) {
+      if (e.propertyName !== 'max-height') return;
+      body.style.cssText = '';
+      body.removeEventListener('transitionend', h);
+    });
+  } else {
+    body.style.cssText = `overflow:hidden;max-height:${body.scrollHeight}px;opacity:1`;
+    body.offsetHeight; // force reflow
+    body.style.transition = 'max-height .3s ease, opacity .22s ease';
+    body.style.maxHeight = '0';
+    body.style.opacity = '0';
+    body.addEventListener('transitionend', function h(e) {
+      if (e.propertyName !== 'max-height') return;
+      body.classList.remove('open');
+      body.style.cssText = '';
+      body.removeEventListener('transitionend', h);
+    });
+  }
+}
+
+function saveSectionState() {
+  const state = {};
+  document.querySelectorAll('.section-header[id]').forEach(h => {
+    state[h.id] = h.classList.contains('open');
+  });
+  try { localStorage.setItem(SECTION_KEY, JSON.stringify(state)); } catch {}
+}
+
+function restoreSectionState() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(SECTION_KEY) || 'null');
+    if (!saved) return;
+    document.querySelectorAll('.section-header[id]').forEach(h => {
+      const open = saved[h.id] !== false;
+      h.classList.toggle('open', open);
+      h.nextElementSibling.classList.toggle('open', open);
+    });
+  } catch {}
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDER ALL
+// ══════════════════════════════════════════════════════════════
+
+function renderAll() {
+  team = getViewedPI()?.team || getCurrentPI()?.team || [];
+  syncRatiosFromPi();
+  renderPISwitcher();
+  renderGlobalPIPanel();
+  renderIterSection();
+  renderTeam();
+  renderOverhead();
+  renderTimeOffSection();
+  recalc();
+}
+
+// ══════════════════════════════════════════════════════════════
+// BOOT
+// ══════════════════════════════════════════════════════════════
+
+initStorage().then(() => restoreSectionState());
+
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); manualSave(); }
+});
+
+// Auto-save normally covers this, but guards the ~1.2s window right after
+// an edit, before the debounced write has actually fired.
+window.addEventListener('beforeunload', e => {
+  if (document.getElementById('save-status')?.classList.contains('save-unsaved')) {
+    e.preventDefault(); e.returnValue = '';
+  }
+});
+</script>
+<div id="toast-container"></div>
+<div id="chart-tooltip">
+  <div class="tt-iter" id="tt-iter"></div>
+  <div class="tt-dev"  id="tt-dev"></div>
+  <div class="tt-qa"   id="tt-qa"></div>
+  <div class="tt-sep"></div>
+  <div class="tt-total" id="tt-total"></div>
+</div>
+</body>
+</html>
