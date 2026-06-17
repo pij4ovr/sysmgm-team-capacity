@@ -855,6 +855,15 @@ async function writePath(p, text) {
   if (!res.ok) throw new Error(res.error || 'Write failed');
 }
 
+// Returns whichever of the given save-state objects (primary file, backup
+// mirror, localStorage, ...) has the most recent `savedAt` — used so a
+// teammate's save mirrored only to the shared backup file is still detected
+// as "newer" even though our own primaryPath hasn't changed.
+function newestState(...candidates) {
+  return candidates.filter(Boolean).reduce((best, c) =>
+    (!best || new Date(c.savedAt) > new Date(best.savedAt)) ? c : best, null);
+}
+
 // ── Embedded backup history: every write keeps a rolling copy of the
 // previous on-disk version *inside the saved JSON itself*, so recovery
 // works no matter how the file is opened (double-click, local server, a
@@ -909,21 +918,31 @@ async function safeWriteFile() {
   let previousData = null;
   try { previousData = await readPath(primaryPath); } catch {}
 
-  if (previousData && lastKnownSavedAt && previousData.savedAt && previousData.savedAt !== lastKnownSavedAt) {
-    const when = new Date(previousData.savedAt).toLocaleString();
+  // A teammate's own session may have mirrored a newer save to the shared
+  // backupPath without ever touching our primaryPath directly — check that
+  // too, and treat whichever of the two is newest as "the latest version".
+  let backupData = null;
+  if (backupPath) { try { backupData = await readPath(backupPath); } catch {} }
+  const latest = newestState(previousData, backupData);
+  const latestSource = latest && latest === backupData && (!previousData || backupData.savedAt !== previousData.savedAt)
+    ? 'the backup mirror' : 'this file';
+
+  if (latest && lastKnownSavedAt && latest.savedAt && latest.savedAt !== lastKnownSavedAt) {
+    const when = new Date(latest.savedAt).toLocaleString();
     const overwrite = confirm(
-      'This file was saved by someone/something else at ' + when + ' — after this session last loaded it.\n\n' +
+      'A newer version was saved (' + latestSource + ') at ' + when + ' — after this session last loaded it.\n\n' +
       'Click OK to overwrite those changes with yours.\n' +
       'Click Cancel to discard your local changes and load the latest version instead.'
     );
     if (!overwrite) {
-      applyState(previousData);
+      applyState(latest);
       lsSave();
       restoreViewedPI();
       renderAll();
-      lastKnownSavedAt = previousData.savedAt;
+      lastKnownSavedAt = latest.savedAt;
+      try { await writePath(primaryPath, JSON.stringify(latest, null, 2)); } catch {}
       setSaveStatus('saved', 'local file');
-      showToast('Loaded the latest version from disk — your local changes were discarded', 'error');
+      showToast('Loaded the latest version from ' + latestSource + ' — your local changes were discarded', 'error');
       return false;
     }
   }
@@ -1007,6 +1026,32 @@ async function autoSaveToFile() {
     console.error(e);
     setSaveStatus('error', 'Save error (' + (e.name || 'unknown') + ') — click to retry');
   }
+}
+
+const BACKUP_POLL_MS = 20000;
+
+// Lets two people share this app via the same backup mirror file: if a
+// teammate's session has written a newer save there (because their own
+// primaryPath -> backupPath mirror landed on the same shared file we point
+// our backupPath at), pull it down into our local primary copy automatically.
+// Skipped while we have edits pending our own debounced autosave, so we
+// never silently discard in-progress local work — safeWriteFile()'s own
+// freshness check covers the conflict in that case instead.
+async function checkBackupForUpdate() {
+  if (!backupPath || !primaryPath || _autoSaveTimer) return;
+  let backupData;
+  try { backupData = await readPath(backupPath); } catch { return; }
+  if (!backupData || !backupData.savedAt) return;
+  if (lastKnownSavedAt && new Date(backupData.savedAt) <= new Date(lastKnownSavedAt)) return;
+
+  applyState(backupData);
+  lsSave();
+  restoreViewedPI();
+  renderAll();
+  lastKnownSavedAt = backupData.savedAt;
+  try { await writePath(primaryPath, JSON.stringify(backupData, null, 2)); } catch {}
+  setSaveStatus('saved', 'local file');
+  showToast('↺ Updated from backup — a teammate’s changes were loaded');
 }
 
 
@@ -1210,17 +1255,32 @@ async function initStorage() {
   if (!config.primaryPath) { showBanner('connect'); setSaveStatus('nofile','No file'); return; }
   primaryPath = config.primaryPath;
   try {
-    const data = await readPath(primaryPath);
+    const primaryData = await readPath(primaryPath);
+    let backupData = null;
+    if (backupPath) { try { backupData = await readPath(backupPath); } catch {} }
+    const data = newestState(primaryData, backupData);
     if (data) {
       lastKnownSavedAt = data.savedAt;
       const newer = !lsData || new Date(data.savedAt) >= new Date(lsData.savedAt||0);
       if (newer && applyState(data)) { lsSave(); restoreViewedPI(); renderAll(); }
+      // The backup mirror turned out to be the newest copy (a teammate saved
+      // there since our local primary file last changed) — sync it down.
+      if (data === backupData && (!primaryData || backupData.savedAt !== primaryData.savedAt)) {
+        try { await writePath(primaryPath, JSON.stringify(data, null, 2)); } catch {}
+      }
     }
     setSaveStatus('saved', 'local file');
   } catch (e) {
     console.error(e);
     setSaveStatus('error', 'Could not read connected file (' + (e.message || 'unknown') + ') — click to retry');
   }
+
+  // While the app stays open, periodically (and whenever the window regains
+  // focus) check whether a teammate has saved a newer version to the shared
+  // backup mirror, so two people can work against the same backup file
+  // without either of them having to manually reconnect/reload.
+  setInterval(checkBackupForUpdate, BACKUP_POLL_MS);
+  window.addEventListener('focus', checkBackupForUpdate);
 }
 
 // ══════════════════════════════════════════════════════════════

@@ -62,9 +62,15 @@ Every `safeWriteFile()` call re-reads `primaryPath` fresh first, and if writing 
 Key functions: `safeWriteFile()`, `isDataShrinking(prev, next)`, `describeShrink(prev, next)`, `withBackupHistory(newState, previousData)`, `showHistoryPanel()`, `restoreBackup(i)`, `openDifferentFile()`, `configureBackup()`.
 
 ### Conflict detection (kept from the shared-drive design)
-`lastKnownSavedAt` tracks the `savedAt` of the file content this session last read/wrote. Before every write, `safeWriteFile()` re-reads `primaryPath` and compares its `savedAt` to `lastKnownSavedAt`:
-- If it changed (e.g. the file was edited by another copy of the app, or restored from a backup), the user is asked to either overwrite those changes or discard local edits and reload the latest version.
+`lastKnownSavedAt` tracks the `savedAt` of the file content this session last read/wrote. Before every write, `safeWriteFile()` re-reads `primaryPath` **and `backupPath`** and picks whichever has the newest `savedAt` (via `newestState(...)`) to compare against `lastKnownSavedAt`:
+- If it changed (e.g. the file was edited by another copy of the app, or a teammate's session mirrored a newer save to the shared backup file), the user is asked to either overwrite those changes or discard local edits and load the latest version — which is also written back into `primaryPath` so the two stay in sync.
 - This is a basic last-writer-aware warning, not real merging.
+
+### Two-person workflow via a shared backup file (2026-06)
+Two people can use the app concurrently by each pointing their own `backupPath` at the *same* network file (their `primaryPath`s stay local/separate). To make that usable without manual reconnects:
+- **On launch**, `initStorage()` reads both `primaryPath` and `backupPath` and adopts whichever is newer (`newestState()`); if the backup turns out to be newest, its content is written down into the local `primaryPath` too.
+- **While running**, `checkBackupForUpdate()` polls `backupPath` every `BACKUP_POLL_MS` (20s) and also runs on window `focus`. If it finds a `savedAt` newer than `lastKnownSavedAt`, it pulls that data in automatically (`applyState` + sync down to `primaryPath`) and shows a toast — but only when there's no pending local autosave (`_autoSaveTimer`), so in-progress edits are never silently discarded. If edits are pending, the conflict is instead caught by `safeWriteFile()`'s own check on the next save.
+- This is still not real merging — last-writer-wins between whichever of primary/backup is newest, same as the original shared-drive conflict detection, just extended to cover the backup-mirror direction too.
 
 ---
 
@@ -366,6 +372,8 @@ Collapsible. Shows all historical PIs with their actual execution data.
 | `totalOverhead()` | Sum of all `overhead[i].hpd` |
 | `scheduleSave()` | Marks unsaved status, silently saves to localStorage, and (re)starts the ~1.2s debounce timer that calls `autoSaveToFile()`. |
 | `autoSaveToFile()` | Debounced auto-save target — calls `safeWriteFile()` once edits settle. |
+| `newestState(...candidates)` | Returns whichever of the given state objects (primary file / backup mirror / localStorage) has the most recent `savedAt`. |
+| `checkBackupForUpdate()` | Polled every `BACKUP_POLL_MS` (and on window focus) — pulls a newer backup-mirror save into the local primary file automatically, skipped while local edits are pending. |
 | `manualSave()` | Cancels the pending debounce and writes immediately via `safeWriteFile()`. Called by Save button or Ctrl+S. |
 | `applyState(data)` | Loads a saved state object. Includes backfill logic for older saves. Does NOT touch `viewedPIId` — caller is responsible for setting it. |
 | `initViewedPI()` | Sets `viewedPIId` to the 'current' PI (or null). Called only from `initStorage()` so that reconnect/reload mid-session does not jump tabs. |
