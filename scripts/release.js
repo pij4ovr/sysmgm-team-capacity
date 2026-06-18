@@ -13,6 +13,7 @@
 // If neither --message nor --notes-file is given, a minimal default note
 // ("Release vX.Y.Z") is used for both the commit and the GitHub release.
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const { execSync } = require('child_process');
 
@@ -51,8 +52,9 @@ fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
 console.log(`Bumped package.json version -> ${version}`);
 
 // 2. Commit + push whatever is currently pending, including the bump
+// (temp files live outside the repo so `git add -A` never picks them up)
 const commitMsg = message || `Release ${tag}`;
-const commitMsgFile = path.join(ROOT, '.release-commit-msg.tmp');
+const commitMsgFile = path.join(os.tmpdir(), `release-commit-msg-${tag}.tmp`);
 fs.writeFileSync(commitMsgFile, commitMsg + '\n');
 run('git add -A');
 let hasStagedChanges = true;
@@ -82,7 +84,7 @@ run(`git push origin ${tag}`);
 // 5. Publish the GitHub release with the .exe attached
 let releaseNotesFile = notesFile, cleanupNotes = false;
 if (!releaseNotesFile) {
-  releaseNotesFile = path.join(ROOT, '.release-notes.tmp.md');
+  releaseNotesFile = path.join(os.tmpdir(), `release-notes-${tag}.tmp.md`);
   fs.writeFileSync(releaseNotesFile, `## ${tag}\n\n${commitMsg}\n`);
   cleanupNotes = true;
 }
