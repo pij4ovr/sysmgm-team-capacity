@@ -7,7 +7,8 @@
   "scripts": {
     "start": "electron .",
     "dist": "electron-builder",
-    "icon": "node scripts/build-icon.js"
+    "icon": "node scripts/build-icon.js",
+    "release": "node scripts/release.js"
   },
   "build": {
     "appId": "com.iqsight.sysmgm-team-capacity",

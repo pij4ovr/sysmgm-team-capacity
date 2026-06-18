@@ -82,8 +82,17 @@ Two people can use the app concurrently by each pointing their own `backupPath` 
 | `preload.js` | Context-bridge: exposes a safe `window.electronAPI` (`getConfig`, `setConfig`, `pickOpenPath`, `pickSavePath`, `readFile`, `writeFile`) to the renderer. `contextIsolation: true`, `nodeIntegration: false`. |
 | `package.json` | `npm start` → `electron .` (dev run). `npm run dist` → `electron-builder`, produces a portable `.exe` under `dist/` (Windows target, no installer required). `npm run icon` → regenerates `build/icon.ico`. |
 | `scripts/build-icon.js` | Generates `build/icon.ico` from scratch (hand-rolled PNG encoder + ICO container, no image libraries) — a navy rounded square with two DEV/QA-colored bars, matching the app's own `--navy`/`--blue`/`--teal` palette. `build.win.icon` in `package.json` points at it. Re-run `npm run icon` after editing the design. |
+| `scripts/release.js` | `npm run release -- <version>` automates the full release process (see below). |
 
 To run: `npm install` once, then `npm start`. To produce a distributable: `npm run dist` (downloads Electron's prebuilt binaries on first run — needs internet access once).
+
+### Cutting a release (since v1.4.3)
+```
+npm run release -- 1.5.0
+npm run release -- 1.5.0 --message "Fix X, add Y"
+npm run release -- 1.5.0 --notes-file release-notes.md
+```
+Runs the full sequence that used to be done by hand: bump `package.json` version → `git add -A` + commit (skipped if nothing changed) → `git push` → `npm run dist` → verify the expected `.exe` exists in `dist/` → `git tag -a vX.Y.Z` + push the tag → `gh release create` with the `.exe` attached. Requires GitHub CLI (`gh`) installed and authenticated (`gh auth login`) — already set up on the machine this was built on. Without `--message`/`--notes-file`, both the commit and the release notes default to "Release vX.Y.Z".
 
 ### State object (`getState()`)
 ```json
