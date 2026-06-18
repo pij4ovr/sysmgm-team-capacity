@@ -2463,10 +2463,16 @@ function projForPI(pi) {
       }
     });
   });
+  // Use this PI's own stored ratios, not spDev()/spQa() — those just read the
+  // ratio-dev/ratio-qa DOM inputs, which only ever reflect the *viewed* PI,
+  // so every other PI in a multi-PI comparison would otherwise show the
+  // viewed PI's ratio instead of its own.
+  const devR = pi.ratios?.dev ?? spDev();
+  const qaR  = pi.ratios?.qa  ?? spQa();
   return {
     devH, qaH,
-    devSP: devH * spDev(), qaSP: qaH * spQa(),
-    devR: spDev(), qaR: spQa(),
+    devSP: devH * devR, qaSP: qaH * qaR,
+    devR, qaR,
     devCount: t.filter(m => m.role === 'Dev').length,
     qaCount:  t.filter(m => m.role === 'QA').length,
     nIters:   (pi.iterations || []).length

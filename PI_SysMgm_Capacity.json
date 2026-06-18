@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "savedAt": "2026-06-18T09:04:40.171Z",
+  "savedAt": "2026-06-18T09:27:42.814Z",
   "piList": [
     {
       "id": 18,
@@ -586,6 +586,1767 @@
     }
   ],
   "backups": [
+    {
+      "savedAt": "2026-06-18T09:22:27.506Z",
+      "piList": [
+        {
+          "id": 18,
+          "status": "current",
+          "iterations": [
+            {
+              "id": "18.1",
+              "sprint": 0,
+              "days": 15,
+              "label": "Iteration 18.1 (153)",
+              "dateStart": "2026-04-01",
+              "dateEnd": "2026-04-21",
+              "dates": "1 Apr 2026 → 21 Apr 2026",
+              "holidays": [
+                {
+                  "name": "03 Apr - Easter Friday Holiday",
+                  "days": 1
+                }
+              ],
+              "devSPexec": 47,
+              "qaSPexec": 26
+            },
+            {
+              "id": "18.2",
+              "sprint": 0,
+              "days": 15,
+              "label": "Iteration 18.2 (154)",
+              "dateStart": "2026-04-22",
+              "dateEnd": "2026-05-12",
+              "dates": "22 Apr 2026 → 12 May 2026",
+              "holidays": [
+                {
+                  "name": "1st May - Public Holiday (Portugal)",
+                  "days": 1
+                }
+              ],
+              "devSPexec": 70,
+              "qaSPexec": 24
+            },
+            {
+              "id": "18.3",
+              "sprint": 0,
+              "days": 15,
+              "label": "Iteration 18.3 (155)",
+              "dateStart": "2026-05-13",
+              "dateEnd": "2026-06-02",
+              "dates": "13 May 2026 → 2 Jun 2026",
+              "holidays": [],
+              "devSPexec": 60,
+              "qaSPexec": 38
+            },
+            {
+              "id": "18.4",
+              "sprint": 0,
+              "days": 15,
+              "label": "Iteration 18.4 (156)",
+              "dateStart": "2026-06-03",
+              "dateEnd": "2026-06-23",
+              "dates": "3 Jun 2026 → 23 Jun 2026",
+              "holidays": [
+                {
+                  "name": "4th Jun - Public Holiday",
+                  "days": 1
+                },
+                {
+                  "name": "PI#19 Planning",
+                  "days": 2
+                }
+              ],
+              "devSPexec": 46,
+              "qaSPexec": 29
+            }
+          ],
+          "actual": {
+            "devH": 530,
+            "devSPest": 201,
+            "devSPexec": null,
+            "devRatio": 0.38,
+            "qaH": 397,
+            "qaSPest": 123,
+            "qaSPexec": null,
+            "qaRatio": 0.31
+          },
+          "team": [
+            {
+              "name": "Amilcar Carvalho",
+              "role": "Dev",
+              "avail": 70,
+              "activeIter": [
+                "18.1",
+                "18.2",
+                "18.3",
+                "19.1",
+                "19.2",
+                "19.3",
+                "19.4"
+              ],
+              "daysOff": {
+                "18.3": 2,
+                "18.2": 5
+              },
+              "focusHpd": 5.516666666666667,
+              "focusHpdByIter": {
+                "18.3": 2.758
+              },
+              "notes": "Amilcar left the team on May 29th"
+            },
+            {
+              "name": "João Botelho",
+              "role": "Dev",
+              "avail": 70,
+              "activeIter": [
+                "18.2",
+                "18.3",
+                "18.4"
+              ],
+              "daysOff": {},
+              "focusHpd": 4.413333333333333,
+              "focusHpdByIter": {
+                "18.2": 2.207,
+                "18.3": 3.31
+              },
+              "notes": "João Botelho Started end of March to replace Lucas"
+            },
+            {
+              "name": "João Pires",
+              "role": "QA",
+              "avail": 25,
+              "activeIter": [
+                "18.1",
+                "18.2",
+                "18.3",
+                "18.4"
+              ],
+              "daysOff": {
+                "18.1": 14,
+                "18.2": 7,
+                "18.3": 2
+              },
+              "focusHpd": 1.1033333333333333,
+              "focusHpdByIter": {},
+              "notes": "From 1st Apr till 1st May - Pattarnety Leave"
+            },
+            {
+              "name": "Wanderson Coelho",
+              "role": "QA",
+              "avail": 100,
+              "activeIter": [
+                "18.1",
+                "18.2",
+                "18.3",
+                "18.4"
+              ],
+              "daysOff": {
+                "18.2": 2,
+                "18.3": 4
+              },
+              "focusHpd": 5.516666666666667,
+              "focusHpdByIter": {},
+              "notes": ""
+            },
+            {
+              "name": "João Oliveira",
+              "role": "Dev",
+              "focusHpd": 2.7583333333333333,
+              "activeIter": [
+                "18.4",
+                "18.3"
+              ],
+              "daysOff": {},
+              "focusHpdByIter": {
+                "18.3": 2.207,
+                "18.4": 3.31
+              },
+              "notes": "João Oliveira being added to the team"
+            }
+          ],
+          "ratios": {
+            "dev": 0.45,
+            "qa": 0.25
+          },
+          "overhead": [
+            {
+              "name": "Daily Meeting",
+              "hpd": 0.25
+            },
+            {
+              "name": "Sprint Planning Pt 1",
+              "hpd": 0.1
+            },
+            {
+              "name": "Sprint Planning Pt 2",
+              "hpd": 0.06666666666666667
+            },
+            {
+              "name": "Sprint Review",
+              "hpd": 0.1
+            },
+            {
+              "name": "Sprint Retrospective",
+              "hpd": 0.1
+            },
+            {
+              "name": "SysMgm Retro/Review",
+              "hpd": 0.06666666666666667
+            },
+            {
+              "name": "SysMgm Refinement",
+              "hpd": 0.1
+            },
+            {
+              "name": "Internal Activities",
+              "hpd": 1
+            },
+            {
+              "name": "Breaks",
+              "hpd": 0.7
+            }
+          ]
+        },
+        {
+          "id": 19,
+          "status": "future",
+          "iterations": [
+            {
+              "id": "19.1",
+              "sprint": 0,
+              "days": 15,
+              "label": "Iteration 19.1 (157)",
+              "dateStart": "2026-06-24",
+              "dateEnd": "2026-07-14",
+              "dates": "24 Jun 2026 → 14 Jul 2026",
+              "holidays": [],
+              "devSPexec": null,
+              "qaSPexec": null
+            },
+            {
+              "id": "19.2",
+              "sprint": 0,
+              "days": 15,
+              "label": "Iteration 19.1 (158)",
+              "dateStart": "2026-07-15",
+              "dateEnd": "2026-08-04",
+              "dates": "15 Jul 2026 → 4 Aug 2026",
+              "holidays": [],
+              "devSPexec": null,
+              "qaSPexec": null
+            },
+            {
+              "id": "19.3",
+              "sprint": 0,
+              "days": 15,
+              "label": "Iteration 19.1 (159)",
+              "dateStart": "2026-08-05",
+              "dateEnd": "2026-08-25",
+              "dates": "5 Aug 2026 → 25 Aug 2026",
+              "holidays": [],
+              "devSPexec": null,
+              "qaSPexec": null
+            },
+            {
+              "id": "19.4",
+              "sprint": 0,
+              "days": 15,
+              "label": "Iteration 19.1 (160)",
+              "dateStart": "2026-08-26",
+              "dateEnd": "2026-09-15",
+              "dates": "26 Aug 2026 → 15 Sept 2026",
+              "holidays": [],
+              "devSPexec": null,
+              "qaSPexec": null
+            },
+            {
+              "id": "19.5",
+              "sprint": 0,
+              "days": 15,
+              "label": "Iteration 19.1 (161)",
+              "dateStart": "2026-09-16",
+              "dateEnd": "2026-10-06",
+              "dates": "16 Sept 2026 → 6 Oct 2026",
+              "holidays": [
+                {
+                  "name": "5 Oct - Public Holiday (Portugal)",
+                  "days": 1
+                },
+                {
+                  "name": "PI#20 Planning",
+                  "days": 2
+                }
+              ],
+              "devSPexec": null,
+              "qaSPexec": null
+            }
+          ],
+          "actual": {
+            "devH": 463,
+            "devSPest": 176,
+            "devSPexec": null,
+            "devRatio": 0.38,
+            "qaH": 519,
+            "qaSPest": 161,
+            "qaSPexec": null,
+            "qaRatio": 0.31
+          },
+          "team": [
+            {
+              "name": "João Botelho",
+              "role": "Dev",
+              "avail": 70,
+              "activeIter": [
+                "19.1",
+                "19.2",
+                "19.3",
+                "19.4",
+                "19.5"
+              ],
+              "daysOff": {
+                "19.3": 4,
+                "19.4": 1
+              },
+              "focusHpd": 4.413333333333333,
+              "focusHpdByIter": {},
+              "notes": "80% due to knowledge ramp-up"
+            },
+            {
+              "name": "João Oliveira",
+              "role": "Dev",
+              "avail": 70,
+              "activeIter": [
+                "19.1",
+                "19.2",
+                "19.3"
+              ],
+              "daysOff": {
+                "19.2": 10
+              },
+              "focusHpd": 4.413333333333333,
+              "focusHpdByIter": {},
+              "notes": "80% due to knowledge ramp-up"
+            },
+            {
+              "name": "João Pires",
+              "role": "QA",
+              "avail": 25,
+              "activeIter": [
+                "19.1",
+                "19.2",
+                "19.3",
+                "19.4",
+                "19.5"
+              ],
+              "daysOff": {
+                "19.2": 2,
+                "19.3": 13
+              },
+              "focusHpd": 1.1033333333333333,
+              "focusHpdByIter": {
+                "19.4": 3.31,
+                "19.5": 3.31
+              },
+              "notes": "60% on last 2 iterations to support QA with RC validation activities. Risk on last iteraiton with PI20 planning."
+            },
+            {
+              "name": "Wanderson Coelho",
+              "role": "QA",
+              "avail": 100,
+              "activeIter": [
+                "19.1",
+                "19.2",
+                "19.3",
+                "19.4",
+                "19.5"
+              ],
+              "daysOff": {
+                "19.2": 4
+              },
+              "focusHpd": 5.516666666666667,
+              "focusHpdByIter": {},
+              "notes": ""
+            }
+          ],
+          "ratios": {
+            "dev": 0.38,
+            "qa": 0.31
+          },
+          "overhead": [
+            {
+              "name": "Daily Meeting",
+              "hpd": 0.25
+            },
+            {
+              "name": "Sprint Planning Pt 1",
+              "hpd": 0.1
+            },
+            {
+              "name": "Sprint Planning Pt 2",
+              "hpd": 0.06666666666666667
+            },
+            {
+              "name": "Sprint Review",
+              "hpd": 0.1
+            },
+            {
+              "name": "Sprint Retrospective",
+              "hpd": 0.1
+            },
+            {
+              "name": "SysMgm Retro/Review",
+              "hpd": 0.06666666666666667
+            },
+            {
+              "name": "SysMgm Refinement",
+              "hpd": 0.1
+            },
+            {
+              "name": "Internal Activities",
+              "hpd": 1
+            },
+            {
+              "name": "Breaks",
+              "hpd": 0.7
+            }
+          ]
+        },
+        {
+          "id": 20,
+          "status": "future",
+          "iterations": [
+            {
+              "id": "20.1",
+              "sprint": 0,
+              "days": 15,
+              "label": "20.1",
+              "dateStart": "2026-10-07",
+              "dateEnd": "2026-10-27",
+              "dates": "7 Oct 2026 → 27 Oct 2026",
+              "holidays": [],
+              "devSPexec": null,
+              "qaSPexec": null
+            },
+            {
+              "id": "20.2",
+              "sprint": 0,
+              "days": 15,
+              "label": "20.2",
+              "dateStart": "2026-10-28",
+              "dateEnd": "2026-11-17",
+              "dates": "28 Oct 2026 → 17 Nov 2026",
+              "holidays": [],
+              "devSPexec": null,
+              "qaSPexec": null
+            },
+            {
+              "id": "20.3",
+              "sprint": 0,
+              "days": 15,
+              "label": "20.3",
+              "dateStart": "2026-11-18",
+              "dateEnd": "2026-12-08",
+              "dates": "18 Nov 2026 → 8 Dec 2026",
+              "holidays": [],
+              "devSPexec": null,
+              "qaSPexec": null
+            },
+            {
+              "id": "20.4",
+              "sprint": 0,
+              "days": 15,
+              "label": "20.4",
+              "dateStart": "2026-12-09",
+              "dateEnd": "2026-12-29",
+              "dates": "9 Dec 2026 → 29 Dec 2026",
+              "holidays": [],
+              "devSPexec": null,
+              "qaSPexec": null
+            }
+          ],
+          "actual": null,
+          "team": [
+            {
+              "name": "João Botelho",
+              "role": "Dev",
+              "avail": 70,
+              "activeIter": [
+                "20.1",
+                "20.2",
+                "20.3",
+                "20.4"
+              ],
+              "daysOff": {},
+              "focusHpd": 4.413333333333333,
+              "focusHpdByIter": {},
+              "notes": ""
+            },
+            {
+              "name": "João Oliveira",
+              "role": "Dev",
+              "avail": 70,
+              "activeIter": [
+                "20.1",
+                "20.2",
+                "20.3",
+                "20.4"
+              ],
+              "daysOff": {},
+              "focusHpd": 4.413333333333333,
+              "focusHpdByIter": {},
+              "notes": ""
+            },
+            {
+              "name": "João Pires",
+              "role": "QA",
+              "avail": 25,
+              "activeIter": [
+                "20.1",
+                "20.2",
+                "20.3",
+                "20.4"
+              ],
+              "daysOff": {},
+              "focusHpd": 1.1033333333333333,
+              "focusHpdByIter": {},
+              "notes": ""
+            },
+            {
+              "name": "Wanderson Coelho",
+              "role": "QA",
+              "avail": 100,
+              "activeIter": [
+                "20.1",
+                "20.2",
+                "20.3",
+                "20.4"
+              ],
+              "daysOff": {},
+              "focusHpd": 5.516666666666667,
+              "focusHpdByIter": {},
+              "notes": ""
+            }
+          ],
+          "ratios": {
+            "dev": 0.38,
+            "qa": 0.31
+          },
+          "overhead": [
+            {
+              "name": "Daily Meeting",
+              "hpd": 0.25
+            },
+            {
+              "name": "Sprint Planning Pt 1",
+              "hpd": 0.1
+            },
+            {
+              "name": "Sprint Planning Pt 2",
+              "hpd": 0.06666666666666667
+            },
+            {
+              "name": "Sprint Review",
+              "hpd": 0.1
+            },
+            {
+              "name": "Sprint Retrospective",
+              "hpd": 0.1
+            },
+            {
+              "name": "SysMgm Retro/Review",
+              "hpd": 0.06666666666666667
+            },
+            {
+              "name": "SysMgm Refinement",
+              "hpd": 0.1
+            },
+            {
+              "name": "Internal Activities",
+              "hpd": 1
+            },
+            {
+              "name": "Breaks",
+              "hpd": 0.7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "savedAt": "2026-06-18T09:22:23.526Z",
+      "piList": [
+        {
+          "id": 18,
+          "status": "current",
+          "iterations": [
+            {
+              "id": "18.1",
+              "sprint": 0,
+              "days": 15,
+              "label": "Iteration 18.1 (153)",
+              "dateStart": "2026-04-01",
+              "dateEnd": "2026-04-21",
+              "dates": "1 Apr 2026 → 21 Apr 2026",
+              "holidays": [
+                {
+                  "name": "03 Apr - Easter Friday Holiday",
+                  "days": 1
+                }
+              ],
+              "devSPexec": 47,
+              "qaSPexec": 26
+            },
+            {
+              "id": "18.2",
+              "sprint": 0,
+              "days": 15,
+              "label": "Iteration 18.2 (154)",
+              "dateStart": "2026-04-22",
+              "dateEnd": "2026-05-12",
+              "dates": "22 Apr 2026 → 12 May 2026",
+              "holidays": [
+                {
+                  "name": "1st May - Public Holiday (Portugal)",
+                  "days": 1
+                }
+              ],
+              "devSPexec": 70,
+              "qaSPexec": 24
+            },
+            {
+              "id": "18.3",
+              "sprint": 0,
+              "days": 15,
+              "label": "Iteration 18.3 (155)",
+              "dateStart": "2026-05-13",
+              "dateEnd": "2026-06-02",
+              "dates": "13 May 2026 → 2 Jun 2026",
+              "holidays": [],
+              "devSPexec": 60,
+              "qaSPexec": 38
+            },
+            {
+              "id": "18.4",
+              "sprint": 0,
+              "days": 15,
+              "label": "Iteration 18.4 (156)",
+              "dateStart": "2026-06-03",
+              "dateEnd": "2026-06-23",
+              "dates": "3 Jun 2026 → 23 Jun 2026",
+              "holidays": [
+                {
+                  "name": "4th Jun - Public Holiday",
+                  "days": 1
+                },
+                {
+                  "name": "PI#19 Planning",
+                  "days": 2
+                }
+              ],
+              "devSPexec": 46,
+              "qaSPexec": 29
+            }
+          ],
+          "actual": {
+            "devH": 530,
+            "devSPest": 201,
+            "devSPexec": null,
+            "devRatio": 0.38,
+            "qaH": 397,
+            "qaSPest": 123,
+            "qaSPexec": null,
+            "qaRatio": 0.31
+          },
+          "team": [
+            {
+              "name": "Amilcar Carvalho",
+              "role": "Dev",
+              "avail": 70,
+              "activeIter": [
+                "18.1",
+                "18.2",
+                "18.3",
+                "19.1",
+                "19.2",
+                "19.3",
+                "19.4"
+              ],
+              "daysOff": {
+                "18.3": 2,
+                "18.2": 5
+              },
+              "focusHpd": 5.516666666666667,
+              "focusHpdByIter": {
+                "18.3": 2.758
+              },
+              "notes": "Amilcar left the team on May 29th"
+            },
+            {
+              "name": "João Botelho",
+              "role": "Dev",
+              "avail": 70,
+              "activeIter": [
+                "18.2",
+                "18.3",
+                "18.4"
+              ],
+              "daysOff": {},
+              "focusHpd": 4.413333333333333,
+              "focusHpdByIter": {
+                "18.2": 2.207,
+                "18.3": 3.31
+              },
+              "notes": "João Botelho Started end of March to replace Lucas"
+            },
+            {
+              "name": "João Pires",
+              "role": "QA",
+              "avail": 25,
+              "activeIter": [
+                "18.1",
+                "18.2",
+                "18.3",
+                "18.4"
+              ],
+              "daysOff": {
+                "18.1": 14,
+                "18.2": 7,
+                "18.3": 2
+              },
+              "focusHpd": 1.1033333333333333,
+              "focusHpdByIter": {},
+              "notes": "From 1st Apr till 1st May - Pattarnety Leave"
+            },
+            {
+              "name": "Wanderson Coelho",
+              "role": "QA",
+              "avail": 100,
+              "activeIter": [
+                "18.1",
+                "18.2",
+                "18.3",
+                "18.4"
+              ],
+              "daysOff": {
+                "18.2": 2,
+                "18.3": 4
+              },
+              "focusHpd": 5.516666666666667,
+              "focusHpdByIter": {},
+              "notes": ""
+            },
+            {
+              "name": "João Oliveira",
+              "role": "Dev",
+              "focusHpd": 2.7583333333333333,
+              "activeIter": [
+                "18.4",
+                "18.3"
+              ],
+              "daysOff": {},
+              "focusHpdByIter": {
+                "18.3": 2.207,
+                "18.4": 3.31
+              },
+              "notes": "João Oliveira being added to the team"
+            }
+          ],
+          "ratios": {
+            "dev": 0.45,
+            "qa": 0.25
+          },
+          "overhead": [
+            {
+              "name": "Daily Meeting",
+              "hpd": 0.25
+            },
+            {
+              "name": "Sprint Planning Pt 1",
+              "hpd": 0.1
+            },
+            {
+              "name": "Sprint Planning Pt 2",
+              "hpd": 0.06666666666666667
+            },
+            {
+              "name": "Sprint Review",
+              "hpd": 0.1
+            },
+            {
+              "name": "Sprint Retrospective",
+              "hpd": 0.1
+            },
+            {
+              "name": "SysMgm Retro/Review",
+              "hpd": 0.06666666666666667
+            },
+            {
+              "name": "SysMgm Refinement",
+              "hpd": 0.1
+            },
+            {
+              "name": "Internal Activities",
+              "hpd": 1
+            },
+            {
+              "name": "Breaks",
+              "hpd": 0.7
+            }
+          ]
+        },
+        {
+          "id": 19,
+          "status": "future",
+          "iterations": [
+            {
+              "id": "19.1",
+              "sprint": 0,
+              "days": 15,
+              "label": "Iteration 19.1 (157)",
+              "dateStart": "2026-06-24",
+              "dateEnd": "2026-07-14",
+              "dates": "24 Jun 2026 → 14 Jul 2026",
+              "holidays": [],
+              "devSPexec": null,
+              "qaSPexec": null
+            },
+            {
+              "id": "19.2",
+              "sprint": 0,
+              "days": 15,
+              "label": "Iteration 19.1 (158)",
+              "dateStart": "2026-07-15",
+              "dateEnd": "2026-08-04",
+              "dates": "15 Jul 2026 → 4 Aug 2026",
+              "holidays": [],
+              "devSPexec": null,
+              "qaSPexec": null
+            },
+            {
+              "id": "19.3",
+              "sprint": 0,
+              "days": 15,
+              "label": "Iteration 19.1 (159)",
+              "dateStart": "2026-08-05",
+              "dateEnd": "2026-08-25",
+              "dates": "5 Aug 2026 → 25 Aug 2026",
+              "holidays": [],
+              "devSPexec": null,
+              "qaSPexec": null
+            },
+            {
+              "id": "19.4",
+              "sprint": 0,
+              "days": 15,
+              "label": "Iteration 19.1 (160)",
+              "dateStart": "2026-08-26",
+              "dateEnd": "2026-09-15",
+              "dates": "26 Aug 2026 → 15 Sept 2026",
+              "holidays": [],
+              "devSPexec": null,
+              "qaSPexec": null
+            },
+            {
+              "id": "19.5",
+              "sprint": 0,
+              "days": 15,
+              "label": "Iteration 19.1 (161)",
+              "dateStart": "2026-09-16",
+              "dateEnd": "2026-10-06",
+              "dates": "16 Sept 2026 → 6 Oct 2026",
+              "holidays": [
+                {
+                  "name": "5 Oct - Public Holiday (Portugal)",
+                  "days": 1
+                },
+                {
+                  "name": "PI#20 Planning",
+                  "days": 2
+                }
+              ],
+              "devSPexec": null,
+              "qaSPexec": null
+            }
+          ],
+          "actual": {
+            "devH": 463,
+            "devSPest": 176,
+            "devSPexec": null,
+            "devRatio": 0.38,
+            "qaH": 519,
+            "qaSPest": 161,
+            "qaSPexec": null,
+            "qaRatio": 0.31
+          },
+          "team": [
+            {
+              "name": "João Botelho",
+              "role": "Dev",
+              "avail": 70,
+              "activeIter": [
+                "19.1",
+                "19.2",
+                "19.3",
+                "19.4",
+                "19.5"
+              ],
+              "daysOff": {
+                "19.3": 4,
+                "19.4": 1
+              },
+              "focusHpd": 4.413333333333333,
+              "focusHpdByIter": {},
+              "notes": "80% due to knowledge ramp-up"
+            },
+            {
+              "name": "João Oliveira",
+              "role": "Dev",
+              "avail": 70,
+              "activeIter": [
+                "19.1",
+                "19.2",
+                "19.3"
+              ],
+              "daysOff": {
+                "19.2": 10
+              },
+              "focusHpd": 4.413333333333333,
+              "focusHpdByIter": {},
+              "notes": "80% due to knowledge ramp-up"
+            },
+            {
+              "name": "João Pires",
+              "role": "QA",
+              "avail": 25,
+              "activeIter": [
+                "19.1",
+                "19.2",
+                "19.3",
+                "19.4",
+                "19.5"
+              ],
+              "daysOff": {
+                "19.2": 2,
+                "19.3": 13
+              },
+              "focusHpd": 1.1033333333333333,
+              "focusHpdByIter": {
+                "19.4": 3.31,
+                "19.5": 3.31
+              },
+              "notes": "60% on last 2 iterations to support QA with RC validation activities. Risk on last iteraiton with PI20 planning."
+            },
+            {
+              "name": "Wanderson Coelho",
+              "role": "QA",
+              "avail": 100,
+              "activeIter": [
+                "19.1",
+                "19.2",
+                "19.3",
+                "19.4",
+                "19.5"
+              ],
+              "daysOff": {
+                "19.2": 4
+              },
+              "focusHpd": 5.516666666666667,
+              "focusHpdByIter": {},
+              "notes": ""
+            }
+          ],
+          "ratios": {
+            "dev": 0.38,
+            "qa": 0.31
+          },
+          "overhead": [
+            {
+              "name": "Daily Meeting",
+              "hpd": 0.25
+            },
+            {
+              "name": "Sprint Planning Pt 1",
+              "hpd": 0.1
+            },
+            {
+              "name": "Sprint Planning Pt 2",
+              "hpd": 0.06666666666666667
+            },
+            {
+              "name": "Sprint Review",
+              "hpd": 0.1
+            },
+            {
+              "name": "Sprint Retrospective",
+              "hpd": 0.1
+            },
+            {
+              "name": "SysMgm Retro/Review",
+              "hpd": 0.06666666666666667
+            },
+            {
+              "name": "SysMgm Refinement",
+              "hpd": 0.1
+            },
+            {
+              "name": "Internal Activities",
+              "hpd": 1
+            },
+            {
+              "name": "Breaks",
+              "hpd": 0.7
+            }
+          ]
+        },
+        {
+          "id": 20,
+          "status": "future",
+          "iterations": [
+            {
+              "id": "20.1",
+              "sprint": 0,
+              "days": 15,
+              "label": "20.1",
+              "dateStart": "2026-10-07",
+              "dateEnd": "2026-10-27",
+              "dates": "7 Oct 2026 → 27 Oct 2026",
+              "holidays": [],
+              "devSPexec": null,
+              "qaSPexec": null
+            },
+            {
+              "id": "20.2",
+              "sprint": 0,
+              "days": 15,
+              "label": "20.2",
+              "dateStart": "2026-10-28",
+              "dateEnd": "2026-11-17",
+              "dates": "28 Oct 2026 → 17 Nov 2026",
+              "holidays": [],
+              "devSPexec": null,
+              "qaSPexec": null
+            },
+            {
+              "id": "20.3",
+              "sprint": 0,
+              "days": 15,
+              "label": "20.3",
+              "dateStart": "2026-11-18",
+              "dateEnd": "2026-12-08",
+              "dates": "18 Nov 2026 → 8 Dec 2026",
+              "holidays": [],
+              "devSPexec": null,
+              "qaSPexec": null
+            },
+            {
+              "id": "20.4",
+              "sprint": 0,
+              "days": 15,
+              "label": "20.4",
+              "dateStart": "2026-12-09",
+              "dateEnd": "2026-12-29",
+              "dates": "9 Dec 2026 → 29 Dec 2026",
+              "holidays": [],
+              "devSPexec": null,
+              "qaSPexec": null
+            }
+          ],
+          "actual": null,
+          "team": [
+            {
+              "name": "João Botelho",
+              "role": "Dev",
+              "avail": 70,
+              "activeIter": [
+                "20.1",
+                "20.2",
+                "20.3",
+                "20.4"
+              ],
+              "daysOff": {},
+              "focusHpd": 4.413333333333333,
+              "focusHpdByIter": {},
+              "notes": ""
+            },
+            {
+              "name": "João Oliveira",
+              "role": "Dev",
+              "avail": 70,
+              "activeIter": [
+                "20.1",
+                "20.2",
+                "20.3",
+                "20.4"
+              ],
+              "daysOff": {},
+              "focusHpd": 4.413333333333333,
+              "focusHpdByIter": {},
+              "notes": ""
+            },
+            {
+              "name": "João Pires",
+              "role": "QA",
+              "avail": 25,
+              "activeIter": [
+                "20.1",
+                "20.2",
+                "20.3",
+                "20.4"
+              ],
+              "daysOff": {},
+              "focusHpd": 1.1033333333333333,
+              "focusHpdByIter": {},
+              "notes": ""
+            },
+            {
+              "name": "Wanderson Coelho",
+              "role": "QA",
+              "avail": 100,
+              "activeIter": [
+                "20.1",
+                "20.2",
+                "20.3",
+                "20.4"
+              ],
+              "daysOff": {},
+              "focusHpd": 5.516666666666667,
+              "focusHpdByIter": {},
+              "notes": ""
+            }
+          ],
+          "ratios": {
+            "dev": 0.38,
+            "qa": 0.31
+          },
+          "overhead": [
+            {
+              "name": "Daily Meeting",
+              "hpd": 0.25
+            },
+            {
+              "name": "Sprint Planning Pt 1",
+              "hpd": 0.1
+            },
+            {
+              "name": "Sprint Planning Pt 2",
+              "hpd": 0.06666666666666667
+            },
+            {
+              "name": "Sprint Review",
+              "hpd": 0.1
+            },
+            {
+              "name": "Sprint Retrospective",
+              "hpd": 0.1
+            },
+            {
+              "name": "SysMgm Retro/Review",
+              "hpd": 0.06666666666666667
+            },
+            {
+              "name": "SysMgm Refinement",
+              "hpd": 0.1
+            },
+            {
+              "name": "Internal Activities",
+              "hpd": 1
+            },
+            {
+              "name": "Breaks",
+              "hpd": 0.7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "savedAt": "2026-06-18T09:04:40.171Z",
+      "piList": [
+        {
+          "id": 18,
+          "status": "current",
+          "iterations": [
+            {
+              "id": "18.1",
+              "sprint": 0,
+              "days": 15,
+              "label": "Iteration 18.1 (153)",
+              "dateStart": "2026-04-01",
+              "dateEnd": "2026-04-21",
+              "dates": "1 Apr 2026 → 21 Apr 2026",
+              "holidays": [
+                {
+                  "name": "03 Apr - Easter Friday Holiday",
+                  "days": 1
+                }
+              ],
+              "devSPexec": 47,
+              "qaSPexec": 26
+            },
+            {
+              "id": "18.2",
+              "sprint": 0,
+              "days": 15,
+              "label": "Iteration 18.2 (154)",
+              "dateStart": "2026-04-22",
+              "dateEnd": "2026-05-12",
+              "dates": "22 Apr 2026 → 12 May 2026",
+              "holidays": [
+                {
+                  "name": "1st May - Public Holiday (Portugal)",
+                  "days": 1
+                }
+              ],
+              "devSPexec": 70,
+              "qaSPexec": 24
+            },
+            {
+              "id": "18.3",
+              "sprint": 0,
+              "days": 15,
+              "label": "Iteration 18.3 (155)",
+              "dateStart": "2026-05-13",
+              "dateEnd": "2026-06-02",
+              "dates": "13 May 2026 → 2 Jun 2026",
+              "holidays": [],
+              "devSPexec": 60,
+              "qaSPexec": 38
+            },
+            {
+              "id": "18.4",
+              "sprint": 0,
+              "days": 15,
+              "label": "Iteration 18.4 (156)",
+              "dateStart": "2026-06-03",
+              "dateEnd": "2026-06-23",
+              "dates": "3 Jun 2026 → 23 Jun 2026",
+              "holidays": [
+                {
+                  "name": "4th Jun - Public Holiday",
+                  "days": 1
+                },
+                {
+                  "name": "PI#19 Planning",
+                  "days": 2
+                }
+              ],
+              "devSPexec": 46,
+              "qaSPexec": 29
+            }
+          ],
+          "actual": {
+            "devH": 530,
+            "devSPest": 201,
+            "devSPexec": null,
+            "devRatio": 0.38,
+            "qaH": 397,
+            "qaSPest": 123,
+            "qaSPexec": null,
+            "qaRatio": 0.31
+          },
+          "team": [
+            {
+              "name": "Amilcar Carvalho",
+              "role": "Dev",
+              "avail": 70,
+              "activeIter": [
+                "18.1",
+                "18.2",
+                "18.3",
+                "19.1",
+                "19.2",
+                "19.3",
+                "19.4"
+              ],
+              "daysOff": {
+                "18.3": 2,
+                "18.2": 5
+              },
+              "focusHpd": 5.516666666666667,
+              "focusHpdByIter": {
+                "18.3": 2.758
+              },
+              "notes": "Amilcar left the team on May 29th"
+            },
+            {
+              "name": "João Botelho",
+              "role": "Dev",
+              "avail": 70,
+              "activeIter": [
+                "18.2",
+                "18.3",
+                "18.4"
+              ],
+              "daysOff": {},
+              "focusHpd": 4.413333333333333,
+              "focusHpdByIter": {
+                "18.2": 2.207,
+                "18.3": 3.31
+              },
+              "notes": "João Botelho Started end of March to replace Lucas"
+            },
+            {
+              "name": "João Pires",
+              "role": "QA",
+              "avail": 25,
+              "activeIter": [
+                "18.1",
+                "18.2",
+                "18.3",
+                "18.4"
+              ],
+              "daysOff": {
+                "18.1": 14,
+                "18.2": 7,
+                "18.3": 2
+              },
+              "focusHpd": 1.1033333333333333,
+              "focusHpdByIter": {},
+              "notes": "From 1st Apr till 1st May - Pattarnety Leave"
+            },
+            {
+              "name": "Wanderson Coelho",
+              "role": "QA",
+              "avail": 100,
+              "activeIter": [
+                "18.1",
+                "18.2",
+                "18.3",
+                "18.4"
+              ],
+              "daysOff": {
+                "18.2": 2,
+                "18.3": 4
+              },
+              "focusHpd": 5.516666666666667,
+              "focusHpdByIter": {},
+              "notes": ""
+            },
+            {
+              "name": "João Oliveira",
+              "role": "Dev",
+              "focusHpd": 2.7583333333333333,
+              "activeIter": [
+                "18.4",
+                "18.3"
+              ],
+              "daysOff": {},
+              "focusHpdByIter": {
+                "18.3": 2.207,
+                "18.4": 3.31
+              },
+              "notes": "João Oliveira being added to the team"
+            }
+          ],
+          "ratios": {
+            "dev": 0.45,
+            "qa": 0.25
+          },
+          "overhead": [
+            {
+              "name": "Daily Meeting",
+              "hpd": 0.25
+            },
+            {
+              "name": "Sprint Planning Pt 1",
+              "hpd": 0.1
+            },
+            {
+              "name": "Sprint Planning Pt 2",
+              "hpd": 0.06666666666666667
+            },
+            {
+              "name": "Sprint Review",
+              "hpd": 0.1
+            },
+            {
+              "name": "Sprint Retrospective",
+              "hpd": 0.1
+            },
+            {
+              "name": "SysMgm Retro/Review",
+              "hpd": 0.06666666666666667
+            },
+            {
+              "name": "SysMgm Refinement",
+              "hpd": 0.1
+            },
+            {
+              "name": "Internal Activities",
+              "hpd": 1
+            },
+            {
+              "name": "Breaks",
+              "hpd": 0.7
+            }
+          ]
+        },
+        {
+          "id": 19,
+          "status": "future",
+          "iterations": [
+            {
+              "id": "19.1",
+              "sprint": 0,
+              "days": 15,
+              "label": "Iteration 19.1 (157)",
+              "dateStart": "2026-06-24",
+              "dateEnd": "2026-07-14",
+              "dates": "24 Jun 2026 → 14 Jul 2026",
+              "holidays": [],
+              "devSPexec": null,
+              "qaSPexec": null
+            },
+            {
+              "id": "19.2",
+              "sprint": 0,
+              "days": 15,
+              "label": "Iteration 19.1 (158)",
+              "dateStart": "2026-07-15",
+              "dateEnd": "2026-08-04",
+              "dates": "15 Jul 2026 → 4 Aug 2026",
+              "holidays": [],
+              "devSPexec": null,
+              "qaSPexec": null
+            },
+            {
+              "id": "19.3",
+              "sprint": 0,
+              "days": 15,
+              "label": "Iteration 19.1 (159)",
+              "dateStart": "2026-08-05",
+              "dateEnd": "2026-08-25",
+              "dates": "5 Aug 2026 → 25 Aug 2026",
+              "holidays": [],
+              "devSPexec": null,
+              "qaSPexec": null
+            },
+            {
+              "id": "19.4",
+              "sprint": 0,
+              "days": 15,
+              "label": "Iteration 19.1 (160)",
+              "dateStart": "2026-08-26",
+              "dateEnd": "2026-09-15",
+              "dates": "26 Aug 2026 → 15 Sept 2026",
+              "holidays": [],
+              "devSPexec": null,
+              "qaSPexec": null
+            },
+            {
+              "id": "19.5",
+              "sprint": 0,
+              "days": 15,
+              "label": "Iteration 19.1 (161)",
+              "dateStart": "2026-09-16",
+              "dateEnd": "2026-10-06",
+              "dates": "16 Sept 2026 → 6 Oct 2026",
+              "holidays": [
+                {
+                  "name": "5 Oct - Public Holiday (Portugal)",
+                  "days": 1
+                },
+                {
+                  "name": "PI#20 Planning",
+                  "days": 2
+                }
+              ],
+              "devSPexec": null,
+              "qaSPexec": null
+            }
+          ],
+          "actual": {
+            "devH": 463,
+            "devSPest": 176,
+            "devSPexec": null,
+            "devRatio": 0.38,
+            "qaH": 519,
+            "qaSPest": 161,
+            "qaSPexec": null,
+            "qaRatio": 0.31
+          },
+          "team": [
+            {
+              "name": "João Botelho",
+              "role": "Dev",
+              "avail": 70,
+              "activeIter": [
+                "19.1",
+                "19.2",
+                "19.3",
+                "19.4",
+                "19.5"
+              ],
+              "daysOff": {
+                "19.3": 4,
+                "19.4": 1
+              },
+              "focusHpd": 4.413333333333333,
+              "focusHpdByIter": {},
+              "notes": "80% due to knowledge ramp-up"
+            },
+            {
+              "name": "João Oliveira",
+              "role": "Dev",
+              "avail": 70,
+              "activeIter": [
+                "19.1",
+                "19.2",
+                "19.3"
+              ],
+              "daysOff": {
+                "19.2": 10
+              },
+              "focusHpd": 4.413333333333333,
+              "focusHpdByIter": {},
+              "notes": "80% due to knowledge ramp-up"
+            },
+            {
+              "name": "João Pires",
+              "role": "QA",
+              "avail": 25,
+              "activeIter": [
+                "19.1",
+                "19.2",
+                "19.3",
+                "19.4",
+                "19.5"
+              ],
+              "daysOff": {
+                "19.2": 2,
+                "19.3": 13
+              },
+              "focusHpd": 1.1033333333333333,
+              "focusHpdByIter": {
+                "19.4": 3.31,
+                "19.5": 3.31
+              },
+              "notes": "60% on last 2 iterations to support QA with RC validation activities. Risk on last iteraiton with PI20 planning."
+            },
+            {
+              "name": "Wanderson Coelho",
+              "role": "QA",
+              "avail": 100,
+              "activeIter": [
+                "19.1",
+                "19.2",
+                "19.3",
+                "19.4",
+                "19.5"
+              ],
+              "daysOff": {
+                "19.2": 4
+              },
+              "focusHpd": 5.516666666666667,
+              "focusHpdByIter": {},
+              "notes": ""
+            }
+          ],
+          "ratios": {
+            "dev": 0.38,
+            "qa": 0.31
+          },
+          "overhead": [
+            {
+              "name": "Daily Meeting",
+              "hpd": 0.25
+            },
+            {
+              "name": "Sprint Planning Pt 1",
+              "hpd": 0.1
+            },
+            {
+              "name": "Sprint Planning Pt 2",
+              "hpd": 0.06666666666666667
+            },
+            {
+              "name": "Sprint Review",
+              "hpd": 0.1
+            },
+            {
+              "name": "Sprint Retrospective",
+              "hpd": 0.1
+            },
+            {
+              "name": "SysMgm Retro/Review",
+              "hpd": 0.06666666666666667
+            },
+            {
+              "name": "SysMgm Refinement",
+              "hpd": 0.1
+            },
+            {
+              "name": "Internal Activities",
+              "hpd": 1
+            },
+            {
+              "name": "Breaks",
+              "hpd": 0.7
+            }
+          ]
+        },
+        {
+          "id": 20,
+          "status": "future",
+          "iterations": [
+            {
+              "id": "20.1",
+              "sprint": 0,
+              "days": 15,
+              "label": "20.1",
+              "dateStart": "2026-10-07",
+              "dateEnd": "2026-10-27",
+              "dates": "7 Oct 2026 → 27 Oct 2026",
+              "holidays": [],
+              "devSPexec": null,
+              "qaSPexec": null
+            },
+            {
+              "id": "20.2",
+              "sprint": 0,
+              "days": 15,
+              "label": "20.2",
+              "dateStart": "2026-10-28",
+              "dateEnd": "2026-11-17",
+              "dates": "28 Oct 2026 → 17 Nov 2026",
+              "holidays": [],
+              "devSPexec": null,
+              "qaSPexec": null
+            },
+            {
+              "id": "20.3",
+              "sprint": 0,
+              "days": 15,
+              "label": "20.3",
+              "dateStart": "2026-11-18",
+              "dateEnd": "2026-12-08",
+              "dates": "18 Nov 2026 → 8 Dec 2026",
+              "holidays": [],
+              "devSPexec": null,
+              "qaSPexec": null
+            },
+            {
+              "id": "20.4",
+              "sprint": 0,
+              "days": 15,
+              "label": "20.4",
+              "dateStart": "2026-12-09",
+              "dateEnd": "2026-12-29",
+              "dates": "9 Dec 2026 → 29 Dec 2026",
+              "holidays": [],
+              "devSPexec": null,
+              "qaSPexec": null
+            }
+          ],
+          "actual": null,
+          "team": [
+            {
+              "name": "João Botelho",
+              "role": "Dev",
+              "avail": 70,
+              "activeIter": [
+                "20.1",
+                "20.2",
+                "20.3",
+                "20.4"
+              ],
+              "daysOff": {},
+              "focusHpd": 4.413333333333333,
+              "focusHpdByIter": {},
+              "notes": ""
+            },
+            {
+              "name": "João Oliveira",
+              "role": "Dev",
+              "avail": 70,
+              "activeIter": [
+                "20.1",
+                "20.2",
+                "20.3",
+                "20.4"
+              ],
+              "daysOff": {},
+              "focusHpd": 4.413333333333333,
+              "focusHpdByIter": {},
+              "notes": ""
+            },
+            {
+              "name": "João Pires",
+              "role": "QA",
+              "avail": 25,
+              "activeIter": [
+                "20.1",
+                "20.2",
+                "20.3",
+                "20.4"
+              ],
+              "daysOff": {},
+              "focusHpd": 1.1033333333333333,
+              "focusHpdByIter": {},
+              "notes": ""
+            },
+            {
+              "name": "Wanderson Coelho",
+              "role": "QA",
+              "avail": 100,
+              "activeIter": [
+                "20.1",
+                "20.2",
+                "20.3",
+                "20.4"
+              ],
+              "daysOff": {},
+              "focusHpd": 5.516666666666667,
+              "focusHpdByIter": {},
+              "notes": ""
+            }
+          ],
+          "ratios": {
+            "dev": 0.38,
+            "qa": 0.31
+          },
+          "overhead": [
+            {
+              "name": "Daily Meeting",
+              "hpd": 0.25
+            },
+            {
+              "name": "Sprint Planning Pt 1",
+              "hpd": 0.1
+            },
+            {
+              "name": "Sprint Planning Pt 2",
+              "hpd": 0.06666666666666667
+            },
+            {
+              "name": "Sprint Review",
+              "hpd": 0.1
+            },
+            {
+              "name": "Sprint Retrospective",
+              "hpd": 0.1
+            },
+            {
+              "name": "SysMgm Retro/Review",
+              "hpd": 0.06666666666666667
+            },
+            {
+              "name": "SysMgm Refinement",
+              "hpd": 0.1
+            },
+            {
+              "name": "Internal Activities",
+              "hpd": 1
+            },
+            {
+              "name": "Breaks",
+              "hpd": 0.7
+            }
+          ]
+        }
+      ]
+    },
     {
       "savedAt": "2026-06-18T09:04:35.554Z",
       "piList": [
@@ -4716,1543 +6477,6 @@
               "hpd": 0.7
             }
           ]
-        }
-      ]
-    },
-    {
-      "savedAt": "2026-06-18T08:40:28.394Z",
-      "piList": [
-        {
-          "id": 18,
-          "status": "current",
-          "iterations": [
-            {
-              "id": "18.1",
-              "sprint": 0,
-              "days": 15,
-              "label": "Iteration 18.1 (153)",
-              "dateStart": "2026-04-01",
-              "dateEnd": "2026-04-21",
-              "dates": "1 Apr 2026 → 21 Apr 2026",
-              "holidays": [
-                {
-                  "name": "03 Apr - Easter Friday Holiday",
-                  "days": 1
-                }
-              ],
-              "devSPexec": 47,
-              "qaSPexec": 26
-            },
-            {
-              "id": "18.2",
-              "sprint": 0,
-              "days": 15,
-              "label": "Iteration 18.2 (154)",
-              "dateStart": "2026-04-22",
-              "dateEnd": "2026-05-12",
-              "dates": "22 Apr 2026 → 12 May 2026",
-              "holidays": [
-                {
-                  "name": "1st May - Public Holiday (Portugal)",
-                  "days": 1
-                }
-              ],
-              "devSPexec": 70,
-              "qaSPexec": 24
-            },
-            {
-              "id": "18.3",
-              "sprint": 0,
-              "days": 15,
-              "label": "Iteration 18.3 (155)",
-              "dateStart": "2026-05-13",
-              "dateEnd": "2026-06-02",
-              "dates": "13 May 2026 → 2 Jun 2026",
-              "holidays": [],
-              "devSPexec": 60,
-              "qaSPexec": 38
-            },
-            {
-              "id": "18.4",
-              "sprint": 0,
-              "days": 15,
-              "label": "Iteration 18.4 (156)",
-              "dateStart": "2026-06-03",
-              "dateEnd": "2026-06-23",
-              "dates": "3 Jun 2026 → 23 Jun 2026",
-              "holidays": [
-                {
-                  "name": "4th Jun - Public Holiday",
-                  "days": 1
-                },
-                {
-                  "name": "PI#19 Planning",
-                  "days": 2
-                }
-              ],
-              "devSPexec": 46,
-              "qaSPexec": 29
-            }
-          ],
-          "actual": {
-            "devH": 530,
-            "devSPest": 201,
-            "devSPexec": null,
-            "devRatio": 0.38,
-            "qaH": 397,
-            "qaSPest": 123,
-            "qaSPexec": null,
-            "qaRatio": 0.31
-          },
-          "team": [
-            {
-              "name": "Amilcar Carvalho",
-              "role": "Dev",
-              "avail": 70,
-              "activeIter": [
-                "18.1",
-                "18.2",
-                "18.3",
-                "19.1",
-                "19.2",
-                "19.3",
-                "19.4"
-              ],
-              "daysOff": {
-                "18.3": 2,
-                "18.2": 5
-              },
-              "focusHpd": 5.516666666666667,
-              "focusHpdByIter": {
-                "18.3": 2.758
-              },
-              "notes": "Amilcar left the team on May 29th"
-            },
-            {
-              "name": "João Botelho",
-              "role": "Dev",
-              "avail": 70,
-              "activeIter": [
-                "18.2",
-                "18.3",
-                "18.4"
-              ],
-              "daysOff": {},
-              "focusHpd": 4.413333333333333,
-              "focusHpdByIter": {
-                "18.2": 2.207,
-                "18.3": 3.31
-              },
-              "notes": "João Botelho Started end of March to replace Lucas"
-            },
-            {
-              "name": "João Pires",
-              "role": "QA",
-              "avail": 25,
-              "activeIter": [
-                "18.1",
-                "18.2",
-                "18.3",
-                "18.4"
-              ],
-              "daysOff": {
-                "18.1": 14,
-                "18.2": 7,
-                "18.3": 2
-              },
-              "focusHpd": 1.1033333333333333,
-              "focusHpdByIter": {},
-              "notes": "From 1st Apr till 1st May - Pattarnety Leave"
-            },
-            {
-              "name": "Wanderson Coelho",
-              "role": "QA",
-              "avail": 100,
-              "activeIter": [
-                "18.1",
-                "18.2",
-                "18.3",
-                "18.4"
-              ],
-              "daysOff": {
-                "18.2": 2,
-                "18.3": 4
-              },
-              "focusHpd": 5.516666666666667,
-              "focusHpdByIter": {},
-              "notes": ""
-            },
-            {
-              "name": "João Oliveira",
-              "role": "Dev",
-              "focusHpd": 2.7583333333333333,
-              "activeIter": [
-                "18.4",
-                "18.3"
-              ],
-              "daysOff": {},
-              "focusHpdByIter": {
-                "18.3": 2.207,
-                "18.4": 3.31
-              },
-              "notes": "João Oliveira being added to the team"
-            }
-          ],
-          "ratios": {
-            "dev": 0.45,
-            "qa": 0.25
-          }
-        },
-        {
-          "id": 19,
-          "status": "future",
-          "iterations": [
-            {
-              "id": "19.1",
-              "sprint": 0,
-              "days": 15,
-              "label": "Iteration 19.1 (157)",
-              "dateStart": "2026-06-24",
-              "dateEnd": "2026-07-14",
-              "dates": "24 Jun 2026 → 14 Jul 2026",
-              "holidays": [],
-              "devSPexec": null,
-              "qaSPexec": null
-            },
-            {
-              "id": "19.2",
-              "sprint": 0,
-              "days": 15,
-              "label": "Iteration 19.1 (158)",
-              "dateStart": "2026-07-15",
-              "dateEnd": "2026-08-04",
-              "dates": "15 Jul 2026 → 4 Aug 2026",
-              "holidays": [],
-              "devSPexec": null,
-              "qaSPexec": null
-            },
-            {
-              "id": "19.3",
-              "sprint": 0,
-              "days": 15,
-              "label": "Iteration 19.1 (159)",
-              "dateStart": "2026-08-05",
-              "dateEnd": "2026-08-25",
-              "dates": "5 Aug 2026 → 25 Aug 2026",
-              "holidays": [],
-              "devSPexec": null,
-              "qaSPexec": null
-            },
-            {
-              "id": "19.4",
-              "sprint": 0,
-              "days": 15,
-              "label": "Iteration 19.1 (160)",
-              "dateStart": "2026-08-26",
-              "dateEnd": "2026-09-15",
-              "dates": "26 Aug 2026 → 15 Sept 2026",
-              "holidays": [],
-              "devSPexec": null,
-              "qaSPexec": null
-            },
-            {
-              "id": "19.5",
-              "sprint": 0,
-              "days": 15,
-              "label": "Iteration 19.1 (161)",
-              "dateStart": "2026-09-16",
-              "dateEnd": "2026-10-06",
-              "dates": "16 Sept 2026 → 6 Oct 2026",
-              "holidays": [
-                {
-                  "name": "5 Oct - Public Holiday (Portugal)",
-                  "days": 1
-                },
-                {
-                  "name": "PI#20 Planning",
-                  "days": 2
-                }
-              ],
-              "devSPexec": null,
-              "qaSPexec": null
-            }
-          ],
-          "actual": {
-            "devH": 463,
-            "devSPest": 176,
-            "devSPexec": null,
-            "devRatio": 0.38,
-            "qaH": 519,
-            "qaSPest": 161,
-            "qaSPexec": null,
-            "qaRatio": 0.31
-          },
-          "team": [
-            {
-              "name": "João Botelho",
-              "role": "Dev",
-              "avail": 70,
-              "activeIter": [
-                "19.1",
-                "19.2",
-                "19.3",
-                "19.4",
-                "19.5"
-              ],
-              "daysOff": {
-                "19.3": 4,
-                "19.4": 1
-              },
-              "focusHpd": 4.413333333333333,
-              "focusHpdByIter": {},
-              "notes": "80% due to knowledge ramp-up"
-            },
-            {
-              "name": "João Oliveira",
-              "role": "Dev",
-              "avail": 70,
-              "activeIter": [
-                "19.1",
-                "19.2",
-                "19.3"
-              ],
-              "daysOff": {
-                "19.2": 10
-              },
-              "focusHpd": 4.413333333333333,
-              "focusHpdByIter": {},
-              "notes": "80% due to knowledge ramp-up"
-            },
-            {
-              "name": "João Pires",
-              "role": "QA",
-              "avail": 25,
-              "activeIter": [
-                "19.1",
-                "19.2",
-                "19.3",
-                "19.4",
-                "19.5"
-              ],
-              "daysOff": {
-                "19.2": 2,
-                "19.3": 13
-              },
-              "focusHpd": 1.1033333333333333,
-              "focusHpdByIter": {
-                "19.4": 3.31,
-                "19.5": 3.31
-              },
-              "notes": "60% on last 2 iterations to support QA with RC validation activities. Risk on last iteraiton with PI20 planning."
-            },
-            {
-              "name": "Wanderson Coelho",
-              "role": "QA",
-              "avail": 100,
-              "activeIter": [
-                "19.1",
-                "19.2",
-                "19.3",
-                "19.4",
-                "19.5"
-              ],
-              "daysOff": {
-                "19.2": 4
-              },
-              "focusHpd": 5.516666666666667,
-              "focusHpdByIter": {},
-              "notes": ""
-            }
-          ],
-          "ratios": {
-            "dev": 0.38,
-            "qa": 0.31
-          }
-        },
-        {
-          "id": 20,
-          "status": "future",
-          "iterations": [
-            {
-              "id": "20.1",
-              "sprint": 0,
-              "days": 15,
-              "label": "20.1",
-              "dateStart": "2026-10-07",
-              "dateEnd": "2026-10-27",
-              "dates": "7 Oct 2026 → 27 Oct 2026",
-              "holidays": [],
-              "devSPexec": null,
-              "qaSPexec": null
-            },
-            {
-              "id": "20.2",
-              "sprint": 0,
-              "days": 15,
-              "label": "20.2",
-              "dateStart": "2026-10-28",
-              "dateEnd": "2026-11-17",
-              "dates": "28 Oct 2026 → 17 Nov 2026",
-              "holidays": [],
-              "devSPexec": null,
-              "qaSPexec": null
-            },
-            {
-              "id": "20.3",
-              "sprint": 0,
-              "days": 15,
-              "label": "20.3",
-              "dateStart": "2026-11-18",
-              "dateEnd": "2026-12-08",
-              "dates": "18 Nov 2026 → 8 Dec 2026",
-              "holidays": [],
-              "devSPexec": null,
-              "qaSPexec": null
-            },
-            {
-              "id": "20.4",
-              "sprint": 0,
-              "days": 15,
-              "label": "20.4",
-              "dateStart": "2026-12-09",
-              "dateEnd": "2026-12-29",
-              "dates": "9 Dec 2026 → 29 Dec 2026",
-              "holidays": [],
-              "devSPexec": null,
-              "qaSPexec": null
-            }
-          ],
-          "actual": null,
-          "team": [
-            {
-              "name": "João Botelho",
-              "role": "Dev",
-              "avail": 70,
-              "activeIter": [
-                "20.1",
-                "20.2",
-                "20.3",
-                "20.4"
-              ],
-              "daysOff": {},
-              "focusHpd": 4.413333333333333,
-              "focusHpdByIter": {},
-              "notes": ""
-            },
-            {
-              "name": "João Oliveira",
-              "role": "Dev",
-              "avail": 70,
-              "activeIter": [
-                "20.1",
-                "20.2",
-                "20.3",
-                "20.4"
-              ],
-              "daysOff": {},
-              "focusHpd": 4.413333333333333,
-              "focusHpdByIter": {},
-              "notes": ""
-            },
-            {
-              "name": "João Pires",
-              "role": "QA",
-              "avail": 25,
-              "activeIter": [
-                "20.1",
-                "20.2",
-                "20.3",
-                "20.4"
-              ],
-              "daysOff": {},
-              "focusHpd": 1.1033333333333333,
-              "focusHpdByIter": {},
-              "notes": ""
-            },
-            {
-              "name": "Wanderson Coelho",
-              "role": "QA",
-              "avail": 100,
-              "activeIter": [
-                "20.1",
-                "20.2",
-                "20.3",
-                "20.4"
-              ],
-              "daysOff": {},
-              "focusHpd": 5.516666666666667,
-              "focusHpdByIter": {},
-              "notes": ""
-            }
-          ],
-          "ratios": {
-            "dev": 0.38,
-            "qa": 0.31
-          }
-        }
-      ],
-      "overhead": [
-        {
-          "name": "Daily Meeting",
-          "hpd": 0.25
-        },
-        {
-          "name": "Sprint Planning Pt 1",
-          "hpd": 0.1
-        },
-        {
-          "name": "Sprint Planning Pt 2",
-          "hpd": 0.06666666666666667
-        },
-        {
-          "name": "Sprint Review",
-          "hpd": 0.1
-        },
-        {
-          "name": "Sprint Retrospective",
-          "hpd": 0.1
-        },
-        {
-          "name": "SysMgm Retro/Review",
-          "hpd": 0.06666666666666667
-        },
-        {
-          "name": "SysMgm Refinement",
-          "hpd": 0.1
-        },
-        {
-          "name": "Internal Activities",
-          "hpd": 1
-        },
-        {
-          "name": "Breaks",
-          "hpd": 0.7
-        }
-      ]
-    },
-    {
-      "savedAt": "2026-06-18T08:40:04.059Z",
-      "piList": [
-        {
-          "id": 18,
-          "status": "current",
-          "iterations": [
-            {
-              "id": "18.1",
-              "sprint": 0,
-              "days": 15,
-              "label": "Iteration 18.1 (153)",
-              "dateStart": "2026-04-01",
-              "dateEnd": "2026-04-21",
-              "dates": "1 Apr 2026 → 21 Apr 2026",
-              "holidays": [
-                {
-                  "name": "03 Apr - Easter Friday Holiday",
-                  "days": 1
-                }
-              ],
-              "devSPexec": 47,
-              "qaSPexec": 26
-            },
-            {
-              "id": "18.2",
-              "sprint": 0,
-              "days": 15,
-              "label": "Iteration 18.2 (154)",
-              "dateStart": "2026-04-22",
-              "dateEnd": "2026-05-12",
-              "dates": "22 Apr 2026 → 12 May 2026",
-              "holidays": [
-                {
-                  "name": "1st May - Public Holiday (Portugal)",
-                  "days": 1
-                }
-              ],
-              "devSPexec": 70,
-              "qaSPexec": 24
-            },
-            {
-              "id": "18.3",
-              "sprint": 0,
-              "days": 15,
-              "label": "Iteration 18.3 (155)",
-              "dateStart": "2026-05-13",
-              "dateEnd": "2026-06-02",
-              "dates": "13 May 2026 → 2 Jun 2026",
-              "holidays": [],
-              "devSPexec": 60,
-              "qaSPexec": 38
-            },
-            {
-              "id": "18.4",
-              "sprint": 0,
-              "days": 15,
-              "label": "Iteration 18.4 (156)",
-              "dateStart": "2026-06-03",
-              "dateEnd": "2026-06-23",
-              "dates": "3 Jun 2026 → 23 Jun 2026",
-              "holidays": [
-                {
-                  "name": "4th Jun - Public Holiday",
-                  "days": 1
-                },
-                {
-                  "name": "PI#19 Planning",
-                  "days": 2
-                }
-              ],
-              "devSPexec": 46,
-              "qaSPexec": 29
-            }
-          ],
-          "actual": {
-            "devH": 530,
-            "devSPest": 201,
-            "devSPexec": null,
-            "devRatio": 0.38,
-            "qaH": 397,
-            "qaSPest": 123,
-            "qaSPexec": null,
-            "qaRatio": 0.31
-          },
-          "team": [
-            {
-              "name": "Amilcar Carvalho",
-              "role": "Dev",
-              "avail": 70,
-              "activeIter": [
-                "18.1",
-                "18.2",
-                "18.3",
-                "19.1",
-                "19.2",
-                "19.3",
-                "19.4"
-              ],
-              "daysOff": {
-                "18.3": 2,
-                "18.2": 5
-              },
-              "focusHpd": 5.516666666666667,
-              "focusHpdByIter": {
-                "18.3": 2.758
-              },
-              "notes": "Amilcar left the team on May 29th"
-            },
-            {
-              "name": "João Botelho",
-              "role": "Dev",
-              "avail": 70,
-              "activeIter": [
-                "18.2",
-                "18.3",
-                "18.4"
-              ],
-              "daysOff": {},
-              "focusHpd": 4.413333333333333,
-              "focusHpdByIter": {
-                "18.2": 2.207,
-                "18.3": 3.31
-              },
-              "notes": "João Botelho Started end of March to replace Lucas"
-            },
-            {
-              "name": "João Pires",
-              "role": "QA",
-              "avail": 25,
-              "activeIter": [
-                "18.1",
-                "18.2",
-                "18.3",
-                "18.4"
-              ],
-              "daysOff": {
-                "18.1": 14,
-                "18.2": 7,
-                "18.3": 2
-              },
-              "focusHpd": 1.1033333333333333,
-              "focusHpdByIter": {},
-              "notes": "From 1st Apr till 1st May - Pattarnety Leave"
-            },
-            {
-              "name": "Wanderson Coelho",
-              "role": "QA",
-              "avail": 100,
-              "activeIter": [
-                "18.1",
-                "18.2",
-                "18.3",
-                "18.4"
-              ],
-              "daysOff": {
-                "18.2": 2,
-                "18.3": 4
-              },
-              "focusHpd": 5.516666666666667,
-              "focusHpdByIter": {},
-              "notes": ""
-            },
-            {
-              "name": "João Oliveira",
-              "role": "Dev",
-              "focusHpd": 2.7583333333333333,
-              "activeIter": [
-                "18.4",
-                "18.3"
-              ],
-              "daysOff": {},
-              "focusHpdByIter": {
-                "18.3": 2.207,
-                "18.4": 3.31
-              },
-              "notes": "João Oliveira being added to the team"
-            }
-          ],
-          "ratios": {
-            "dev": 0.45,
-            "qa": 0.25
-          }
-        },
-        {
-          "id": 19,
-          "status": "future",
-          "iterations": [
-            {
-              "id": "19.1",
-              "sprint": 0,
-              "days": 15,
-              "label": "Iteration 19.1 (157)",
-              "dateStart": "2026-06-24",
-              "dateEnd": "2026-07-14",
-              "dates": "24 Jun 2026 → 14 Jul 2026",
-              "holidays": [],
-              "devSPexec": null,
-              "qaSPexec": null
-            },
-            {
-              "id": "19.2",
-              "sprint": 0,
-              "days": 15,
-              "label": "Iteration 19.1 (158)",
-              "dateStart": "2026-07-15",
-              "dateEnd": "2026-08-04",
-              "dates": "15 Jul 2026 → 4 Aug 2026",
-              "holidays": [],
-              "devSPexec": null,
-              "qaSPexec": null
-            },
-            {
-              "id": "19.3",
-              "sprint": 0,
-              "days": 15,
-              "label": "Iteration 19.1 (159)",
-              "dateStart": "2026-08-05",
-              "dateEnd": "2026-08-25",
-              "dates": "5 Aug 2026 → 25 Aug 2026",
-              "holidays": [],
-              "devSPexec": null,
-              "qaSPexec": null
-            },
-            {
-              "id": "19.4",
-              "sprint": 0,
-              "days": 15,
-              "label": "Iteration 19.1 (160)",
-              "dateStart": "2026-08-26",
-              "dateEnd": "2026-09-15",
-              "dates": "26 Aug 2026 → 15 Sept 2026",
-              "holidays": [],
-              "devSPexec": null,
-              "qaSPexec": null
-            },
-            {
-              "id": "19.5",
-              "sprint": 0,
-              "days": 15,
-              "label": "Iteration 19.1 (161)",
-              "dateStart": "2026-09-16",
-              "dateEnd": "2026-10-06",
-              "dates": "16 Sept 2026 → 6 Oct 2026",
-              "holidays": [
-                {
-                  "name": "5 Oct - Public Holiday (Portugal)",
-                  "days": 1
-                },
-                {
-                  "name": "PI#20 Planning",
-                  "days": 2
-                }
-              ],
-              "devSPexec": null,
-              "qaSPexec": null
-            }
-          ],
-          "actual": {
-            "devH": 463,
-            "devSPest": 176,
-            "devSPexec": null,
-            "devRatio": 0.38,
-            "qaH": 519,
-            "qaSPest": 161,
-            "qaSPexec": null,
-            "qaRatio": 0.31
-          },
-          "team": [
-            {
-              "name": "João Botelho",
-              "role": "Dev",
-              "avail": 70,
-              "activeIter": [
-                "19.1",
-                "19.2",
-                "19.3",
-                "19.4",
-                "19.5"
-              ],
-              "daysOff": {
-                "19.3": 4,
-                "19.4": 1
-              },
-              "focusHpd": 4.413333333333333,
-              "focusHpdByIter": {},
-              "notes": "80% due to knowledge ramp-up"
-            },
-            {
-              "name": "João Oliveira",
-              "role": "Dev",
-              "avail": 70,
-              "activeIter": [
-                "19.1",
-                "19.2",
-                "19.3"
-              ],
-              "daysOff": {
-                "19.2": 10
-              },
-              "focusHpd": 4.413333333333333,
-              "focusHpdByIter": {},
-              "notes": "80% due to knowledge ramp-up"
-            },
-            {
-              "name": "João Pires",
-              "role": "QA",
-              "avail": 25,
-              "activeIter": [
-                "19.1",
-                "19.2",
-                "19.3",
-                "19.4",
-                "19.5"
-              ],
-              "daysOff": {
-                "19.2": 2,
-                "19.3": 13
-              },
-              "focusHpd": 1.1033333333333333,
-              "focusHpdByIter": {
-                "19.4": 3.31,
-                "19.5": 3.31
-              },
-              "notes": "60% on last 2 iterations to support QA with RC validation activities. Risk on last iteraiton with PI20 planning."
-            },
-            {
-              "name": "Wanderson Coelho",
-              "role": "QA",
-              "avail": 100,
-              "activeIter": [
-                "19.1",
-                "19.2",
-                "19.3",
-                "19.4",
-                "19.5"
-              ],
-              "daysOff": {
-                "19.2": 4
-              },
-              "focusHpd": 5.516666666666667,
-              "focusHpdByIter": {},
-              "notes": ""
-            }
-          ],
-          "ratios": {
-            "dev": 0.38,
-            "qa": 0.31
-          }
-        },
-        {
-          "id": 20,
-          "status": "future",
-          "iterations": [
-            {
-              "id": "20.1",
-              "sprint": 0,
-              "days": 15,
-              "label": "20.1",
-              "dateStart": "2026-10-07",
-              "dateEnd": "2026-10-27",
-              "dates": "7 Oct 2026 → 27 Oct 2026",
-              "holidays": [],
-              "devSPexec": null,
-              "qaSPexec": null
-            },
-            {
-              "id": "20.2",
-              "sprint": 0,
-              "days": 15,
-              "label": "20.2",
-              "dateStart": "2026-10-28",
-              "dateEnd": "2026-11-17",
-              "dates": "28 Oct 2026 → 17 Nov 2026",
-              "holidays": [],
-              "devSPexec": null,
-              "qaSPexec": null
-            },
-            {
-              "id": "20.3",
-              "sprint": 0,
-              "days": 15,
-              "label": "20.3",
-              "dateStart": "2026-11-18",
-              "dateEnd": "2026-12-08",
-              "dates": "18 Nov 2026 → 8 Dec 2026",
-              "holidays": [],
-              "devSPexec": null,
-              "qaSPexec": null
-            },
-            {
-              "id": "20.4",
-              "sprint": 0,
-              "days": 15,
-              "label": "20.4",
-              "dateStart": "2026-12-09",
-              "dateEnd": "2026-12-29",
-              "dates": "9 Dec 2026 → 29 Dec 2026",
-              "holidays": [],
-              "devSPexec": null,
-              "qaSPexec": null
-            }
-          ],
-          "actual": null,
-          "team": [
-            {
-              "name": "João Botelho",
-              "role": "Dev",
-              "avail": 70,
-              "activeIter": [
-                "20.1",
-                "20.2",
-                "20.3",
-                "20.4"
-              ],
-              "daysOff": {},
-              "focusHpd": 4.413333333333333,
-              "focusHpdByIter": {},
-              "notes": ""
-            },
-            {
-              "name": "João Oliveira",
-              "role": "Dev",
-              "avail": 70,
-              "activeIter": [
-                "20.1",
-                "20.2",
-                "20.3",
-                "20.4"
-              ],
-              "daysOff": {},
-              "focusHpd": 4.413333333333333,
-              "focusHpdByIter": {},
-              "notes": ""
-            },
-            {
-              "name": "João Pires",
-              "role": "QA",
-              "avail": 25,
-              "activeIter": [
-                "20.1",
-                "20.2",
-                "20.3",
-                "20.4"
-              ],
-              "daysOff": {},
-              "focusHpd": 1.1033333333333333,
-              "focusHpdByIter": {},
-              "notes": ""
-            },
-            {
-              "name": "Wanderson Coelho",
-              "role": "QA",
-              "avail": 100,
-              "activeIter": [
-                "20.1",
-                "20.2",
-                "20.3",
-                "20.4"
-              ],
-              "daysOff": {},
-              "focusHpd": 5.516666666666667,
-              "focusHpdByIter": {},
-              "notes": ""
-            }
-          ],
-          "ratios": {
-            "dev": 0.38,
-            "qa": 0.31
-          }
-        }
-      ],
-      "overhead": [
-        {
-          "name": "Daily Meeting",
-          "hpd": 0.25
-        },
-        {
-          "name": "Sprint Planning Pt 1",
-          "hpd": 0.1
-        },
-        {
-          "name": "Sprint Planning Pt 2",
-          "hpd": 0.06666666666666667
-        },
-        {
-          "name": "Sprint Review",
-          "hpd": 0.1
-        },
-        {
-          "name": "Sprint Retrospective",
-          "hpd": 0.1
-        },
-        {
-          "name": "SysMgm Retro/Review",
-          "hpd": 0.06666666666666667
-        },
-        {
-          "name": "SysMgm Refinement",
-          "hpd": 0.1
-        },
-        {
-          "name": "Internal Activities",
-          "hpd": 1
-        },
-        {
-          "name": "Breaks",
-          "hpd": 0.75
-        }
-      ]
-    },
-    {
-      "savedAt": "2026-06-18T08:39:40.592Z",
-      "piList": [
-        {
-          "id": 18,
-          "status": "current",
-          "iterations": [
-            {
-              "id": "18.1",
-              "sprint": 0,
-              "days": 15,
-              "label": "Iteration 18.1 (153)",
-              "dateStart": "2026-04-01",
-              "dateEnd": "2026-04-21",
-              "dates": "1 Apr 2026 → 21 Apr 2026",
-              "holidays": [
-                {
-                  "name": "03 Apr - Easter Friday Holiday",
-                  "days": 1
-                }
-              ],
-              "devSPexec": 47,
-              "qaSPexec": 26
-            },
-            {
-              "id": "18.2",
-              "sprint": 0,
-              "days": 15,
-              "label": "Iteration 18.2 (154)",
-              "dateStart": "2026-04-22",
-              "dateEnd": "2026-05-12",
-              "dates": "22 Apr 2026 → 12 May 2026",
-              "holidays": [
-                {
-                  "name": "1st May - Public Holiday (Portugal)",
-                  "days": 1
-                }
-              ],
-              "devSPexec": 70,
-              "qaSPexec": 24
-            },
-            {
-              "id": "18.3",
-              "sprint": 0,
-              "days": 15,
-              "label": "Iteration 18.3 (155)",
-              "dateStart": "2026-05-13",
-              "dateEnd": "2026-06-02",
-              "dates": "13 May 2026 → 2 Jun 2026",
-              "holidays": [],
-              "devSPexec": 60,
-              "qaSPexec": 38
-            },
-            {
-              "id": "18.4",
-              "sprint": 0,
-              "days": 15,
-              "label": "Iteration 18.4 (156)",
-              "dateStart": "2026-06-03",
-              "dateEnd": "2026-06-23",
-              "dates": "3 Jun 2026 → 23 Jun 2026",
-              "holidays": [
-                {
-                  "name": "4th Jun - Public Holiday",
-                  "days": 1
-                },
-                {
-                  "name": "PI#19 Planning",
-                  "days": 2
-                }
-              ],
-              "devSPexec": 46,
-              "qaSPexec": 29
-            }
-          ],
-          "actual": {
-            "devH": 530,
-            "devSPest": 201,
-            "devSPexec": null,
-            "devRatio": 0.38,
-            "qaH": 397,
-            "qaSPest": 123,
-            "qaSPexec": null,
-            "qaRatio": 0.31
-          },
-          "team": [
-            {
-              "name": "Amilcar Carvalho",
-              "role": "Dev",
-              "avail": 70,
-              "activeIter": [
-                "18.1",
-                "18.2",
-                "18.3",
-                "19.1",
-                "19.2",
-                "19.3",
-                "19.4"
-              ],
-              "daysOff": {
-                "18.3": 2,
-                "18.2": 5
-              },
-              "focusHpd": 5.516666666666667,
-              "focusHpdByIter": {
-                "18.3": 2.758
-              },
-              "notes": "Amilcar left the team on May 29th"
-            },
-            {
-              "name": "João Botelho",
-              "role": "Dev",
-              "avail": 70,
-              "activeIter": [
-                "18.2",
-                "18.3",
-                "18.4"
-              ],
-              "daysOff": {},
-              "focusHpd": 4.413333333333333,
-              "focusHpdByIter": {
-                "18.2": 2.207,
-                "18.3": 3.31
-              },
-              "notes": "João Botelho Started end of March to replace Lucas"
-            },
-            {
-              "name": "João Pires",
-              "role": "QA",
-              "avail": 25,
-              "activeIter": [
-                "18.1",
-                "18.2",
-                "18.3",
-                "18.4"
-              ],
-              "daysOff": {
-                "18.1": 14,
-                "18.2": 7,
-                "18.3": 2
-              },
-              "focusHpd": 1.1033333333333333,
-              "focusHpdByIter": {},
-              "notes": "From 1st Apr till 1st May - Pattarnety Leave"
-            },
-            {
-              "name": "Wanderson Coelho",
-              "role": "QA",
-              "avail": 100,
-              "activeIter": [
-                "18.1",
-                "18.2",
-                "18.3",
-                "18.4"
-              ],
-              "daysOff": {
-                "18.2": 2,
-                "18.3": 4
-              },
-              "focusHpd": 5.516666666666667,
-              "focusHpdByIter": {},
-              "notes": ""
-            },
-            {
-              "name": "João Oliveira",
-              "role": "Dev",
-              "focusHpd": 2.7583333333333333,
-              "activeIter": [
-                "18.4",
-                "18.3"
-              ],
-              "daysOff": {},
-              "focusHpdByIter": {
-                "18.3": 2.207,
-                "18.4": 3.31
-              },
-              "notes": "João Oliveira being added to the team"
-            }
-          ],
-          "ratios": {
-            "dev": 0.45,
-            "qa": 0.25
-          }
-        },
-        {
-          "id": 19,
-          "status": "future",
-          "iterations": [
-            {
-              "id": "19.1",
-              "sprint": 0,
-              "days": 15,
-              "label": "Iteration 19.1 (157)",
-              "dateStart": "2026-06-24",
-              "dateEnd": "2026-07-14",
-              "dates": "24 Jun 2026 → 14 Jul 2026",
-              "holidays": [],
-              "devSPexec": null,
-              "qaSPexec": null
-            },
-            {
-              "id": "19.2",
-              "sprint": 0,
-              "days": 15,
-              "label": "Iteration 19.1 (158)",
-              "dateStart": "2026-07-15",
-              "dateEnd": "2026-08-04",
-              "dates": "15 Jul 2026 → 4 Aug 2026",
-              "holidays": [],
-              "devSPexec": null,
-              "qaSPexec": null
-            },
-            {
-              "id": "19.3",
-              "sprint": 0,
-              "days": 15,
-              "label": "Iteration 19.1 (159)",
-              "dateStart": "2026-08-05",
-              "dateEnd": "2026-08-25",
-              "dates": "5 Aug 2026 → 25 Aug 2026",
-              "holidays": [],
-              "devSPexec": null,
-              "qaSPexec": null
-            },
-            {
-              "id": "19.4",
-              "sprint": 0,
-              "days": 15,
-              "label": "Iteration 19.1 (160)",
-              "dateStart": "2026-08-26",
-              "dateEnd": "2026-09-15",
-              "dates": "26 Aug 2026 → 15 Sept 2026",
-              "holidays": [],
-              "devSPexec": null,
-              "qaSPexec": null
-            },
-            {
-              "id": "19.5",
-              "sprint": 0,
-              "days": 15,
-              "label": "Iteration 19.1 (161)",
-              "dateStart": "2026-09-16",
-              "dateEnd": "2026-10-06",
-              "dates": "16 Sept 2026 → 6 Oct 2026",
-              "holidays": [
-                {
-                  "name": "5 Oct - Public Holiday (Portugal)",
-                  "days": 1
-                },
-                {
-                  "name": "PI#20 Planning",
-                  "days": 2
-                }
-              ],
-              "devSPexec": null,
-              "qaSPexec": null
-            }
-          ],
-          "actual": {
-            "devH": 463,
-            "devSPest": 176,
-            "devSPexec": null,
-            "devRatio": 0.38,
-            "qaH": 519,
-            "qaSPest": 161,
-            "qaSPexec": null,
-            "qaRatio": 0.31
-          },
-          "team": [
-            {
-              "name": "João Botelho",
-              "role": "Dev",
-              "avail": 70,
-              "activeIter": [
-                "19.1",
-                "19.2",
-                "19.3",
-                "19.4",
-                "19.5"
-              ],
-              "daysOff": {
-                "19.3": 4,
-                "19.4": 1
-              },
-              "focusHpd": 4.413333333333333,
-              "focusHpdByIter": {},
-              "notes": "80% due to knowledge ramp-up"
-            },
-            {
-              "name": "João Oliveira",
-              "role": "Dev",
-              "avail": 70,
-              "activeIter": [
-                "19.1",
-                "19.2",
-                "19.3"
-              ],
-              "daysOff": {
-                "19.2": 10
-              },
-              "focusHpd": 4.413333333333333,
-              "focusHpdByIter": {},
-              "notes": "80% due to knowledge ramp-up"
-            },
-            {
-              "name": "João Pires",
-              "role": "QA",
-              "avail": 25,
-              "activeIter": [
-                "19.1",
-                "19.2",
-                "19.3",
-                "19.4",
-                "19.5"
-              ],
-              "daysOff": {
-                "19.2": 2,
-                "19.3": 13
-              },
-              "focusHpd": 1.1033333333333333,
-              "focusHpdByIter": {
-                "19.4": 3.31,
-                "19.5": 3.31
-              },
-              "notes": "60% on last 2 iterations to support QA with RC validation activities. Risk on last iteraiton with PI20 planning."
-            },
-            {
-              "name": "Wanderson Coelho",
-              "role": "QA",
-              "avail": 100,
-              "activeIter": [
-                "19.1",
-                "19.2",
-                "19.3",
-                "19.4",
-                "19.5"
-              ],
-              "daysOff": {
-                "19.2": 4
-              },
-              "focusHpd": 5.516666666666667,
-              "focusHpdByIter": {},
-              "notes": ""
-            }
-          ],
-          "ratios": {
-            "dev": 0.38,
-            "qa": 0.31
-          }
-        },
-        {
-          "id": 20,
-          "status": "future",
-          "iterations": [
-            {
-              "id": "20.1",
-              "sprint": 0,
-              "days": 15,
-              "label": "20.1",
-              "dateStart": "2026-10-07",
-              "dateEnd": "2026-10-27",
-              "dates": "7 Oct 2026 → 27 Oct 2026",
-              "holidays": [],
-              "devSPexec": null,
-              "qaSPexec": null
-            },
-            {
-              "id": "20.2",
-              "sprint": 0,
-              "days": 15,
-              "label": "20.2",
-              "dateStart": "2026-10-28",
-              "dateEnd": "2026-11-17",
-              "dates": "28 Oct 2026 → 17 Nov 2026",
-              "holidays": [],
-              "devSPexec": null,
-              "qaSPexec": null
-            },
-            {
-              "id": "20.3",
-              "sprint": 0,
-              "days": 15,
-              "label": "20.3",
-              "dateStart": "2026-11-18",
-              "dateEnd": "2026-12-08",
-              "dates": "18 Nov 2026 → 8 Dec 2026",
-              "holidays": [],
-              "devSPexec": null,
-              "qaSPexec": null
-            },
-            {
-              "id": "20.4",
-              "sprint": 0,
-              "days": 15,
-              "label": "20.4",
-              "dateStart": "2026-12-09",
-              "dateEnd": "2026-12-29",
-              "dates": "9 Dec 2026 → 29 Dec 2026",
-              "holidays": [],
-              "devSPexec": null,
-              "qaSPexec": null
-            }
-          ],
-          "actual": null,
-          "team": [
-            {
-              "name": "João Botelho",
-              "role": "Dev",
-              "avail": 70,
-              "activeIter": [
-                "20.1",
-                "20.2",
-                "20.3",
-                "20.4"
-              ],
-              "daysOff": {},
-              "focusHpd": 4.413333333333333,
-              "focusHpdByIter": {},
-              "notes": ""
-            },
-            {
-              "name": "João Oliveira",
-              "role": "Dev",
-              "avail": 70,
-              "activeIter": [
-                "20.1",
-                "20.2",
-                "20.3",
-                "20.4"
-              ],
-              "daysOff": {},
-              "focusHpd": 4.413333333333333,
-              "focusHpdByIter": {},
-              "notes": ""
-            },
-            {
-              "name": "João Pires",
-              "role": "QA",
-              "avail": 25,
-              "activeIter": [
-                "20.1",
-                "20.2",
-                "20.3",
-                "20.4"
-              ],
-              "daysOff": {},
-              "focusHpd": 1.1033333333333333,
-              "focusHpdByIter": {},
-              "notes": ""
-            },
-            {
-              "name": "Wanderson Coelho",
-              "role": "QA",
-              "avail": 100,
-              "activeIter": [
-                "20.1",
-                "20.2",
-                "20.3",
-                "20.4"
-              ],
-              "daysOff": {},
-              "focusHpd": 5.516666666666667,
-              "focusHpdByIter": {},
-              "notes": ""
-            }
-          ],
-          "ratios": {
-            "dev": 0.38,
-            "qa": 0.31
-          }
-        }
-      ],
-      "overhead": [
-        {
-          "name": "Daily Meeting",
-          "hpd": 0.25
-        },
-        {
-          "name": "Sprint Planning Pt 1",
-          "hpd": 0.1
-        },
-        {
-          "name": "Sprint Planning Pt 2",
-          "hpd": 0.06666666666666667
-        },
-        {
-          "name": "Sprint Review",
-          "hpd": 0.1
-        },
-        {
-          "name": "Sprint Retrospective",
-          "hpd": 0.1
-        },
-        {
-          "name": "SysMgm Retro/Review",
-          "hpd": 0.06666666666666667
-        },
-        {
-          "name": "SysMgm Refinement",
-          "hpd": 0.1
-        },
-        {
-          "name": "Internal Activities",
-          "hpd": 1
-        },
-        {
-          "name": "Breaks",
-          "hpd": 0.75
-        },
-        {
-          "name": "Brainstorming Sessions",
-          "hpd": 0.067
         }
       ]
     }
