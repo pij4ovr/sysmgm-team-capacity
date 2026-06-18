@@ -387,7 +387,8 @@ Collapsible. Shows all historical PIs with their actual execution data.
 | `showToast(msg, type)` | Shows a brief bottom-right notification. type: 'success' or 'error'. |
 | `renderCapacityChart(iters, devHArr, qaHArr)` | Renders SVG stacked bar chart into `#cap-chart-wrap`. |
 | `setPIStatus(piId, status)` | Unified status dispatcher — routes to `setCurrentPI`, `markAsCurrent`, `markHistorical`, or `markFuture`. Called by the status dropdown in PI Management. |
-| `markHistorical(piId)` | Marks a PI historical. Snapshots `devH`/`qaH`/`devSPest`/`qaSPest`/ratios into `pi.actual` via `projForPI(pi)` (only if still at the zeroed default — never overwrites a hand-edited actual record), then aggregates any per-iteration `devSPexec`/`qaSPexec` (Sprint Actuals) into `pi.actual.devSPexec`/`qaSPexec`. |
+| `markHistorical(piId)` | Marks a PI historical. Only ensures `pi.actual` exists as a fallback shell — `effectiveActual()` computes the real hours/SP live, so there's nothing to snapshot. |
+| `effectiveActual(pi)` | The source of truth for "what happened" in any PI with an `actual` record. Computes `devH`/`qaH`/`devSPest`/`qaSPest` live via `projForPI(pi)` whenever the PI has team+iteration data (so it's never stale), and sums `devSPexec`/`qaSPexec` live from each iteration's Sprint Actuals. Falls back to the stored `pi.actual` fields only for PIs with no team/iteration data at all. Used by the Historical Comparison card, `piHours()`/`piTotalSP()` (Δ-vs-previous-PI), and `computeActualRatios()`/`getSuggestedRatios()`. |
 | `setCurrentPI(piId)` | Marks `piId` as `'planning'`. Uses `inferStatusFromDates(prev)` to decide prev PI's new status; aggregates actuals if prev is historical. Resets `viewedPIId = null`. |
 | `markAsCurrent(piId)` | Marks a PI as `'current'` (running). Demotes any existing 'current' PI. |
 | `renderAll()` | Syncs `team` to viewed PI's team at the top before re-rendering everything. |

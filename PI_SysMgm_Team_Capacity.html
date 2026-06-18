@@ -251,8 +251,6 @@
   .ratio-active-badge{font-size:10px;font-weight:600;background:var(--green-light);color:var(--green);padding:2px 6px;border-radius:3px;white-space:nowrap}
   .ratio-manual-badge{font-size:10px;font-weight:600;background:var(--amber-light);color:var(--amber);padding:2px 6px;border-radius:3px;white-space:nowrap}
 
-  /* ── COMPUTED RATIO HIGHLIGHT ── */
-  .hist-ratio-computed{color:var(--green);font-weight:700}
   .hist-ratio-note{font-size:10px;color:var(--slate-400);margin-left:4px}
 
   /* ── SPRINT ACTUALS TABLE ── */
@@ -1515,50 +1513,12 @@ function markHistorical(piId) {
   const v = validateStatusTransition(pi, 'historical');
   if (!v.ok) { showToast(v.msg, 'error'); renderGlobalPIPanel(); return; }
   pi.status = 'historical';
+  // `pi.actual` only needs to exist as a fallback shell for PIs with no
+  // team/iteration data at all — effectiveActual() computes everything else
+  // live from team+iterations+ratios, so there's nothing to snapshot here.
   if (!pi.actual) pi.actual = {devH:0,devSPest:0,devSPexec:null,devRatio:0.45,qaH:0,qaSPest:0,qaSPexec:null,qaRatio:0.25};
-  // Snapshot the projected hours/estimated SP from the real team+iterations+ratios
-  // data into the historical record — only when it's still at the zeroed default,
-  // so a previously hand-edited actual record (Historical Comparison edit mode)
-  // is never clobbered.
-  if (!pi.actual.devH && !pi.actual.qaH) {
-    const proj = projForPI(pi);
-    pi.actual.devH     = Math.round(proj.devH);
-    pi.actual.qaH      = Math.round(proj.qaH);
-    pi.actual.devSPest = Math.round(proj.devSP);
-    pi.actual.qaSPest  = Math.round(proj.qaSP);
-    pi.actual.devRatio = proj.devR;
-    pi.actual.qaRatio  = proj.qaR;
-  }
-  // Auto-aggregate sprint actuals from iterations into the historical actual record
-  const iters = pi.iterations || [];
-  const devExecs = iters.map(it => it.devSPexec).filter(v => v != null);
-  const qaExecs  = iters.map(it => it.qaSPexec).filter(v => v != null);
-  if (devExecs.length > 0) pi.actual.devSPexec = devExecs.reduce((s,v) => s+v, 0);
-  if (qaExecs.length  > 0) pi.actual.qaSPexec  = qaExecs.reduce((s,v) => s+v, 0);
   renderAll(); scheduleSave();
 }
-
-// Manual escape hatch for PIs whose `actual` record is stuck at the zeroed
-// default (e.g. PIs that became historical before this snapshot logic
-// existed) — recomputes devH/qaH/devSPest/qaSPest/ratios from this PI's own
-// team + iterations + ratios, the same calculation markHistorical() does
-// automatically on a fresh transition. Available as a button on each
-// historical PI's comparison card.
-function recomputeActualFromProjection(piId) {
-  const pi = piList.find(p => p.id === piId);
-  if (!pi || !pi.actual) return;
-  const proj = projForPI(pi);
-  pi.actual.devH     = Math.round(proj.devH);
-  pi.actual.qaH      = Math.round(proj.qaH);
-  pi.actual.devSPest = Math.round(proj.devSP);
-  pi.actual.qaSPest  = Math.round(proj.qaSP);
-  pi.actual.devRatio = proj.devR;
-  pi.actual.qaRatio  = proj.qaR;
-  renderAll();
-  scheduleSave();
-  showToast('Recalculated DEV/QA hours and estimated SP for PI ' + piId + ' from its team + iterations');
-}
-
 
 function updateHistActual(piId, field, val) {
   const pi = piList.find(p => p.id === piId);
@@ -2511,6 +2471,35 @@ function projForPI(pi) {
   };
 }
 
+// The single source of truth for "what actually happened" in any PI that
+// has an `actual` record (i.e. historical, or any PI being compared).
+// DEV/QA hours and estimated SP are computed live from team+iterations+ratios
+// whenever that data exists — same calculation as the projected/current
+// card — so they're never a stale snapshot. Executed SP is summed live from
+// each iteration's Sprint Actuals. Both fall back to the stored `pi.actual`
+// values only for PIs with no team/iteration data at all (e.g. very old
+// hand-entered totals with nothing to compute from).
+function effectiveActual(pi) {
+  const a = pi.actual || {};
+  const hasIterData = (pi.team || []).length > 0 && (pi.iterations || []).length > 0;
+  const live = hasIterData ? projForPI(pi) : null;
+
+  const iters      = pi.iterations || [];
+  const devExecArr = iters.map(it => it.devSPexec).filter(v => v != null);
+  const qaExecArr  = iters.map(it => it.qaSPexec).filter(v => v != null);
+
+  return {
+    devH:           live ? live.devH  : (a.devH ?? 0),
+    qaH:            live ? live.qaH   : (a.qaH  ?? 0),
+    devSPest:       live ? live.devSP : (a.devSPest ?? 0),
+    qaSPest:        live ? live.qaSP  : (a.qaSPest  ?? 0),
+    devRatioStored: live ? live.devR  : (a.devRatio ?? null),
+    qaRatioStored:  live ? live.qaR   : (a.qaRatio  ?? null),
+    devSPexec: devExecArr.length ? devExecArr.reduce((s,v) => s+v, 0) : (a.devSPexec ?? null),
+    qaSPexec:  qaExecArr.length  ? qaExecArr.reduce((s,v) => s+v, 0)  : (a.qaSPexec  ?? null)
+  };
+}
+
 function renderHistoricalSection() {
   const eligible = piList.filter(p => p.status==='historical'||p.status==='current'||p.status==='future');
   const grid     = document.getElementById('hist-grid');
@@ -2545,11 +2534,11 @@ function renderHistoricalSection() {
     '📈 Historical comparison — ' + display.map(p=>'PI'+p.id).join(' · ');
 
   function piTotalSP(p) {
-    if (p.actual) return (p.actual.devSPexec ?? p.actual.devSPest ?? 0) + (p.actual.qaSPexec ?? p.actual.qaSPest ?? 0);
+    if (p.actual) { const e = effectiveActual(p); return (e.devSPexec ?? e.devSPest) + (e.qaSPexec ?? e.qaSPest); }
     const q = projForPI(p); return q.devSP + q.qaSP;
   }
   function piHours(p) {
-    if (p.actual) return {devH: p.actual.devH||0, qaH: p.actual.qaH||0};
+    if (p.actual) { const e = effectiveActual(p); return {devH: e.devH, qaH: e.qaH}; }
     const q = projForPI(p); return {devH: q.devH, qaH: q.qaH};
   }
 
@@ -2610,58 +2599,51 @@ function renderHistoricalSection() {
       }
 
     } else if (pi.actual) {
-      const a        = pi.actual;
-      const hasExec  = a.devSPexec != null || a.qaSPexec != null;
+      const e        = effectiveActual(pi);
+      const hasExec  = e.devSPexec != null || e.qaSPexec != null;
       const t        = pi.team || [];
       const devCount = t.filter(m => m.role === 'Dev').length;
       const qaCount  = t.filter(m => m.role === 'QA').length;
       const nIters   = (pi.iterations || []).length;
-      const totalH   = (a.devH||0) + (a.qaH||0);
-      const devActR  = (a.devSPexec != null && a.devH > 0) ? a.devSPexec / a.devH : null;
-      const qaActR   = (a.qaSPexec  != null && a.qaH  > 0) ? a.qaSPexec  / a.qaH  : null;
+      const totalH   = e.devH + e.qaH;
+      const devActR  = (e.devSPexec != null && e.devH > 0) ? e.devSPexec / e.devH : null;
+      const qaActR   = (e.qaSPexec  != null && e.qaH  > 0) ? e.qaSPexec  / e.qaH  : null;
 
       html += `<div class="hist-label">${hasExec ? 'Actual (executed)' : 'Estimated'}</div>`;
       if (devCount + qaCount > 0) html += hRow('Team', `${devCount} Dev · ${qaCount} QA`);
       if (nIters > 0)             html += hRow('Iterations', nIters);
-      if ((t.length || 0) > 0 && nIters > 0) {
-        html += `<button class="btn btn-sm" style="margin:2px 0 8px" onclick="recomputeActualFromProjection(${pi.id})" title="Recompute DEV/QA hours and estimated SP from this PI's team + iterations + ratios">↻ Recalculate from team/iterations</button>`;
-      }
 
-      html += hRow('DEV hours', a.devH ?? '—');
-      if (a.devSPest  != null) html += hRow('DEV SP estimated', a.devSPest, 'var(--blue-dark)');
-      if (a.devSPexec != null) html += hRow('DEV SP executed',  a.devSPexec, 'var(--blue-dark)');
-      else if (a.devSPest != null) html += hRowHtml('DEV SP executed', '<span style="color:var(--slate-300)">in progress</span>');
+      html += hRow('DEV hours', e.devH ? e.devH.toFixed(0) : '—');
+      if (e.devSPest  != null) html += hRow('DEV SP estimated', e.devSPest.toFixed(0), 'var(--blue-dark)');
+      if (e.devSPexec != null) html += hRow('DEV SP executed',  e.devSPexec, 'var(--blue-dark)');
+      else if (e.devSPest != null) html += hRowHtml('DEV SP executed', '<span style="color:var(--slate-300)">in progress</span>');
       if (devActR != null) {
-        html += hRowHtml('DEV ratio (actual)', `<span class="hist-ratio-computed">${devActR.toFixed(2)} SP/h</span><span class="hist-ratio-note">exec÷hours</span>`);
-      } else if (a.devRatio != null) {
-        html += hRow('DEV ratio (stored)', a.devRatio.toFixed(2) + ' SP/h');
+        html += hRowHtml('DEV ratio (actual)', `${devActR.toFixed(2)} SP/h<span class="hist-ratio-note">exec÷hours</span>`);
+      } else if (e.devRatioStored != null) {
+        html += hRow('DEV ratio (stored)', e.devRatioStored.toFixed(2) + ' SP/h');
       }
 
-      html += hRow('QA hours', a.qaH ?? '—');
-      if (a.qaSPest  != null) html += hRow('QA SP estimated', a.qaSPest, 'var(--teal)');
-      if (a.qaSPexec != null) html += hRow('QA SP executed',  a.qaSPexec, 'var(--teal)');
-      else if (a.qaSPest != null) html += hRowHtml('QA SP executed', '<span style="color:var(--slate-300)">in progress</span>');
+      html += hRow('QA hours', e.qaH ? e.qaH.toFixed(0) : '—');
+      if (e.qaSPest  != null) html += hRow('QA SP estimated', e.qaSPest.toFixed(0), 'var(--teal)');
+      if (e.qaSPexec != null) html += hRow('QA SP executed',  e.qaSPexec, 'var(--teal)');
+      else if (e.qaSPest != null) html += hRowHtml('QA SP executed', '<span style="color:var(--slate-300)">in progress</span>');
       if (qaActR != null) {
-        html += hRowHtml('QA ratio (actual)', `<span class="hist-ratio-computed" style="color:var(--teal)">${qaActR.toFixed(2)} SP/h</span><span class="hist-ratio-note">exec÷hours</span>`);
-      } else if (a.qaRatio != null) {
-        html += hRow('QA ratio (stored)', a.qaRatio.toFixed(2) + ' SP/h');
+        html += hRowHtml('QA ratio (actual)', `${qaActR.toFixed(2)} SP/h<span class="hist-ratio-note">exec÷hours</span>`);
+      } else if (e.qaRatioStored != null) {
+        html += hRow('QA ratio (stored)', e.qaRatioStored.toFixed(2) + ' SP/h');
       }
 
-      if (a.devSPexec != null && a.devSPest != null && a.devSPest > 0) {
-        const acc = Math.round(a.devSPexec / a.devSPest * 100);
-        const ac  = acc >= 90 ? 'var(--green)' : acc >= 70 ? 'var(--amber)' : 'var(--red)';
-        html += hRowHtml('DEV accuracy', `<span style="color:${ac};font-weight:600">${acc}%</span>`);
+      if (e.devSPexec != null && e.devSPest > 0) {
+        html += hRow('DEV accuracy', Math.round(e.devSPexec / e.devSPest * 100) + '%');
       }
-      if (a.qaSPexec != null && a.qaSPest != null && a.qaSPest > 0) {
-        const acc = Math.round(a.qaSPexec / a.qaSPest * 100);
-        const ac  = acc >= 90 ? 'var(--green)' : acc >= 70 ? 'var(--amber)' : 'var(--red)';
-        html += hRowHtml('QA accuracy', `<span style="color:${ac};font-weight:600">${acc}%</span>`);
+      if (e.qaSPexec != null && e.qaSPest > 0) {
+        html += hRow('QA accuracy', Math.round(e.qaSPexec / e.qaSPest * 100) + '%');
       }
 
-      if (totalH > 0) html += hRow('Total hours', totalH);
-      const totalSP = (a.devSPexec ?? a.devSPest ?? 0) + (a.qaSPexec ?? a.qaSPest ?? 0);
+      if (totalH > 0) html += hRow('Total hours', totalH.toFixed(0));
+      const totalSP = (e.devSPexec ?? e.devSPest) + (e.qaSPexec ?? e.qaSPest);
       if (totalSP > 0) {
-        html += hRowHtml('Total SP', `<strong style="color:var(--amber)">${totalSP}</strong>`);
+        html += hRowHtml('Total SP', `<strong style="color:var(--amber)">${totalSP.toFixed(0)}</strong>`);
         if (totalH > 0) html += hRow('SP efficiency', (totalSP / totalH).toFixed(2)+' SP/h');
         if (nIters > 0) html += hRow('Avg SP / iter', (totalSP / nIters).toFixed(0));
       }
@@ -2670,8 +2652,8 @@ function renderHistoricalSection() {
         const {devH:pH, qaH:qH} = piHours(prevPI);
         const prevSP = piTotalSP(prevPI);
         html += `<div class="hist-label" style="margin-top:8px">Δ vs PI ${prevPI.id}</div>`;
-        html += hRowHtml('DEV h Δ', delta((a.devH||0) - pH));
-        html += hRowHtml('QA h Δ',  delta((a.qaH||0)  - qH));
+        html += hRowHtml('DEV h Δ', delta(e.devH - pH));
+        html += hRowHtml('QA h Δ',  delta(e.qaH  - qH));
         if (prevSP > 0) {
           const dSP = totalSP - prevSP;
           html += hRowHtml('SP Δ', `<span style="color:${dSP>=0?'var(--teal)':'var(--red)'};font-weight:600">${dSP>=0?'+':''}${dSP.toFixed(0)} SP</span>`);
@@ -2888,12 +2870,12 @@ function renderSprintActuals() {
 // ══════════════════════════════════════════════════════════════
 
 function computeActualRatios(pi) {
-  const a = pi.actual;
-  if (!a) return null;
-  const devRatio      = (a.devSPexec != null && a.devH > 0) ? a.devSPexec / a.devH : (a.devRatio || null);
-  const qaRatio       = (a.qaSPexec  != null && a.qaH  > 0) ? a.qaSPexec  / a.qaH  : (a.qaRatio  || null);
-  const devIsComputed = a.devSPexec != null && a.devH > 0;
-  const qaIsComputed  = a.qaSPexec  != null && a.qaH  > 0;
+  if (!pi.actual) return null;
+  const e = effectiveActual(pi);
+  const devRatio      = (e.devSPexec != null && e.devH > 0) ? e.devSPexec / e.devH : (e.devRatioStored || null);
+  const qaRatio       = (e.qaSPexec  != null && e.qaH  > 0) ? e.qaSPexec  / e.qaH  : (e.qaRatioStored  || null);
+  const devIsComputed = e.devSPexec != null && e.devH > 0;
+  const qaIsComputed  = e.qaSPexec  != null && e.qaH  > 0;
   return {devRatio, qaRatio, devIsComputed, qaIsComputed};
 }
 
@@ -2911,16 +2893,15 @@ function getSuggestedRatios() {
   }
 
   // Average only when at least 2 PIs have SP-executed-based ratios
-  const withExec = histPIs.filter(p => {
-    const a = p.actual;
-    return a && a.devSPexec != null && a.devH > 0 && a.qaSPexec != null && a.qaH > 0;
-  });
+  const withExec = histPIs
+    .map(p => ({p, e: effectiveActual(p)}))
+    .filter(({e}) => e.devSPexec != null && e.devH > 0 && e.qaSPexec != null && e.qaH > 0);
   let average = null;
   if (withExec.length >= 2) {
     average = {
       piCount:  withExec.length,
-      devRatio: withExec.reduce((s,p) => s + p.actual.devSPexec / p.actual.devH, 0) / withExec.length,
-      qaRatio:  withExec.reduce((s,p) => s + p.actual.qaSPexec  / p.actual.qaH,  0) / withExec.length
+      devRatio: withExec.reduce((s,{e}) => s + e.devSPexec / e.devH, 0) / withExec.length,
+      qaRatio:  withExec.reduce((s,{e}) => s + e.qaSPexec  / e.qaH,  0) / withExec.length
     };
   }
 
