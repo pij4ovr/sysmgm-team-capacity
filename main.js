@@ -22,6 +22,7 @@ function createWindow() {
   const win = new BrowserWindow({
     width: 1400,
     height: 900,
+    icon: path.join(__dirname, 'build', 'icon.ico'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -37,6 +38,8 @@ app.whenReady().then(createWindow);
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
+
+ipcMain.handle('app:getVersion', () => app.getVersion());
 
 ipcMain.handle('config:get', () => readConfig());
 ipcMain.handle('config:set', (_e, partial) => writeConfig(partial));

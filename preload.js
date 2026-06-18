@@ -1,6 +1,7 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electronAPI', {
+  getVersion: () => ipcRenderer.invoke('app:getVersion'),
   getConfig: () => ipcRenderer.invoke('config:get'),
   setConfig: (partial) => ipcRenderer.invoke('config:set', partial),
   pickOpenPath: () => ipcRenderer.invoke('dialog:pickOpen'),

@@ -1,6 +1,6 @@
 {
   "name": "sysmgm-team-capacity",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "Team Capacity Calculator (desktop app)",
   "author": "IQSIGHT SysMgm",
   "main": "main.js",
@@ -15,7 +15,8 @@
     "files": [
       "main.js",
       "preload.js",
-      "PI_SysMgm_Team_Capacity.html"
+      "PI_SysMgm_Team_Capacity.html",
+      "build/icon.ico"
     ],
     "win": {
       "target": "portable",
