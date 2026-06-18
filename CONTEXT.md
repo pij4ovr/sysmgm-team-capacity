@@ -89,11 +89,10 @@ To run: `npm install` once, then `npm start`. To produce a distributable: `npm r
 {
   "version": 1,
   "savedAt": "ISO timestamp",
-  "piList": [...],
-  "overhead": [...]
+  "piList": [...]
 }
 ```
-`team` and `ratios` live per-PI inside each `piList[i]` entry, not at the top level (older saves with a top-level `team`/`ratios` are migrated by `applyState()`). When written to a connected file, `safeWriteFile()` adds a `backups` array on top (see storage caveat above) — `applyState()` ignores that field on load.
+`team`, `ratios`, and `overhead` all live per-PI inside each `piList[i]` entry, not at the top level (older saves with a top-level `team`/`ratios`/`overhead` are migrated by `applyState()` — each PI lacking its own copy gets one backfilled, falling back to the built-in `DEFAULTS.overhead` if there was no legacy global value either). This means each PI's ceremonies/overhead list is fully independent: adding, removing, or re-allocating hours for a ceremony in one PI never affects any other PI. When written to a connected file, `safeWriteFile()` adds a `backups` array on top (see storage caveat above) — `applyState()` ignores that field on load.
 
 ### Section collapse state
 - Stored separately in localStorage under key `sysmgm-sections-v1`
@@ -190,10 +189,12 @@ Current team:
 | João Pires | QA | 1.5 h/day | Hybrid QA+PO role, 4h contracted, 2.5h overhead = 1.5h focus |
 | Wanderson Coelho | QA | 5.5 h/day | Full-speed, 8h contracted, 2.5h overhead = 5.5h focus |
 
-### 4.3 `overhead` — Ceremonies & Activities
+### 4.3 `overhead` — Ceremonies & Activities (per-PI, changed 2026-06)
+
+Lives inside each `piList[i].overhead` — independent per PI, same as `team` and `ratios`. The global `overhead` variable always points at the *viewed* PI's array (kept in sync in `renderAll()`, `setViewedPI()`, `restoreViewedPI()`, and `applyState()`), so edits, additions, and removals only ever affect that one PI.
 
 ```javascript
-overhead = [
+pi.overhead = [
   { name: 'Daily Meeting',        hpd: 0.250 },
   { name: 'Sprint Planning Pt 1', hpd: 0.100 },
   { name: 'Sprint Planning Pt 2', hpd: 0.067 },
@@ -202,6 +203,8 @@ overhead = [
   // ... more rows
 ]
 ```
+
+A new PI created via "Add PI" starts with a **copy** of the planning PI's `overhead` (`addPIFromForm()`), same as it does for `team`/`ratios` — a convenient starting point, but a separate array from that point on.
 
 `hpd` = hours per working day consumed by this ceremony/activity.
 `totalOverhead()` = sum of all `hpd` values ≈ 2.501 h/day.
@@ -271,6 +274,7 @@ Collapsible. Contains three sub-areas:
 **Overhead / Ceremonies Table**
 - One row per ceremony: editable name, h/day input, computed h/sprint
 - Add / remove rows freely
+- **Per-PI** (changed 2026-06): the table shown follows the viewed PI's own `overhead` array — adding/removing/re-allocating a ceremony only affects that PI. A new PI starts with a copy of the planning PI's list as a starting point.
 - Total overhead row at the bottom
 - Summary line: `8h full day − X.XXh overhead = Y.YYh/day focus`
 - **Ratio SP/h inputs**: manually entered, one for DEV and one for QA

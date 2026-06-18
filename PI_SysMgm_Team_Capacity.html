@@ -752,11 +752,13 @@ const DEFAULTS = {
 // ══════════════════════════════════════════════════════════════
 
 let piList   = JSON.parse(JSON.stringify(DEFAULTS.piList));
-let overhead = JSON.parse(JSON.stringify(DEFAULTS.overhead));
-// Ensure every PI in the default list has its own team array
+// Ensure every PI in the default list has its own team and overhead arrays
 piList.forEach(pi => { if (!pi.team) pi.team = []; });
-// `team` always points to the viewed PI's team array (updated by setViewedPI / applyState)
+piList.forEach(pi => { if (!pi.overhead) pi.overhead = JSON.parse(JSON.stringify(DEFAULTS.overhead)); });
+// `team`/`overhead` always point to the viewed PI's own arrays (updated by setViewedPI / applyState),
+// so each PI's ceremonies/overhead are independent — editing one PI never affects another.
 let team     = (piList.find(p => p.status === 'current') || piList.find(p => p.status === 'future'))?.team || [];
+let overhead = (piList.find(p => p.status === 'current') || piList.find(p => p.status === 'future'))?.overhead || [];
 
 let viewedPIId = null;
 let _proj = {devH:0,qaH:0,devSP:0,qaSP:0,devR:0.42,qaR:0.29};
@@ -781,13 +783,12 @@ const VIEW_KEY = 'sysmgm-viewed-pi-v1';
 
 function getState() {
   saveRatiosToPi(); // ensure current DOM values are flushed to the viewed PI before saving
-  return { version: 1, savedAt: new Date().toISOString(), piList, overhead };
+  return { version: 1, savedAt: new Date().toISOString(), piList };
 }
 
 function applyState(data) {
   if (!data || data.version !== 1) return false;
   piList   = data.piList   || piList;
-  overhead = data.overhead || overhead;
   // Migrate old saves: copy global team into each PI, resetting activeIter to that PI's own iterations
   if (data.team && data.team.length) {
     piList.forEach(pi => {
@@ -830,10 +831,17 @@ function applyState(data) {
   }
   // Ensure every PI has a ratios object
   piList.forEach(pi => { if (!pi.ratios) pi.ratios = { dev: 0.42, qa: 0.29 }; });
+  // Migrate old saves: copy the old global overhead list into each PI that doesn't have its own yet
+  if (data.overhead && data.overhead.length) {
+    piList.forEach(pi => { if (!pi.overhead) pi.overhead = JSON.parse(JSON.stringify(data.overhead)); });
+  }
+  // Ensure every PI has its own overhead array (falls back to the built-in defaults)
+  piList.forEach(pi => { if (!pi.overhead) pi.overhead = JSON.parse(JSON.stringify(DEFAULTS.overhead)); });
   // Migrate legacy 'planning' status → 'future'
   piList.forEach(pi => { if (pi.status === 'planning') pi.status = 'future'; });
 
-  team = getViewedPI()?.team || getCurrentPI()?.team || [];
+  team     = getViewedPI()?.team     || getCurrentPI()?.team     || [];
+  overhead = getViewedPI()?.overhead || getCurrentPI()?.overhead || [];
   syncRatiosFromPi();
   return true;
 }
@@ -1237,7 +1245,8 @@ function restoreViewedPI() {
       const id = parseInt(saved, 10);
       if (!isNaN(id) && piList.some(p => p.id === id)) {
         viewedPIId = id;
-        team = getViewedPI()?.team || getCurrentPI()?.team || [];
+        team     = getViewedPI()?.team     || getCurrentPI()?.team     || [];
+        overhead = getViewedPI()?.overhead || getCurrentPI()?.overhead || [];
         syncRatiosFromPi();
       }
     }
@@ -1310,7 +1319,8 @@ function saveRatiosToPi() {
 function setViewedPI(id) {
   viewedPIId = id;
   try { sessionStorage.setItem(VIEW_KEY, String(id)); } catch {}
-  team = getViewedPI()?.team || getCurrentPI()?.team || [];
+  team     = getViewedPI()?.team     || getCurrentPI()?.team     || [];
+  overhead = getViewedPI()?.overhead || getCurrentPI()?.overhead || [];
   syncRatiosFromPi();
   renderAll();
 }
@@ -1435,8 +1445,9 @@ function addPIFromForm() {
   const newTeam   = JSON.parse(JSON.stringify(srcTeam));
   newTeam.forEach(m => { m.activeIter = [...iterIds]; m.daysOff = {}; m.focusHpdByIter = {}; });
 
-  const srcRatios = getCurrentPI()?.ratios || {dev: spDev(), qa: spQa()};
-  const newPI = {id: num, status: inferred, iterations, actual: null, team: newTeam, ratios: {...srcRatios}};
+  const srcRatios   = getCurrentPI()?.ratios || {dev: spDev(), qa: spQa()};
+  const srcOverhead = getCurrentPI()?.overhead || overhead;
+  const newPI = {id: num, status: inferred, iterations, actual: null, team: newTeam, ratios: {...srcRatios}, overhead: JSON.parse(JSON.stringify(srcOverhead))};
 
   if (inferred === 'historical') {
     newPI.actual = {devH:0,devSPest:0,devSPexec:null,devRatio:null,qaH:0,qaSPest:0,qaSPexec:null,qaRatio:null};
@@ -1980,9 +1991,9 @@ function renderOverhead() {
       <td style="width:99%"><input type="text" value="${esc(o.name)}" style="width:100%;box-sizing:border-box"
         oninput="overhead[${i}].name=this.value;scheduleSave()"></td>
       <td class="num"><input type="number" id="oh-hpd-${i}" value="${o.hpd.toFixed(3)}" step="0.001" min="0" max="8" style="width:72px"
-        onchange="overhead[${i}].hpd=+this.value;document.getElementById('oh-spr-${i}').value=(+this.value*DAYS).toFixed(2);renderTeam();recalc();scheduleSave()"></td>
+        onchange="overhead[${i}].hpd=+this.value;renderOverhead();renderTeam();recalc();scheduleSave()"></td>
       <td class="num"><input type="number" id="oh-spr-${i}" value="${(o.hpd*DAYS).toFixed(2)}" step="0.25" min="0" max="${FULL_H*DAYS}" style="width:72px"
-        onchange="var _h=+this.value/DAYS;overhead[${i}].hpd=_h;document.getElementById('oh-hpd-${i}').value=_h.toFixed(3);renderTeam();recalc();scheduleSave()"></td>
+        onchange="overhead[${i}].hpd=+this.value/DAYS;renderOverhead();renderTeam();recalc();scheduleSave()"></td>
       <td><button class="btn btn-sm btn-danger" onclick="removeOverhead(${i})">✕</button></td>`;
     tbody.appendChild(tr);
   });
@@ -3015,7 +3026,8 @@ function restoreSectionState() {
 // ══════════════════════════════════════════════════════════════
 
 function renderAll() {
-  team = getViewedPI()?.team || getCurrentPI()?.team || [];
+  team     = getViewedPI()?.team     || getCurrentPI()?.team     || [];
+  overhead = getViewedPI()?.overhead || getCurrentPI()?.overhead || [];
   syncRatiosFromPi();
   renderPISwitcher();
   renderGlobalPIPanel();
