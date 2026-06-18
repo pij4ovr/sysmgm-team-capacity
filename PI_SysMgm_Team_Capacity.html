@@ -1516,6 +1516,19 @@ function markHistorical(piId) {
   if (!v.ok) { showToast(v.msg, 'error'); renderGlobalPIPanel(); return; }
   pi.status = 'historical';
   if (!pi.actual) pi.actual = {devH:0,devSPest:0,devSPexec:null,devRatio:0.45,qaH:0,qaSPest:0,qaSPexec:null,qaRatio:0.25};
+  // Snapshot the projected hours/estimated SP from the real team+iterations+ratios
+  // data into the historical record — only when it's still at the zeroed default,
+  // so a previously hand-edited actual record (Historical Comparison edit mode)
+  // is never clobbered.
+  if (!pi.actual.devH && !pi.actual.qaH) {
+    const proj = projForPI(pi);
+    pi.actual.devH     = Math.round(proj.devH);
+    pi.actual.qaH      = Math.round(proj.qaH);
+    pi.actual.devSPest = Math.round(proj.devSP);
+    pi.actual.qaSPest  = Math.round(proj.qaSP);
+    pi.actual.devRatio = proj.devR;
+    pi.actual.qaRatio  = proj.qaR;
+  }
   // Auto-aggregate sprint actuals from iterations into the historical actual record
   const iters = pi.iterations || [];
   const devExecs = iters.map(it => it.devSPexec).filter(v => v != null);
@@ -1523,6 +1536,27 @@ function markHistorical(piId) {
   if (devExecs.length > 0) pi.actual.devSPexec = devExecs.reduce((s,v) => s+v, 0);
   if (qaExecs.length  > 0) pi.actual.qaSPexec  = qaExecs.reduce((s,v) => s+v, 0);
   renderAll(); scheduleSave();
+}
+
+// Manual escape hatch for PIs whose `actual` record is stuck at the zeroed
+// default (e.g. PIs that became historical before this snapshot logic
+// existed) — recomputes devH/qaH/devSPest/qaSPest/ratios from this PI's own
+// team + iterations + ratios, the same calculation markHistorical() does
+// automatically on a fresh transition. Available as a button on each
+// historical PI's comparison card.
+function recomputeActualFromProjection(piId) {
+  const pi = piList.find(p => p.id === piId);
+  if (!pi || !pi.actual) return;
+  const proj = projForPI(pi);
+  pi.actual.devH     = Math.round(proj.devH);
+  pi.actual.qaH      = Math.round(proj.qaH);
+  pi.actual.devSPest = Math.round(proj.devSP);
+  pi.actual.qaSPest  = Math.round(proj.qaSP);
+  pi.actual.devRatio = proj.devR;
+  pi.actual.qaRatio  = proj.qaR;
+  renderAll();
+  scheduleSave();
+  showToast('Recalculated DEV/QA hours and estimated SP for PI ' + piId + ' from its team + iterations');
 }
 
 
@@ -1666,9 +1700,7 @@ function renderGlobalPIPanel() {
     const inferred   = inferStatusFromDates(pi);
 
     const count = (pi.iterations||[]).length;
-    let summary = isHist && pi.actual
-      ? (() => { const dsp = pi.actual.devSPexec ?? pi.actual.devSPest ?? '—'; const qsp = pi.actual.qaSPexec ?? pi.actual.qaSPest ?? '—'; return `DEV ${pi.actual.devH}h / ${dsp} SP &nbsp;·&nbsp; QA ${pi.actual.qaH}h / ${qsp} SP${piRangeTxt}`; })()
-      : `${count} iteration${count!==1?'s':''} planned${piRangeTxt}`;
+    let summary = `${count} iteration${count!==1?'s':''} planned${piRangeTxt}`;
     if (inferred && inferred !== pi.status) {
       const hintColor = inferred==='current'?'var(--teal)':inferred==='historical'?'var(--slate-500)':'var(--amber)';
       const hintLabel = inferred==='current'?'ongoing':inferred;
@@ -2591,6 +2623,9 @@ function renderHistoricalSection() {
       html += `<div class="hist-label">${hasExec ? 'Actual (executed)' : 'Estimated'}</div>`;
       if (devCount + qaCount > 0) html += hRow('Team', `${devCount} Dev · ${qaCount} QA`);
       if (nIters > 0)             html += hRow('Iterations', nIters);
+      if ((t.length || 0) > 0 && nIters > 0) {
+        html += `<button class="btn btn-sm" style="margin:2px 0 8px" onclick="recomputeActualFromProjection(${pi.id})" title="Recompute DEV/QA hours and estimated SP from this PI's team + iterations + ratios">↻ Recalculate from team/iterations</button>`;
+      }
 
       html += hRow('DEV hours', a.devH ?? '—');
       if (a.devSPest  != null) html += hRow('DEV SP estimated', a.devSPest, 'var(--blue-dark)');

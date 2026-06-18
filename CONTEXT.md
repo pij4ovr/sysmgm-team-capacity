@@ -387,6 +387,7 @@ Collapsible. Shows all historical PIs with their actual execution data.
 | `showToast(msg, type)` | Shows a brief bottom-right notification. type: 'success' or 'error'. |
 | `renderCapacityChart(iters, devHArr, qaHArr)` | Renders SVG stacked bar chart into `#cap-chart-wrap`. |
 | `setPIStatus(piId, status)` | Unified status dispatcher — routes to `setCurrentPI`, `markAsCurrent`, `markHistorical`, or `markFuture`. Called by the status dropdown in PI Management. |
+| `markHistorical(piId)` | Marks a PI historical. Snapshots `devH`/`qaH`/`devSPest`/`qaSPest`/ratios into `pi.actual` via `projForPI(pi)` (only if still at the zeroed default — never overwrites a hand-edited actual record), then aggregates any per-iteration `devSPexec`/`qaSPexec` (Sprint Actuals) into `pi.actual.devSPexec`/`qaSPexec`. |
 | `setCurrentPI(piId)` | Marks `piId` as `'planning'`. Uses `inferStatusFromDates(prev)` to decide prev PI's new status; aggregates actuals if prev is historical. Resets `viewedPIId = null`. |
 | `markAsCurrent(piId)` | Marks a PI as `'current'` (running). Demotes any existing 'current' PI. |
 | `renderAll()` | Syncs `team` to viewed PI's team at the top before re-rendering everything. |
