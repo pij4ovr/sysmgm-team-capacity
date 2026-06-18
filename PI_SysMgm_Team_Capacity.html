@@ -2693,8 +2693,7 @@ function updateIterActual(iterId, field, val) {
   const inputId = 'actual-' + iterId + '-' + field;
   const input = document.getElementById(inputId);
   if (input) input.className = 'actuals-input' + (it[field] != null ? ' has-val' : '');
-  renderSprintActuals();
-  renderRatioSuggestion();
+  recalc();
   scheduleSave();
 }
 
