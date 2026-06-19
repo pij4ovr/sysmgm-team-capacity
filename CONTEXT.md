@@ -449,25 +449,7 @@ The team table has two linked inputs per row:
 
 ---
 
-## 11. PI 19 — Current Setup (as of June 2026)
-
-| Iteration | Sprint | Dates | Working Days |
-|---|---|---|---|
-| 19.1 | 157 | 24 Jun → 14 Jul 2026 | 15 |
-| 19.2 | 158 | 15 Jul → 4 Aug 2026 | 15 |
-| 19.3 | 159 | 5 Aug → 25 Aug 2026 | 15 |
-| 19.4 | 160 | 26 Aug → 15 Sep 2026 | 15 |
-| 19.5 | 161 | 16 Sep → 6 Oct 2026 | 15 (3 public holidays → 12 net) |
-
-Active iterations per member (anonymized, see §4.2):
-- Dev A: all 5
-- Dev B: 19.1, 19.2, 19.3
-- QA A: all 5
-- QA B: all 5
-
----
-
-## 12. Design Decisions & Why
+## 11. Design Decisions & Why
 
 | Decision | Reason |
 |---|---|
