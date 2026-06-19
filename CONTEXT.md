@@ -177,7 +177,7 @@ Rules:
 ```javascript
 team = [
   {
-    name: 'João Botelho',
+    name: 'Dev A',
     role: 'Dev',                       // 'Dev' | 'QA'
     focusHpd: 3.5,                     // focus hours per day (primary capacity field)
     activeIter: ['19.1','19.2','19.3','19.4','19.5'], // iteration IDs this person is active in
@@ -191,13 +191,13 @@ team = [
 
 **Important**: `focusHpd` is the **primary** capacity field. There is NO `avail%` field stored — the % shown in the UI is derived: `avail% = (focusHpd / focusStd()) * 100`.
 
-Current team:
+Current team (names anonymized — see local data file for real names):
 | Name | Role | focusHpd | Rationale |
 |---|---|---|---|
-| João Botelho | Dev | 3.5 h/day | Still learning, 6h contracted, 2.5h overhead = 3.5h focus |
-| João Oliveira | Dev | 3.5 h/day | Same as above |
-| João Pires | QA | 1.5 h/day | Hybrid QA+PO role, 4h contracted, 2.5h overhead = 1.5h focus |
-| Wanderson Coelho | QA | 5.5 h/day | Full-speed, 8h contracted, 2.5h overhead = 5.5h focus |
+| Dev A | Dev | 3.5 h/day | Still learning, 6h contracted, 2.5h overhead = 3.5h focus |
+| Dev B | Dev | 3.5 h/day | Same as above |
+| QA A | QA | 1.5 h/day | Hybrid QA+PO role, 4h contracted, 2.5h overhead = 1.5h focus |
+| QA B | QA | 5.5 h/day | Full-speed, 8h contracted, 2.5h overhead = 5.5h focus |
 
 ### 4.3 `overhead` — Ceremonies & Activities (per-PI, changed 2026-06)
 
@@ -459,11 +459,11 @@ The team table has two linked inputs per row:
 | 19.4 | 160 | 26 Aug → 15 Sep 2026 | 15 |
 | 19.5 | 161 | 16 Sep → 6 Oct 2026 | 15 (3 public holidays → 12 net) |
 
-Active iterations per member:
-- João Botelho: all 5
-- João Oliveira: 19.1, 19.2, 19.3
-- João Pires: all 5
-- Wanderson Coelho: all 5
+Active iterations per member (anonymized, see §4.2):
+- Dev A: all 5
+- Dev B: 19.1, 19.2, 19.3
+- QA A: all 5
+- QA B: all 5
 
 ---
 

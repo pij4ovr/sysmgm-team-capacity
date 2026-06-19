@@ -2,3 +2,4 @@ node_modules/
 dist/
 *.exe
 RELEASE_STEPS.md
+PI_SysMgm_Capacity.json
