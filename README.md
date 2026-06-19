@@ -12,19 +12,6 @@ On first launch, the app shows a **"Connect a data file"** banner — what to do
 
 ---
 
-## Screenshots
-
-**PI management** — add/track Program Increments and their iterations, switch which one is active.
-![PI management](docs/screenshots/pi-management.png)
-
-**Capacity per iteration** — focus hours, estimated Story Points, and a chart comparing estimated vs. executed SP across the PI.
-![Capacity overview](docs/screenshots/capacity-overview.png)
-
-**PI totals & historical comparison** — side-by-side comparison across PIs, with deltas and accuracy vs. previous PIs.
-![Historical comparison](docs/screenshots/historical-comparison.png)
-
----
-
 ## 👤 I'm from a different team, starting from scratch
 
 If you don't have any data yet and you're going to use this app for your own team:
@@ -53,3 +40,16 @@ If you're joining the SysMgm team and want to continue from the data that alread
 
 - Architecture and technical details: [ARCHITECTURE.md](ARCHITECTURE.md) and [CONTEXT.md](CONTEXT.md).
 - To run from source (development), see the "Desktop App Files & Build" section in `CONTEXT.md`.
+
+---
+
+## Screenshots
+
+**PI management** — add/track Program Increments and their iterations, switch which one is active.
+![PI management](docs/screenshots/pi-management.png)
+
+**Capacity per iteration** — focus hours, estimated Story Points, and a chart comparing estimated vs. executed SP across the PI.
+![Capacity overview](docs/screenshots/capacity-overview.png)
+
+**PI totals & historical comparison** — side-by-side comparison across PIs, with deltas and accuracy vs. previous PIs.
+![Historical comparison](docs/screenshots/historical-comparison.png)
