@@ -2870,7 +2870,6 @@ function renderSprintActuals() {
 // ══════════════════════════════════════════════════════════════
 
 function computeActualRatios(pi) {
-  if (!pi.actual) return null;
   const e = effectiveActual(pi);
   const devRatio      = (e.devSPexec != null && e.devH > 0) ? e.devSPexec / e.devH : (e.devRatioStored || null);
   const qaRatio       = (e.qaSPexec  != null && e.qaH  > 0) ? e.qaSPexec  / e.qaH  : (e.qaRatioStored  || null);
@@ -2881,7 +2880,7 @@ function computeActualRatios(pi) {
 
 function getSuggestedRatios() {
   const histPIs = piList
-    .filter(p => p.status === 'historical' && p.actual)
+    .filter(p => p.status === 'historical' || p.status === 'current')
     .sort((a, b) => b.id - a.id);
   if (!histPIs.length) return null;
 
@@ -2933,7 +2932,7 @@ function renderRatioSuggestion() {
   }
 
   const {mostRecent: mr, average: av} = suggestions;
-  const curPI = getCurrentPI();
+  const curPI = getViewedPI();
   const curLabel = curPI ? 'PI ' + curPI.id : 'current PI';
 
   let html = `<div class="ratio-suggestion">
