@@ -7,5 +7,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   pickOpenPath: () => ipcRenderer.invoke('dialog:pickOpen'),
   pickSavePath: (suggestedName) => ipcRenderer.invoke('dialog:pickSave', suggestedName),
   readFile: (filePath) => ipcRenderer.invoke('file:read', filePath),
-  writeFile: (filePath, text) => ipcRenderer.invoke('file:write', filePath, text)
+  writeFile: (filePath, text) => ipcRenderer.invoke('file:write', filePath, text),
+  getTfsSettings: () => ipcRenderer.invoke('tfs:getSettings'),
+  setTfsSettings: (partial) => ipcRenderer.invoke('tfs:setSettings', partial),
+  fetchTfsSprint: (params) => ipcRenderer.invoke('tfs:fetchSprint', params),
+  openTfsWorkItem: (id) => ipcRenderer.invoke('tfs:openWorkItem', id)
 });

@@ -386,6 +386,32 @@
   </div>
 </div>
 
+<div class="history-overlay" id="tfs-settings-panel">
+  <div class="history-panel">
+    <div class="history-panel-title">TFS Settings</div>
+    <div class="history-panel-sub">Configure the on-prem Azure DevOps Server (TFS) connection used by "Pull Planned" / "Pull Executed" in Sprint Actuals. The PAT is encrypted on this machine (OS-level) and never leaves the app.</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <label style="font-size:12px;font-weight:600;color:var(--slate-600)">Collection URL
+        <input type="text" id="tfs-collection-url" placeholder="https://tfsservice.bst-eng.com/tfs/OT1TFS" style="width:100%;margin-top:4px;box-sizing:border-box">
+      </label>
+      <label style="font-size:12px;font-weight:600;color:var(--slate-600)">Project
+        <input type="text" id="tfs-project" placeholder="VS-PAS4-OVR" style="width:100%;margin-top:4px;box-sizing:border-box">
+      </label>
+      <label style="font-size:12px;font-weight:600;color:var(--slate-600)">Personal Access Token
+        <input type="password" id="tfs-pat" style="width:100%;margin-top:4px;box-sizing:border-box" autocomplete="off">
+      </label>
+      <div id="tfs-pat-status" style="font-size:11px;color:var(--slate-400)"></div>
+    </div>
+    <div style="margin-top:14px;display:flex;justify-content:space-between;align-items:center">
+      <button class="banner-btn banner-btn-secondary" style="background:var(--red-light);color:var(--red)" onclick="clearTfsPat()">Clear PAT</button>
+      <div style="display:flex;gap:8px">
+        <button class="banner-btn banner-btn-secondary" style="background:var(--slate-100);color:var(--slate-700)" onclick="hideTfsSettingsPanel()">Close</button>
+        <button class="banner-btn banner-btn-primary" onclick="saveTfsSettings()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <header class="site-header">
   <div class="site-header-inner">
     <div>
@@ -405,6 +431,7 @@
       <button class="btn-history" id="btn-history" onclick="showHistoryPanel()" title="View saved versions / restore a backup">🕑 History</button>
       <button class="btn-history" id="btn-open-file" onclick="openDifferentFile()" title="Connect to a different .json save file">📂 Open File</button>
       <button class="btn-history" id="btn-backup" onclick="configureBackup()" title="Set or change a backup location (e.g. a network folder) every save also mirrors to">🗄 Backup</button>
+      <button class="btn-history" id="btn-tfs-settings" onclick="showTfsSettingsPanel()" title="Configure the TFS connection used by Pull Planned / Pull Executed in Sprint Actuals">🔗 TFS Settings</button>
     </div>
   </div>
 </header>
@@ -816,6 +843,9 @@ function applyState(data) {
       if (!('dateStart' in it))       it.dateStart  = '';
       if (!('dateEnd'   in it))       it.dateEnd    = '';
       if (!('days'      in it))       it.days       = DAYS;
+      if (!('tfsUrl'      in it))     it.tfsUrl      = '';
+      if (!('tfsPlanned'  in it))     it.tfsPlanned  = null;
+      if (!('tfsExecuted' in it))     it.tfsExecuted = null;
     });
     pi.team.forEach(m => {
       if (!m.daysOff)        m.daysOff        = {};
@@ -1224,6 +1254,41 @@ async function showHistoryPanel() {
   document.getElementById('history-panel').style.display = 'flex';
 }
 function hideHistoryPanel() { document.getElementById('history-panel').style.display = 'none'; }
+
+async function showTfsSettingsPanel() {
+  const s = await window.electronAPI.getTfsSettings();
+  document.getElementById('tfs-collection-url').value = s.collectionUrl || '';
+  document.getElementById('tfs-project').value = s.project || '';
+  const patInput = document.getElementById('tfs-pat');
+  patInput.value = '';
+  patInput.placeholder = s.hasPat ? 'PAT configured — leave blank to keep' : 'Not set';
+  document.getElementById('tfs-pat-status').textContent = s.hasPat
+    ? 'A PAT is currently stored (encrypted) for this app.'
+    : 'No PAT stored yet.';
+  document.getElementById('tfs-settings-panel').style.display = 'flex';
+}
+function hideTfsSettingsPanel() { document.getElementById('tfs-settings-panel').style.display = 'none'; }
+
+async function saveTfsSettings() {
+  const collectionUrl = document.getElementById('tfs-collection-url').value.trim();
+  const project        = document.getElementById('tfs-project').value.trim();
+  const pat             = document.getElementById('tfs-pat').value;
+  const partial = { collectionUrl, project };
+  if (pat) partial.pat = pat;   // blank = leave the stored PAT unchanged
+  const res = await window.electronAPI.setTfsSettings(partial);
+  if (!res || !res.ok) { showToast('Could not save TFS settings' + (res && res.error ? ': ' + res.error : ''), 'error'); return; }
+  showToast('TFS settings saved');
+  hideTfsSettingsPanel();
+}
+
+async function clearTfsPat() {
+  if (!confirm('Remove the stored TFS PAT?')) return;
+  const res = await window.electronAPI.setTfsSettings({ pat: '' });
+  if (!res || !res.ok) { showToast('Could not clear the TFS PAT' + (res && res.error ? ': ' + res.error : ''), 'error'); return; }
+  showToast('TFS PAT cleared');
+  document.getElementById('tfs-pat').placeholder = 'Not set';
+  document.getElementById('tfs-pat-status').textContent = 'No PAT stored yet.';
+}
 async function restoreBackup(i) {
   const entry = (window._historyEntries || [])[i];
   if (!entry) return;
@@ -1404,7 +1469,8 @@ function autoGenerateIterations(piId, startIso, endIso) {
     iters.push({
       id: `${piId}.${n}`, sprint: 0, days: 15, label: `${piId}.${n}`,
       dateStart: ds, dateEnd: de, dates: formatIterDates(ds, de),
-      holidays: [], devSPexec: null, qaSPexec: null
+      holidays: [], devSPexec: null, qaSPexec: null,
+      tfsUrl: '', tfsPlanned: null, tfsExecuted: null
     });
     cur.setDate(cur.getDate() + 21);
     n++;
@@ -1540,7 +1606,7 @@ function addIterFromForm() {
   if (!id) return;
   if (pi.iterations.find(it => it.id === id)) { alert('Iteration ' + id + ' already exists.'); return; }
   const dates = formatIterDates(dateStart, dateEnd);
-  pi.iterations.push({id, sprint:0, days, label:label||id, dateStart, dateEnd, dates, holidays:[], devSPexec:null, qaSPexec:null});
+  pi.iterations.push({id, sprint:0, days, label:label||id, dateStart, dateEnd, dates, holidays:[], devSPexec:null, qaSPexec:null, tfsUrl:'', tfsPlanned:null, tfsExecuted:null});
   team.forEach(m => { if (!m.activeIter.includes(id)) m.activeIter.push(id); });
   ['new-iter-id','new-iter-label','new-iter-start','new-iter-end'].forEach(fid => document.getElementById(fid).value = '');
   document.getElementById('new-iter-days').value = '15';
@@ -1710,6 +1776,7 @@ function renderIterSection() {
       html += `<table><thead><tr>
         <th style="width:80px">ID</th><th>Iteration</th><th>Dates</th>
         <th class="num" style="width:65px" title="Working days in this sprint">Days</th>
+        <th style="width:200px">TFS Sprint URL</th>
         <th style="width:40px"></th>
       </tr></thead><tbody>`;
       viewPI.iterations.forEach(it => {
@@ -1725,6 +1792,9 @@ function renderIterSection() {
             </div>
           </td>
           <td class="num"><input type="number" value="${itDays}" min="1" max="30" style="width:55px" title="Working days" oninput="updateIterField('${it.id}','days',+this.value);recalc()"></td>
+          <td><input type="text" value="${esc(it.tfsUrl||'')}" placeholder="TFS sprint backlog URL" style="width:100%;font-size:11px;box-sizing:border-box"
+            title="Paste the TFS sprint backlog URL — used by Pull Planned / Pull Executed in Sprint Actuals"
+            oninput="updateIterField('${it.id}','tfsUrl',this.value)"></td>
           <td><button class="btn btn-sm btn-danger" onclick="removeIteration('${it.id}')">✕</button></td>
         </tr>`;
       });
@@ -2698,6 +2768,212 @@ function updateIterActual(iterId, field, val) {
   scheduleSave();
 }
 
+// Tracks which (iteration, mode) item lists are currently expanded in the UI.
+// Pure display state — not persisted, not routed through scheduleSave().
+const _tfsDetailsOpen = new Set();
+
+function toggleTfsDetails(iterId, mode) {
+  const key = iterId + ':' + mode;
+  if (_tfsDetailsOpen.has(key)) _tfsDetailsOpen.delete(key); else _tfsDetailsOpen.add(key);
+  renderSprintActuals();
+}
+
+async function openTfsWorkItem(id) {
+  const res = await window.electronAPI.openTfsWorkItem(id);
+  if (!res || !res.ok) showToast('Could not open work item: ' + (res && res.error ? res.error : 'unknown error'), 'error');
+}
+
+const TFS_BUCKET_LABEL = { dev: 'Dev', qa: 'QA', team: 'Team' };
+
+// This team's title convention: User Stories are written starting with
+// "[Dev]", "[QA]", or "[SysMgm Team]". If that prefix doesn't match the
+// bucket the item actually landed in (via its DEV/QA tag), it's almost
+// always a forgotten/wrong tag in TFS, not a real "Team" item — flag it.
+// Bugs are exempt: they always count as Dev regardless of tags OR title.
+function titlePrefixBucket(title) {
+  const m = String(title || '').match(/^\s*\[\s*(dev|qa|sysmgm\s*team)\s*\]/i);
+  if (!m) return null;
+  const token = m[1].toLowerCase().replace(/\s+/g, ' ');
+  return token === 'dev' ? 'dev' : token === 'qa' ? 'qa' : token === 'sysmgm team' ? 'team' : null;
+}
+function tfsTagMismatch(item) {
+  if (item.type === 'Bug') return null;
+  const expected = titlePrefixBucket(item.title);
+  return (expected && expected !== item.bucket) ? expected : null;
+}
+
+function tfsItemRow(item, showState) {
+  const expected = tfsTagMismatch(item);
+  const dim = item.counted === false ? 'opacity:0.55;' : '';
+  const style = expected
+    ? `display:flex;gap:8px;align-items:baseline;font-size:11px;${dim}background:var(--red-light);border-radius:4px;padding:3px 6px;margin:1px 0`
+    : `display:flex;gap:8px;align-items:baseline;font-size:11px;${dim}padding:2px 0`;
+  const tip = expected
+    ? ` title="Title says [${TFS_BUCKET_LABEL[expected]}] but this item is classified as ${TFS_BUCKET_LABEL[item.bucket]} in TFS — check the DEV/QA tag"`
+    : '';
+  return `<div style="${style}"${tip}>
+    <a href="#" onclick="openTfsWorkItem(${item.id});return false;" style="color:var(--blue);text-decoration:underline;white-space:nowrap">#${item.id}</a>
+    <span style="flex:1;color:var(--slate-700)">${esc(item.title)}</span>
+    <span style="color:var(--slate-400);white-space:nowrap">${esc(item.type)}</span>
+    ${showState ? `<span style="color:var(--slate-400);white-space:nowrap">${esc(item.state)}${item.counted === false ? ' — not closed, excluded' : ''}</span>` : ''}
+    <strong style="white-space:nowrap">${item.sp} SP</strong>
+    ${expected ? '<span style="color:var(--red);font-weight:700;white-space:nowrap">⚠ check tag</span>' : ''}
+  </div>`;
+}
+
+// Per-item list grouped by bucket, so tag mistakes (wrong/missing DEV or QA
+// tag) are easy to spot at a glance and fixed with one click into TFS.
+function tfsItemsTable(items) {
+  const buckets = [
+    { key: 'dev',  label: 'Dev',  color: 'var(--blue-dark)' },
+    { key: 'qa',   label: 'QA',   color: 'var(--teal)' },
+    { key: 'team', label: 'Team', color: 'var(--purple)' }
+  ];
+  let html = '<div style="margin-top:4px;padding:8px 10px;background:#fff;border:1px solid var(--slate-200);border-radius:6px;max-width:760px">';
+  buckets.forEach(b => {
+    const bucketItems = items.filter(i => i.bucket === b.key).sort((a, c) => a.id - c.id);
+    if (!bucketItems.length) return;
+    const bucketSP = bucketItems.filter(i => i.counted !== false).reduce((s, i) => s + (i.sp || 0), 0);
+    html += `<div style="font-weight:600;color:${b.color};font-size:11px;margin:4px 0 2px">${b.label} — ${bucketItems.length} item${bucketItems.length !== 1 ? 's' : ''}, ${bucketSP} SP</div>`;
+    bucketItems.forEach(item => { html += tfsItemRow(item, true); });
+  });
+  html += '</div>';
+  return html;
+}
+
+// Compares a Planned snapshot's items against an Executed snapshot's items
+// (matched by work item id) to surface what changed mid-sprint: items added
+// after planning, items removed/descoped before execution, and items whose
+// Dev/QA/Team bucket changed (e.g. a missing tag got fixed in TFS between
+// the two pulls).
+function tfsDiff(plannedItems, executedItems) {
+  const plannedById  = new Map(plannedItems.map(i => [i.id, i]));
+  const executedById = new Map(executedItems.map(i => [i.id, i]));
+  const added   = executedItems.filter(i => !plannedById.has(i.id));
+  const removed = plannedItems.filter(i => !executedById.has(i.id));
+  const bucketChanged = [];
+  executedItems.forEach(i => {
+    const p = plannedById.get(i.id);
+    if (p && p.bucket !== i.bucket) bucketChanged.push({ id: i.id, title: i.title, type: i.type, from: p.bucket, to: i.bucket });
+  });
+  return { added, removed, bucketChanged };
+}
+
+function tfsDiffPanel(diff) {
+  const section = (title, color, items, rowFn) => {
+    if (!items.length) return '';
+    let h = `<div style="font-weight:600;color:${color};font-size:11px;margin:4px 0 2px">${title} (${items.length})</div>`;
+    items.forEach(it => { h += rowFn(it); });
+    return h;
+  };
+  let html = '<div style="margin-top:4px;padding:8px 10px;background:#fff;border:1px solid var(--slate-200);border-radius:6px;max-width:760px">';
+  html += section('Added mid-sprint', 'var(--green)', diff.added, item => tfsItemRow(item, false));
+  html += section('Removed / descoped', 'var(--red)', diff.removed, item => tfsItemRow(item, false));
+  html += section('Bucket changed', 'var(--amber)', diff.bucketChanged, item => `<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:11px">
+      <a href="#" onclick="openTfsWorkItem(${item.id});return false;" style="color:var(--blue);text-decoration:underline;white-space:nowrap" title="Open in TFS">#${item.id}</a>
+      <span style="flex:1;color:var(--slate-700)">${esc(item.title)}</span>
+      <span style="white-space:nowrap">${TFS_BUCKET_LABEL[item.from]} → ${TFS_BUCKET_LABEL[item.to]}</span>
+    </div>`);
+  if (!diff.added.length && !diff.removed.length && !diff.bucketChanged.length) {
+    html += '<div style="font-size:11px;color:var(--slate-400)">No differences — same items, same buckets, in both pulls.</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function tfsDiffSection(it) {
+  const diff = tfsDiff(it.tfsPlanned.items || [], it.tfsExecuted.items || []);
+  const key = it.id + ':diff';
+  const open = _tfsDetailsOpen.has(key);
+  const changeCount = diff.added.length + diff.removed.length + diff.bucketChanged.length;
+  const summary = changeCount
+    ? `${diff.added.length} added · ${diff.removed.length} removed · ${diff.bucketChanged.length} bucket changed`
+    : 'no differences';
+  let html = `<div style="margin-top:2px"><a href="#" onclick="toggleTfsDetails('${it.id}','diff');return false;" style="font-size:11px;color:var(--blue)">${open ? '▾ Hide' : '▸ Compare'} Planned vs Executed <span style="color:var(--slate-400)">(${summary})</span></a></div>`;
+  if (open) html += tfsDiffPanel(diff);
+  return html;
+}
+
+// Lets a mis-click (e.g. "Pull Executed" clicked when "Pull Planned" was meant)
+// be undone: wipes the stored snapshot so the correct button can be pulled
+// again. Clearing an Executed snapshot also resets devSPexec/qaSPexec, since
+// those were written FROM that pull — leaving them would silently keep the
+// wrong numbers in the ratio-calibration math after the snapshot is gone.
+function clearTfsPull(iterId, mode) {
+  const pi = getViewedPI();
+  if (!pi) return;
+  const it = pi.iterations.find(i => i.id === iterId);
+  if (!it) return;
+  const label = mode === 'planned' ? 'Planned' : 'Executed';
+  let msg = `Clear the ${label} TFS pull for ${iterId}? You can pull again afterwards.`;
+  if (mode === 'executed') msg += '\n\nThis also resets the DEV/QA executed SP fields (filled in from this pull) back to empty.';
+  if (!confirm(msg)) return;
+
+  if (mode === 'planned') {
+    it.tfsPlanned = null;
+  } else {
+    it.tfsExecuted = null;
+    it.devSPexec = null;
+    it.qaSPexec  = null;
+  }
+  _tfsDetailsOpen.delete(iterId + ':' + mode);
+  _tfsDetailsOpen.delete(iterId + ':diff');
+  recalc();
+  scheduleSave();
+  showToast(`${label} TFS pull cleared`);
+}
+
+function tfsBreakdownLine(result, label, iterId, mode) {
+  const when = result.pulledAt ? new Date(result.pulledAt).toLocaleString() : '';
+  const items = result.items || [];
+  const key = iterId + ':' + mode;
+  const open = _tfsDetailsOpen.has(key);
+  let html = `<span style="font-size:11px;color:var(--slate-600)"><strong>${label}:</strong>
+    <span style="color:var(--blue-dark)">Dev ${result.devSP}</span> ·
+    <span style="color:var(--teal)">QA ${result.qaSP}</span> ·
+    <span style="color:var(--purple)">Team ${result.teamSP}</span> ·
+    <strong>Total ${result.totalSP}</strong>
+    <span style="color:var(--slate-400)"> (${result.itemCount} item${result.itemCount !== 1 ? 's' : ''}, ${when})</span>
+    ${items.length ? `<a href="#" onclick="toggleTfsDetails('${iterId}','${mode}');return false;" style="margin-left:6px;color:var(--blue)">${open ? '▾ Hide items' : '▸ View items'}</a>` : ''}
+    <a href="#" onclick="clearTfsPull('${iterId}','${mode}');return false;" style="margin-left:8px;color:var(--red)" title="Delete this pull so you can redo it">🗑 Clear</a>
+  </span>`;
+  if (open && items.length) html += tfsItemsTable(items);
+  return html;
+}
+
+async function pullTfsSprint(iterId, mode) {
+  const pi = getViewedPI();
+  if (!pi) return;
+  const it = pi.iterations.find(i => i.id === iterId);
+  if (!it || !it.tfsUrl) { showToast('Set a TFS sprint URL for this iteration first', 'error'); return; }
+
+  const btn = document.getElementById(`tfs-pull-${iterId}-${mode}`);
+  const prevText = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = 'Pulling…'; }
+
+  let res;
+  try { res = await window.electronAPI.fetchTfsSprint({ tfsUrl: it.tfsUrl, mode }); }
+  catch (e) { res = { ok: false, error: e.message }; }
+
+  if (!res || !res.ok) {
+    showToast('TFS pull failed: ' + (res && res.error ? res.error : 'unknown error'), 'error');
+    if (btn) { btn.disabled = false; btn.textContent = prevText; }
+    return;
+  }
+
+  const result = { devSP: res.devSP, qaSP: res.qaSP, teamSP: res.teamSP, totalSP: res.totalSP, itemCount: res.itemCount, items: res.items || [], pulledAt: res.pulledAt };
+  if (mode === 'planned') {
+    it.tfsPlanned = result;
+  } else {
+    it.tfsExecuted = result;
+    it.devSPexec = result.devSP;
+    it.qaSPexec  = result.qaSP;
+  }
+  recalc();        // also re-renders Sprint Actuals (line ~2171)
+  scheduleSave();
+  showToast(`TFS ${mode} load pulled — ${res.itemCount} item${res.itemCount !== 1 ? 's' : ''}`);
+}
+
 function renderSprintActuals() {
   const wrap = document.getElementById('sprint-actuals-wrap');
   if (!wrap) return;
@@ -2817,6 +3093,20 @@ function renderSprintActuals() {
       <td>${ratioHtml(qaExec, qaH, 'ratio-actual-qa')}</td>
       <td style="color:var(--amber);font-weight:600">
         ${totExec != null ? totExec : '<span style="color:var(--slate-300)">—</span>'}
+      </td>
+    </tr>`;
+
+    const noUrl = !it.tfsUrl;
+    const disAttr = noUrl ? 'disabled title="Set a TFS sprint URL for this iteration in PI Management first"' : '';
+    html += `<tr class="tfs-row">
+      <td colspan="10" style="text-align:left;padding:6px 10px;background:var(--slate-50)">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px">
+          <button class="btn btn-sm" id="tfs-pull-${it.id}-planned" ${disAttr} onclick="pullTfsSprint('${it.id}','planned')">⬇ Pull Planned</button>
+          <button class="btn btn-sm" id="tfs-pull-${it.id}-executed" ${disAttr} onclick="pullTfsSprint('${it.id}','executed')">⬇ Pull Executed</button>
+        </div>
+        ${it.tfsPlanned  ? `<div style="margin-bottom:4px">${tfsBreakdownLine(it.tfsPlanned,  'Planned',  it.id, 'planned')}</div>`  : ''}
+        ${it.tfsExecuted ? `<div>${tfsBreakdownLine(it.tfsExecuted, 'Executed', it.id, 'executed')}</div>` : ''}
+        ${(it.tfsPlanned && it.tfsExecuted) ? tfsDiffSection(it) : ''}
       </td>
     </tr>`;
   });

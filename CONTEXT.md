@@ -78,8 +78,8 @@ Two people can use the app concurrently by each pointing their own `backupPath` 
 
 | File | Purpose |
 |---|---|
-| `main.js` | Electron main process. Creates the window, owns `config.json` (in `app.getPath('userData')`), and exposes IPC handlers: `config:get`, `config:set`, `dialog:pickOpen`, `dialog:pickSave`, `file:read`, `file:write`. |
-| `preload.js` | Context-bridge: exposes a safe `window.electronAPI` (`getConfig`, `setConfig`, `pickOpenPath`, `pickSavePath`, `readFile`, `writeFile`) to the renderer. `contextIsolation: true`, `nodeIntegration: false`. |
+| `main.js` | Electron main process. Creates the window, owns `config.json` (in `app.getPath('userData')`), and exposes IPC handlers: `config:get`, `config:set`, `dialog:pickOpen`, `dialog:pickSave`, `file:read`, `file:write`, `tfs:getSettings`, `tfs:setSettings`, `tfs:fetchSprint`, `tfs:openWorkItem` (see §6c). |
+| `preload.js` | Context-bridge: exposes a safe `window.electronAPI` (`getConfig`, `setConfig`, `pickOpenPath`, `pickSavePath`, `readFile`, `writeFile`, `getTfsSettings`, `setTfsSettings`, `fetchTfsSprint`, `openTfsWorkItem`) to the renderer. `contextIsolation: true`, `nodeIntegration: false`. |
 | `package.json` | `npm start` → `electron .` (dev run). `npm run dist` → `electron-builder`, produces a portable `.exe` under `dist/` (Windows target, no installer required). `npm run icon` → regenerates `build/icon.ico`. |
 | `scripts/build-icon.js` | Generates `build/icon.ico` from scratch (hand-rolled PNG encoder + ICO container, no image libraries) — a navy rounded square with two DEV/QA-colored bars, matching the app's own `--navy`/`--blue`/`--teal` palette. `build.win.icon` in `package.json` points at it. Re-run `npm run icon` after editing the design. |
 | `scripts/release.js` | `npm run release -- <version>` automates the full release process (see below). |
@@ -134,7 +134,10 @@ piList = [
           { name: 'Bank Holiday', days: 1 }
         ],
         devSPexec: null,             // actual executed DEV SP (null = not yet tracked)
-        qaSPexec: null               // actual executed QA SP (null = not yet tracked)
+        qaSPexec: null,              // actual executed QA SP (null = not yet tracked)
+        tfsUrl: '',                  // pasted TFS sprint backlog URL (see §6c)
+        tfsPlanned: null,            // {devSP,qaSP,teamSP,totalSP,itemCount,pulledAt} | null — last "Pull Planned"
+        tfsExecuted: null            // same shape | null — last "Pull Executed" (also writes devSPexec/qaSPexec)
       }
       // ...more iterations
     ]
@@ -338,6 +341,41 @@ Collapsible. Shows all historical PIs with their actual execution data.
 
 ---
 
+## 6c. TFS Sprint Pull (Planned / Executed Story Points)
+
+Each iteration can be linked to its TFS (on-prem Azure DevOps Server) sprint backlog URL, and two buttons under its row in Sprint Actuals pull Story Points directly from TFS via WIQL instead of typing them in by hand:
+
+- **⬇ Pull Planned** — click at sprint start. Pulls whatever's currently in the sprint (no state filter beyond excluding `Removed` items). Stores the result in `it.tfsPlanned` only — never touches `devSPexec`/`qaSPexec` or any capacity-model estimate.
+- **⬇ Pull Executed** — click at sprint end. Only counts items with `System.State === 'Closed'`. Stores the result in `it.tfsExecuted` **and** writes `it.devSPexec`/`it.qaSPexec` from it (same effect as typing those fields manually — still editable afterward).
+
+Both buttons are disabled until `it.tfsUrl` is set (edited per-iteration in PI Management → Iterations, a plain text field, persisted via the existing generic `updateIterField()`).
+
+**Work item classification** (`main.js`, `classifyAndSum()`):
+- `Bug` → always **Dev**, regardless of tags.
+- `User Story` → `System.Tags` is split on `;`, trimmed, and exact-matched (case-insensitive, not substring — the field also carries unrelated tags like `19C`/`19Planned`/`SysMgm Core 3.1.0`) against `DEV`/`QA`: `DEV`-only → Dev, `QA`-only → QA, both or neither → **Team**.
+- Team is a third bucket shown purely for visibility (Dev/QA/Team/Total breakdown line under each iteration row) — **it is never folded into `devSPexec`/`qaSPexec`, the ratio-calibration math, `effectiveActual()`, or the Historical Comparison card.** This was a deliberate choice: those stay Dev/QA-only as today.
+- Story points come from `Microsoft.VSTS.Scheduling.StoryPoints` (confirmed via API probe against this org's process template — there's no separate Effort field in use).
+
+**Result shape** (`it.tfsPlanned` / `it.tfsExecuted`): `{devSP, qaSP, teamSP, totalSP, itemCount, pulledAt, items}`, where `items` is every work item the WIQL query returned (not just the counted ones): `{id, title, type, state, sp, bucket, counted}`. `counted` is `false` for an `executed`-mode item that isn't `Closed` yet (still shown, dimmed, so it's visible but visibly excluded) — always `true` for `planned` mode. Re-pulling overwrites the previous snapshot (no history kept beyond the file's own embedded backups).
+
+**Per-item visibility**: each breakdown line has a "▸ View items" toggle (`toggleTfsDetails()`, UI-only expand state in the module-level `_tfsDetailsOpen` Set — not persisted/saved) that lists every item grouped by bucket (Dev/QA/Team) with its title, type, state, and SP — built for exactly this kind of audit: spotting a User Story that landed in "Team" because its `DEV`/`QA` tag is missing or misspelled. Clicking an item's `#id` calls `tfs:openWorkItem` (main process, via `shell.openExternal`) to open that work item directly in TFS in the default browser, so a tagging mistake can be fixed on the spot.
+
+**Planned vs Executed diff**: once both `tfsPlanned` and `tfsExecuted` exist for an iteration, a "▸ Compare Planned vs Executed" toggle appears (`tfsDiffSection()`/`tfsDiff()`/`tfsDiffPanel()`), matching items by id between the two snapshots to show: items **added mid-sprint** (in Executed, not in Planned), items **removed/descoped** (in Planned, not in Executed — including anything whose `System.State` became `Removed`, since the WIQL query excludes those), and items whose **bucket changed** between the two pulls (e.g. a missing DEV/QA tag got fixed in TFS in between). This is a pure client-side comparison of the two already-stored item lists — no extra TFS call.
+
+**Forgotten-tag highlighting**: this team's title convention is that every User Story starts with `[Dev]`, `[QA]`, or `[SysMgm Team]`. `titlePrefixBucket()` parses that literal prefix (case-insensitive) and `tfsTagMismatch()` compares it against the item's actual classified bucket — if they disagree (almost always a missing/wrong `DEV`/`QA` tag in TFS, since a `[Dev]`-titled story landing in "Team" means the tag never got added), the row is highlighted red with a "⚠ check tag" badge and a tooltip explaining the mismatch, in both the per-pull item list and the diff panel's Added/Removed sections (shared row renderer `tfsItemRow()`). **Bugs are always exempt** — per the existing rule they count as Dev regardless of tags, and now also regardless of title, so no mismatch is ever flagged for them. A title with no recognized `[...]` prefix (or a non-convention bracket like `[3.1 RC]`) is simply not checked — only an explicit, recognized prefix can produce a mismatch.
+
+**Per-bucket SP subtotal**: the expanded item list's bucket headers (`tfsItemsTable()`) show both the item count and the summed Story Points for that bucket (e.g. "Dev — 5 items, 33 SP"), counting only items where `counted !== false` — so it always matches the Dev/QA/Team numbers in the breakdown line above it, just broken out per bucket for quick scanning instead of needing to add up each row by hand.
+
+**Clearing/undoing a pull**: each breakdown line has a "🗑 Clear" action (`clearTfsPull(iterId, mode)`) for exactly the "clicked the wrong button" case (e.g. pulled Executed when Planned was meant) — it wipes `it.tfsPlanned`/`it.tfsExecuted` back to `null` (with a confirm dialog) so the correct button can be pulled again. Clearing an **Executed** pull also resets `it.devSPexec`/`it.qaSPexec` back to `null`, since those were written from that pull — otherwise the wrong numbers would silently remain in the ratio-calibration math after the snapshot itself is gone.
+
+**URL parsing** (`main.js`, `extractIterationPath()`): the pasted TFS URL (e.g. `.../_sprints/backlog/{team}/{project}/2026/PI20 - SysMgm/Sprint 20-1 (162)`) is used **only** to extract the path segments after `_sprints/backlog/{team}/{project}/` (URL-decoded, `\`-joined) — these become the `System.IterationPath` filter in the WIQL query. The actual HTTP request always targets the **configured** `tfsCollectionUrl`/`tfsProject` (set once via TFS Settings), never a host parsed from the pasted URL — this is deliberate, so a wrong or malicious pasted link can never redirect the PAT to another server.
+
+**PAT security**: the PAT is entered once via the **🔗 TFS Settings** header button and encrypted at rest using Electron's `safeStorage` (OS-level — DPAPI on Windows), stored as `tfsPatEncrypted` in `config.json`. It's decrypted only inside `main.js`, only at the moment of the TFS HTTP call, and is never sent back to the renderer — `tfs:getSettings` returns only `{collectionUrl, project, hasPat: boolean}`. This is why TFS settings use dedicated `tfs:getSettings`/`tfs:setSettings` IPC channels instead of the generic `config:get`/`config:set` (those echo the full config object back unredacted).
+
+Key functions: `pullTfsSprint(iterId, mode)`, `clearTfsPull(iterId, mode)`, `tfsItemRow(item, showState)`, `titlePrefixBucket(title)`, `tfsTagMismatch(item)`, `tfsBreakdownLine(result, label, iterId, mode)`, `tfsItemsTable(items)`, `tfsDiff(plannedItems, executedItems)`, `tfsDiffPanel(diff)`, `tfsDiffSection(it)`, `toggleTfsDetails(iterId, mode)`, `openTfsWorkItem(id)` (renderer); `extractIterationPath()`, `runWiql()`, `getWorkItemsBatch()`, `classifyItems()`, `encryptPat()`/`decryptPat()` (main process).
+
+---
+
 ## 6b. UX Enhancements (added June 2026)
 
 ### Always-visible summary bar (`#pi-summary-bar`)
@@ -430,6 +468,9 @@ if (!('qaSPexec'  in it))  it.qaSPexec  = null;
 if (!('dateStart' in it))  it.dateStart = '';
 if (!('dateEnd'   in it))  it.dateEnd   = '';
 if (!('days'      in it))  it.days      = DAYS;
+if (!('tfsUrl'      in it))  it.tfsUrl      = '';
+if (!('tfsPlanned'  in it))  it.tfsPlanned  = null;
+if (!('tfsExecuted' in it))  it.tfsExecuted = null;
 
 // Per team member:
 if (!m.daysOff)            m.daysOff    = {};
@@ -465,3 +506,5 @@ The team table has two linked inputs per row:
 | Section collapse state in separate localStorage key | Survives JSON file loads without being overwritten |
 | `.exe` left unsigned (`signAndEditExecutable: false`) | Internal single-team tool — a paid code-signing cert (~70-500€/yr, OV/EV) isn't worth it just to silence the SmartScreen "unknown publisher" prompt; clicking "More info → Run anyway" once per machine is enough |
 | Custom icon generated by `scripts/build-icon.js` instead of an external design tool | No image-editing tool available in this workflow; a small hand-rolled PNG/ICO encoder reliably reproduces a simple on-brand mark and can be re-run whenever the design changes |
+| TFS PAT stored via `safeStorage` + dedicated `tfs:getSettings`/`tfs:setSettings` IPC channels, not the generic `config:get`/`config:set` | Those generic channels return the whole config object unredacted to the renderer — fine for file paths, not for a credential. `safeStorage` gives OS-level (DPAPI) encryption at rest with no new dependency; the PAT is decrypted only inside `main.js`, only at request time. |
+| TFS "Team" bucket (untagged/both-tagged User Stories) kept informational-only, never folded into `devSPexec`/`qaSPexec` | Keeps the existing Dev/QA ratio-calibration math exactly as it was before this feature — a deliberate choice confirmed with the team, not an oversight. |
