@@ -9,6 +9,8 @@
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   :root{
+    /* Page width grows with the window (was a fixed 1280px, which left most of a 4K screen empty) */
+    --page-max:max(1280px, 94vw);
     --navy:#0f172a;
     --blue:#2563eb;--blue-light:#dbeafe;--blue-dark:#1d4ed8;
     --teal:#0d9488;--teal-light:#ccfbf1;
@@ -27,7 +29,7 @@
 
   /* ── HEADER ── */
   .site-header{background:var(--navy);color:#fff;padding:0 32px;position:sticky;top:0;z-index:300;box-shadow:0 2px 8px rgba(0,0,0,.25)}
-  .site-header-inner{display:flex;align-items:center;justify-content:space-between;max-width:1280px;margin:0 auto;height:56px}
+  .site-header-inner{display:flex;align-items:center;justify-content:space-between;max-width:var(--page-max);margin:0 auto;height:56px}
   .site-title{font-size:15px;font-weight:600;letter-spacing:.02em}
   .site-version{font-size:11px;font-weight:400;color:var(--slate-400);font-family:'DM Mono',monospace;margin-left:2px}
   .site-subtitle{font-size:12px;color:#94a3b8;margin-top:1px}
@@ -61,7 +63,7 @@
   .sum-save-bar-btn:hover{background:#b45309;animation:none}
 
   /* ── LAYOUT ── */
-  .page{max-width:1280px;margin:0 auto;padding:24px 32px}
+  .page{max-width:var(--page-max);margin:0 auto;padding:24px 32px}
   .section{background:var(--white);border:1px solid var(--slate-200);border-radius:var(--radius);margin-bottom:20px;overflow:hidden;box-shadow:var(--shadow)}
   .section-header{padding:14px 20px;background:var(--slate-50);border-bottom:1px solid var(--slate-200);display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
   .section-header h2{font-size:13px;font-weight:600;color:var(--slate-700);letter-spacing:.03em;text-transform:uppercase}
@@ -155,6 +157,14 @@
   .hist-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--slate-500);margin-bottom:12px}
   .hist-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--slate-100)}
   .hist-row:last-child{border-bottom:none}
+  /* Free-text fields in the Sprint Report (comments, "Not in backlog" rows):
+     roomy, readable, and they grow with their text (autoGrow) instead of
+     scrolling inside a two-line box. */
+  .free-text{display:block;width:100%;box-sizing:border-box;min-height:44px;padding:6px 8px;
+    font-family:inherit;font-size:12px;line-height:1.45;color:var(--slate-800);background:#fff;
+    border:1px solid var(--slate-200);border-radius:6px;resize:none;overflow:hidden;white-space:pre-wrap}
+  .free-text:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 2px var(--blue-light)}
+  .free-text::placeholder{color:var(--slate-400)}
   .hist-row-label{font-size:12px;color:var(--slate-600)}
   .hist-row-val{font-family:'DM Mono',monospace;font-size:13px;font-weight:500}
   .hist-pi-title{font-size:15px;font-weight:600;color:var(--slate-800);margin-bottom:4px}
@@ -278,7 +288,7 @@
 
   /* ── PI SWITCHER ── */
   .pi-switcher-bar{background:var(--white);border-bottom:1px solid var(--slate-200);position:sticky;top:56px;z-index:200;box-shadow:0 2px 4px rgba(0,0,0,.06)}
-  .pi-switcher-inner{display:flex;align-items:center;max-width:1280px;margin:0 auto;padding:0 32px;overflow-x:auto}
+  .pi-switcher-inner{display:flex;align-items:center;max-width:var(--page-max);margin:0 auto;padding:0 32px;overflow-x:auto}
   .pi-tab{padding:10px 16px;font-size:12px;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;color:var(--slate-400);transition:color .15s,background .15s;user-select:none;display:flex;align-items:center;gap:6px}
   .pi-tab:hover{color:var(--slate-700);background:var(--slate-50)}
   .pi-tab.pi-tab-active{color:var(--blue-dark);border-bottom-color:var(--blue);background:#eff6ff;font-size:13px}
@@ -291,7 +301,7 @@
 
   /* ── SUMMARY BAR ── */
   #pi-summary-bar{position:sticky;top:56px;z-index:100;background:var(--navy);border-bottom:2px solid #1e3a5f;display:none}
-  .sum-bar-inner{display:flex;align-items:center;gap:8px;max-width:1280px;margin:0 auto;padding:7px 32px;flex-wrap:wrap}
+  .sum-bar-inner{display:flex;align-items:center;gap:8px;max-width:var(--page-max);margin:0 auto;padding:7px 32px;flex-wrap:wrap}
   .sum-pill{display:flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px}
   .sum-label{text-transform:uppercase;letter-spacing:.07em;font-size:10px;font-weight:700;margin-right:2px}
   .sum-val{font-family:'DM Mono',monospace;font-size:13px;font-weight:500}
@@ -326,6 +336,8 @@
   .member-card-header{display:flex;align-items:center;gap:8px;padding:10px 12px 6px}
   .member-card-name{flex:1;font-size:13px;font-weight:500;border:1px solid transparent;border-radius:var(--radius-sm);padding:3px 5px;background:transparent;outline:none;color:var(--slate-800);min-width:0;transition:border-color .15s;font-family:'DM Sans',sans-serif}
   .member-card-name:hover,.member-card-name:focus{border-color:var(--slate-200);background:#fff}
+  .member-card-tag{flex:none;width:56px;font-size:11px;font-weight:600;border:1px solid transparent;border-radius:var(--radius-sm);padding:3px 5px;background:transparent;outline:none;color:var(--slate-500);text-align:center;transition:border-color .15s;font-family:'DM Sans',sans-serif}
+  .member-card-tag:hover,.member-card-tag:focus{border-color:var(--slate-200);background:#fff}
   .member-card-meta{display:flex;align-items:center;gap:6px;padding:2px 12px 8px;flex-wrap:wrap;font-size:11px;color:var(--slate-500)}
   .member-card-iters{padding:0 12px 8px}
   .member-card-note{padding:7px 12px;border-top:1px solid var(--slate-100)}
@@ -350,7 +362,7 @@
 
   /* ── GLOBAL PI PANEL ── */
   #pi-global-panel{background:#fff;border-bottom:2px solid var(--slate-200);padding:14px 24px 10px}
-  .pi-global-inner{max-width:1200px;margin:0 auto}
+  .pi-global-inner{max-width:var(--page-max);margin:0 auto}
   .pi-global-title{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--slate-400);margin-bottom:10px;display:flex;align-items:center;gap:10px}
   .pi-global-title::after{content:'';flex:1;height:1px;background:var(--slate-100)}
   .pi-list-row{cursor:pointer;transition:background .12s}
@@ -389,7 +401,7 @@
 <div class="history-overlay" id="tfs-settings-panel">
   <div class="history-panel">
     <div class="history-panel-title">TFS Settings</div>
-    <div class="history-panel-sub">Configure the on-prem Azure DevOps Server (TFS) connection used by "Pull Planned" / "Pull Executed" in Sprint Actuals. The PAT is encrypted on this machine (OS-level) and never leaves the app.</div>
+    <div class="history-panel-sub">Configure the on-prem Azure DevOps Server (TFS) connection used by "Pull PI Planned" / "Pull Sprint Planned" / "Pull Sprint Executed" in Sprint Actuals. The PAT is encrypted on this machine (OS-level) and never leaves the app.</div>
     <div style="display:flex;flex-direction:column;gap:10px">
       <label style="font-size:12px;font-weight:600;color:var(--slate-600)">Collection URL
         <input type="text" id="tfs-collection-url" placeholder="https://tfsservice.bst-eng.com/tfs/OT1TFS" style="width:100%;margin-top:4px;box-sizing:border-box">
@@ -397,10 +409,17 @@
       <label style="font-size:12px;font-weight:600;color:var(--slate-600)">Project
         <input type="text" id="tfs-project" placeholder="VS-PAS4-OVR" style="width:100%;margin-top:4px;box-sizing:border-box">
       </label>
+      <label style="font-size:12px;font-weight:600;color:var(--slate-600)">Wiki branch <span style="font-weight:400;color:var(--slate-400)">(only needed if publishing to Wiki fails with a "versionType should be 'branch'" error)</span>
+        <input type="text" id="tfs-wiki-branch" placeholder="e.g. team — leave blank to let TFS infer it" style="width:100%;margin-top:4px;box-sizing:border-box">
+      </label>
       <label style="font-size:12px;font-weight:600;color:var(--slate-600)">Personal Access Token
         <input type="password" id="tfs-pat" style="width:100%;margin-top:4px;box-sizing:border-box" autocomplete="off">
       </label>
       <div id="tfs-pat-status" style="font-size:11px;color:var(--slate-400)"></div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="banner-btn banner-btn-secondary" style="background:var(--slate-100);color:var(--slate-700)" id="btn-tfs-test" onclick="testTfsConnectionClick()">🔌 Test Connection</button>
+        <span id="tfs-test-result" style="font-size:11px"></span>
+      </div>
     </div>
     <div style="margin-top:14px;display:flex;justify-content:space-between;align-items:center">
       <button class="banner-btn banner-btn-secondary" style="background:var(--red-light);color:var(--red)" onclick="clearTfsPat()">Clear PAT</button>
@@ -412,10 +431,44 @@
   </div>
 </div>
 
+<div class="history-overlay" id="sprint-review-panel">
+  <div class="history-panel" id="sprint-review-box" style="width:96vw;max-height:94vh">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+      <div>
+        <div class="history-panel-title" id="sprint-review-title">Sprint Report</div>
+        <div class="history-panel-sub">Data pulled from TFS, nothing hand-typed.</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button class="btn btn-sm" onclick="adjustSprintReviewZoom(-0.1)" title="Smaller text">Text −</button>
+        <span id="sprint-review-zoom-label" style="align-self:center;font-size:12px;font-weight:600;color:var(--slate-600);min-width:42px;text-align:center">100%</span>
+        <button class="btn btn-sm" onclick="adjustSprintReviewZoom(0.1)" title="Bigger text — handy when sharing your screen">Text +</button>
+        <button class="btn btn-sm" id="sprint-review-full-btn" onclick="toggleSprintReviewFull()" title="Fill the whole window (for presenting)">⛶ Full screen</button>
+        <button class="btn btn-sm" onclick="hideSprintReviewPanel()" title="Close (Esc)">✕ Close</button>
+      </div>
+    </div>
+    <div id="sprint-review-content">
+      <div id="sprint-review-body"></div>
+      <div id="sprint-review-wiki-row"></div>
+    </div>
+    <div style="margin-top:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="banner-btn banner-btn-secondary" style="background:var(--slate-100);color:var(--slate-700)" onclick="copySprintReview()">📋 Copy as text</button>
+        <button class="banner-btn banner-btn-secondary" style="background:var(--slate-100);color:var(--slate-700)" onclick="exportSprintReview('pdf')">📄 Export PDF</button>
+        <button class="banner-btn banner-btn-secondary" style="background:var(--slate-100);color:var(--slate-700)" onclick="exportSprintReview('png')">🖼 Export Image</button>
+      </div>
+      <button class="banner-btn banner-btn-secondary" style="background:var(--slate-100);color:var(--slate-700)" onclick="hideSprintReviewPanel()">Close</button>
+    </div>
+  </div>
+</div>
+
 <header class="site-header">
   <div class="site-header-inner">
     <div>
       <div class="site-title">Team Capacity Calculator <span id="app-version" class="site-version"></span></div>
+      <input type="text" id="product-name-input" placeholder="Product / team name (shown on Sprint Reports)"
+        title="Shown on the header and stamped onto Sprint Reports, so another team can tell whose numbers these are"
+        style="background:transparent;border:none;border-bottom:1px dashed rgba(255,255,255,.35);color:#cbd5e1;font-size:11px;padding:2px 0;margin-top:3px;width:280px;font-family:'DM Sans',sans-serif"
+        oninput="updateProductName(this.value)">
     </div>
     <div class="header-right">
       <span id="header-pi-label"></span>
@@ -431,7 +484,12 @@
       <button class="btn-history" id="btn-history" onclick="showHistoryPanel()" title="View saved versions / restore a backup">🕑 History</button>
       <button class="btn-history" id="btn-open-file" onclick="openDifferentFile()" title="Connect to a different .json save file">📂 Open File</button>
       <button class="btn-history" id="btn-backup" onclick="configureBackup()" title="Set or change a backup location (e.g. a network folder) every save also mirrors to">🗄 Backup</button>
-      <button class="btn-history" id="btn-tfs-settings" onclick="showTfsSettingsPanel()" title="Configure the TFS connection used by Pull Planned / Pull Executed in Sprint Actuals">🔗 TFS Settings</button>
+      <button class="btn-history" id="btn-tfs-settings" onclick="showTfsSettingsPanel()" title="Configure the TFS connection used by Pull PI Planned / Pull Sprint Planned / Pull Sprint Executed in Sprint Actuals">🔗 TFS Settings</button>
+      <span style="display:inline-flex;align-items:center;gap:4px" title="App zoom (also Ctrl + / Ctrl − / Ctrl 0)">
+        <button class="btn-history" onclick="window.electronAPI.changeAppZoom(-0.1)">−</button>
+        <span id="app-zoom-label" style="color:#cbd5e1;font-size:12px;min-width:38px;text-align:center;cursor:pointer" onclick="window.electronAPI.changeAppZoom(0)" title="Reset to 100%">100%</span>
+        <button class="btn-history" onclick="window.electronAPI.changeAppZoom(0.1)">+</button>
+      </span>
     </div>
   </div>
 </header>
@@ -677,6 +735,24 @@
       <svg id="cap-chart-svg"></svg>
     </div>
 
+    <!-- Wiki publishing target for this PI -->
+    <div style="padding:16px 20px;border-top:2px solid var(--slate-100)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">
+        <div class="sub-label" style="margin-bottom:0">Wiki Publishing</div>
+        <span style="font-size:11px;color:var(--slate-400)">— paste this PI's TFS wiki page URL; each sprint's Report publishes as a child page under it</span>
+      </div>
+      <div id="pi-wiki-url-wrap"></div>
+    </div>
+
+    <!-- PI roadmap: Features on the Delivery Plan, pulled at PI start and end -->
+    <div style="padding:16px 20px;border-top:2px solid var(--slate-100)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">
+        <div class="sub-label" style="margin-bottom:0">PI Roadmap</div>
+        <span style="font-size:11px;color:var(--slate-400)">— paste this PI's Delivery Plan URL (or a saved TFS query URL); pull PI Planned at PI planning, PI Executed at PI end</span>
+      </div>
+      <div id="pi-roadmap-wrap"></div>
+    </div>
+
     <!-- Sprint Actuals Tracking -->
     <div style="padding:16px 20px;border-top:2px solid var(--slate-100)">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">
@@ -715,6 +791,10 @@
     <span class="chevron">▾</span>
   </div>
   <div class="section-body open">
+    <div id="velocity-chart-wrap" style="padding:16px 20px 4px">
+      <div class="cap-chart-title">Velocity trend — executed SP per PI (Dev + QA + Team)</div>
+      <svg id="velocity-chart-svg"></svg>
+    </div>
     <div id="hist-pi-selector"></div>
     <div class="hist-grid-wrap">
       <div class="hist-grid" id="hist-grid"></div>
@@ -781,6 +861,9 @@ let piList   = JSON.parse(JSON.stringify(DEFAULTS.piList));
 // Ensure every PI in the default list has its own team and overhead arrays
 piList.forEach(pi => { if (!pi.team) pi.team = []; });
 piList.forEach(pi => { if (!pi.overhead) pi.overhead = JSON.parse(JSON.stringify(DEFAULTS.overhead)); });
+piList.forEach(pi => { if (!('wikiUrl' in pi)) pi.wikiUrl = ''; });
+piList.forEach(pi => { if (!('roadmapUrl' in pi)) pi.roadmapUrl = ''; if (!('roadmapPlanned' in pi)) pi.roadmapPlanned = null; if (!('roadmapExecuted' in pi)) pi.roadmapExecuted = null; });
+piList.forEach(pi => { if (!('planningMeetings' in pi)) pi.planningMeetings = ''; if (!pi.roadmapImages) pi.roadmapImages = {}; if (!pi.order) pi.order = { epics: [], features: [] }; if (!pi.epicPriority) pi.epicPriority = {}; });
 // `team`/`overhead` always point to the viewed PI's own arrays (updated by setViewedPI / applyState),
 // so each PI's ceremonies/overhead are independent — editing one PI never affects another.
 let team     = (piList.find(p => p.status === 'current') || piList.find(p => p.status === 'future'))?.team || [];
@@ -788,6 +871,20 @@ let overhead = (piList.find(p => p.status === 'current') || piList.find(p => p.s
 
 let viewedPIId = null;
 let _proj = {devH:0,qaH:0,devSP:0,qaSP:0,devR:0.42,qaR:0.29};
+
+// Free-text product/team name (e.g. "System Manager") shown on the header
+// and stamped onto Sprint Reports, so another team can tell at a
+// glance which team's numbers they're looking at. Persisted like the rest
+// of the state (see getState()/applyState()), not per-machine config, so
+// it travels with the save file / backup mirror.
+let productName = '';
+
+// Work item IDs whose title-prefix-vs-DEV/QA-tag mismatch was reviewed and
+// confirmed intentional (e.g. a SysMgm Team story tagged DEV because Dev
+// actually did the work) — global across PIs/pulls, since a TFS work item
+// id is stable regardless of which sprint it's pulled from. See
+// tfsTagMismatch() / acknowledgeTagMismatch().
+let ackedTagMismatches = [];
 
 const FULL_H = 8;
 const DAYS   = 15;
@@ -809,12 +906,14 @@ const VIEW_KEY = 'sysmgm-viewed-pi-v1';
 
 function getState() {
   saveRatiosToPi(); // ensure current DOM values are flushed to the viewed PI before saving
-  return { version: 1, savedAt: new Date().toISOString(), piList };
+  return { version: 1, savedAt: new Date().toISOString(), piList, ackedTagMismatches, productName };
 }
 
 function applyState(data) {
   if (!data || data.version !== 1) return false;
   piList   = data.piList   || piList;
+  ackedTagMismatches = Array.isArray(data.ackedTagMismatches) ? data.ackedTagMismatches : [];
+  productName = typeof data.productName === 'string' ? data.productName : '';
   // Migrate old saves: copy global team into each PI, resetting activeIter to that PI's own iterations
   if (data.team && data.team.length) {
     piList.forEach(pi => {
@@ -843,15 +942,17 @@ function applyState(data) {
       if (!('dateStart' in it))       it.dateStart  = '';
       if (!('dateEnd'   in it))       it.dateEnd    = '';
       if (!('days'      in it))       it.days       = DAYS;
-      if (!('tfsUrl'      in it))     it.tfsUrl      = '';
-      if (!('tfsPlanned'  in it))     it.tfsPlanned  = null;
-      if (!('tfsExecuted' in it))     it.tfsExecuted = null;
+      if (!('tfsUrl'        in it))   it.tfsUrl        = '';
+      if (!('tfsPIPlanned'  in it))   it.tfsPIPlanned  = null;
+      if (!('tfsPlanned'    in it))   it.tfsPlanned    = null;
+      if (!('tfsExecuted'   in it))   it.tfsExecuted   = null;
     });
     pi.team.forEach(m => {
       if (!m.daysOff)        m.daysOff        = {};
       if (!m.focusHpdByIter) m.focusHpdByIter = {};
       if (!('focusHpd' in m)) m.focusHpd = +((m.avail || 100) / 100 * focusStd()).toFixed(2);
       if (!('notes' in m))   m.notes          = '';
+      if (!('tag' in m))     m.tag            = '';
     });
   });
   // Migrate old global ratios into each PI that has none
@@ -868,6 +969,18 @@ function applyState(data) {
   piList.forEach(pi => { if (!pi.overhead) pi.overhead = JSON.parse(JSON.stringify(DEFAULTS.overhead)); });
   // Migrate legacy 'planning' status → 'future'
   piList.forEach(pi => { if (pi.status === 'planning') pi.status = 'future'; });
+  // Backfill the PI's own wiki page URL (see §6f) — used to publish the Sprint Report to TFS Wiki
+  piList.forEach(pi => { if (!('wikiUrl' in pi)) pi.wikiUrl = ''; });
+  // PI roadmap: Features on a Delivery Plan (or saved query), pulled at PI start and end — see §6g
+  piList.forEach(pi => {
+    if (!('roadmapUrl'      in pi)) pi.roadmapUrl      = '';
+    if (!('roadmapPlanned'  in pi)) pi.roadmapPlanned  = null;
+    if (!('roadmapExecuted' in pi)) pi.roadmapExecuted = null;
+    if (!('planningMeetings' in pi)) pi.planningMeetings = '';
+    if (!pi.roadmapImages)           pi.roadmapImages    = {};
+    if (!pi.order)                   pi.order            = { epics: [], features: [] };  // manual ▲▼ priority
+    if (!pi.epicPriority)            pi.epicPriority     = {};  // epicId -> 'High' | 'Mid' | 'Low'
+  });
 
   team     = getViewedPI()?.team     || getCurrentPI()?.team     || [];
   overhead = getViewedPI()?.overhead || getCurrentPI()?.overhead || [];
@@ -1013,7 +1126,9 @@ function setBackupStatus(state, detail) {
 }
 
 function setSaveStatus(state, text) {
-  document.getElementById('save-status').className = 'save-status save-' + state;
+  const statusEl = document.getElementById('save-status');
+  statusEl.className = 'save-status save-' + state;
+  statusEl.title = primaryPath ? 'Local file: ' + primaryPath + '\n\nClick to connect a different file' : 'Click to connect a file';
   document.getElementById('save-status-text').textContent = text;
 
   // Header save button — amber + pulse when unsaved
@@ -1259,21 +1374,44 @@ async function showTfsSettingsPanel() {
   const s = await window.electronAPI.getTfsSettings();
   document.getElementById('tfs-collection-url').value = s.collectionUrl || '';
   document.getElementById('tfs-project').value = s.project || '';
+  document.getElementById('tfs-wiki-branch').value = s.wikiBranch || '';
   const patInput = document.getElementById('tfs-pat');
   patInput.value = '';
   patInput.placeholder = s.hasPat ? 'PAT configured — leave blank to keep' : 'Not set';
   document.getElementById('tfs-pat-status').textContent = s.hasPat
     ? 'A PAT is currently stored (encrypted) for this app.'
     : 'No PAT stored yet.';
+  document.getElementById('tfs-test-result').textContent = '';
   document.getElementById('tfs-settings-panel').style.display = 'flex';
 }
 function hideTfsSettingsPanel() { document.getElementById('tfs-settings-panel').style.display = 'none'; }
 
-async function saveTfsSettings() {
+async function testTfsConnectionClick() {
+  const btn = document.getElementById('btn-tfs-test');
+  const result = document.getElementById('tfs-test-result');
   const collectionUrl = document.getElementById('tfs-collection-url').value.trim();
   const project        = document.getElementById('tfs-project').value.trim();
   const pat             = document.getElementById('tfs-pat').value;
-  const partial = { collectionUrl, project };
+  btn.disabled = true;
+  result.style.color = 'var(--slate-400)';
+  result.textContent = 'Testing…';
+  const res = await window.electronAPI.testTfsConnection({ collectionUrl, project, pat });
+  btn.disabled = false;
+  if (res && res.ok) {
+    result.style.color = 'var(--green)';
+    result.textContent = `✓ Connected — project "${res.project}" found`;
+  } else {
+    result.style.color = 'var(--red)';
+    result.textContent = '✗ ' + (res && res.error ? res.error : 'Connection failed');
+  }
+}
+
+async function saveTfsSettings() {
+  const collectionUrl = document.getElementById('tfs-collection-url').value.trim();
+  const project        = document.getElementById('tfs-project').value.trim();
+  const wikiBranch      = document.getElementById('tfs-wiki-branch').value.trim();
+  const pat             = document.getElementById('tfs-pat').value;
+  const partial = { collectionUrl, project, wikiBranch };
   if (pat) partial.pat = pat;   // blank = leave the stored PAT unchanged
   const res = await window.electronAPI.setTfsSettings(partial);
   if (!res || !res.ok) { showToast('Could not save TFS settings' + (res && res.error ? ': ' + res.error : ''), 'error'); return; }
@@ -1470,7 +1608,7 @@ function autoGenerateIterations(piId, startIso, endIso) {
       id: `${piId}.${n}`, sprint: 0, days: 15, label: `${piId}.${n}`,
       dateStart: ds, dateEnd: de, dates: formatIterDates(ds, de),
       holidays: [], devSPexec: null, qaSPexec: null,
-      tfsUrl: '', tfsPlanned: null, tfsExecuted: null
+      tfsUrl: '', tfsPIPlanned: null, tfsPlanned: null, tfsExecuted: null
     });
     cur.setDate(cur.getDate() + 21);
     n++;
@@ -1512,7 +1650,7 @@ function addPIFromForm() {
 
   const srcRatios   = getCurrentPI()?.ratios || {dev: spDev(), qa: spQa()};
   const srcOverhead = getCurrentPI()?.overhead || overhead;
-  const newPI = {id: num, status: inferred, iterations, actual: null, team: newTeam, ratios: {...srcRatios}, overhead: JSON.parse(JSON.stringify(srcOverhead))};
+  const newPI = {id: num, status: inferred, iterations, actual: null, team: newTeam, ratios: {...srcRatios}, overhead: JSON.parse(JSON.stringify(srcOverhead)), wikiUrl: '', roadmapUrl: '', roadmapPlanned: null, roadmapExecuted: null, planningMeetings: '', roadmapImages: {}, order: { epics: [], features: [] }, epicPriority: {}};
 
   if (inferred === 'historical') {
     newPI.actual = {devH:0,devSPest:0,devSPexec:null,devRatio:null,qaH:0,qaSPest:0,qaSPexec:null,qaRatio:null};
@@ -1606,7 +1744,7 @@ function addIterFromForm() {
   if (!id) return;
   if (pi.iterations.find(it => it.id === id)) { alert('Iteration ' + id + ' already exists.'); return; }
   const dates = formatIterDates(dateStart, dateEnd);
-  pi.iterations.push({id, sprint:0, days, label:label||id, dateStart, dateEnd, dates, holidays:[], devSPexec:null, qaSPexec:null, tfsUrl:'', tfsPlanned:null, tfsExecuted:null});
+  pi.iterations.push({id, sprint:0, days, label:label||id, dateStart, dateEnd, dates, holidays:[], devSPexec:null, qaSPexec:null, tfsUrl:'', tfsPIPlanned:null, tfsPlanned:null, tfsExecuted:null});
   team.forEach(m => { if (!m.activeIter.includes(id)) m.activeIter.push(id); });
   ['new-iter-id','new-iter-label','new-iter-start','new-iter-end'].forEach(fid => document.getElementById(fid).value = '');
   document.getElementById('new-iter-days').value = '15';
@@ -1793,7 +1931,7 @@ function renderIterSection() {
           </td>
           <td class="num"><input type="number" value="${itDays}" min="1" max="30" style="width:55px" title="Working days" oninput="updateIterField('${it.id}','days',+this.value);recalc()"></td>
           <td><input type="text" value="${esc(it.tfsUrl||'')}" placeholder="TFS sprint backlog URL" style="width:100%;font-size:11px;box-sizing:border-box"
-            title="Paste the TFS sprint backlog URL — used by Pull Planned / Pull Executed in Sprint Actuals"
+            title="Paste the TFS sprint backlog URL — used by Pull PI Planned / Pull Sprint Planned / Pull Sprint Executed in Sprint Actuals"
             oninput="updateIterField('${it.id}','tfsUrl',this.value)"></td>
           <td><button class="btn btn-sm btn-danger" onclick="removeIteration('${it.id}')">✕</button></td>
         </tr>`;
@@ -1947,6 +2085,9 @@ function renderTeam() {
         </select>
         <input type="text" class="member-card-name" value="${esc(m.name)}"
           onchange="team[${i}].name=this.value;recalc();scheduleSave()">
+        <input type="text" class="member-card-tag" value="${esc(m.tag||'')}" placeholder="tag"
+          title="Extra role, e.g. PO — shown as ${esc(m.role)}/TAG on the Sprint Report"
+          onchange="team[${i}].tag=this.value;recalc();scheduleSave()">
         <button class="btn btn-sm btn-danger" onclick="removeMember(${i})" title="Remove member">✕</button>
       </div>
       <div class="member-card-meta">
@@ -2019,7 +2160,7 @@ function addMember() {
   const viewPI = getViewedPI();
   team.push({name, role:document.getElementById('new-role').value,
     focusHpd:Math.max(0.001, ((+document.getElementById('new-hpd-pct').value||100)/100) * focusStd()),
-    activeIter:(viewPI?.iterations||[]).map(it=>it.id), daysOff:{}, focusHpdByIter:{}, notes:''});
+    activeIter:(viewPI?.iterations||[]).map(it=>it.id), daysOff:{}, focusHpdByIter:{}, notes:'', tag:''});
   document.getElementById('new-name').value = '';
   renderTeam(); renderTimeOffSection(); recalc(); scheduleSave();
 }
@@ -2178,6 +2319,8 @@ function recalc() {
   renderHistoricalSection();
   renderRatioSuggestion();
   renderSprintActuals();
+  renderPIWikiUrl();
+  renderPIRoadmap();
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -2230,10 +2373,16 @@ function renderCapacityChart(iters, devHArr, qaHArr) {
   const spExecArr = iters.map(it => {
     const d = it.devSPexec, q = it.qaSPexec;
     if (d == null && q == null) return null;
-    return (d||0) + (q||0);
+    const t = it.tfsExecuted ? (it.tfsExecuted.teamSP || 0) : 0;
+    return (d||0) + (q||0) + t;
   });
+  // SP planned — from a TFS "Pull Sprint Planned" snapshot (devSP+qaSP+teamSP as
+  // actually captured at sprint start), distinct from the modeled "SP est."
+  // line above (hours × ratio).
+  const spPlannedArr = iters.map(it => it.tfsPlanned ? it.tfsPlanned.totalSP : null);
   const hasExec = spExecArr.some(v => v != null);
-  const maxSP = Math.max(...spEstArr, ...spExecArr.filter(v=>v!=null), 1);
+  const hasPlanned = spPlannedArr.some(v => v != null);
+  const maxSP = Math.max(...spEstArr, ...spExecArr.filter(v=>v!=null), ...spPlannedArr.filter(v=>v!=null), 1);
   const niceMaxSP = Math.ceil(maxSP/20)*20 || 20;
   const spScaleY = v => topPad + chartH - (v/niceMaxSP)*chartH;
 
@@ -2267,10 +2416,16 @@ function renderCapacityChart(iters, devHArr, qaHArr) {
     if (devH > 0) {
       const y = scaleY(devH), h = baseY - scaleY(devH);
       bars += `<rect x="${xBar}" y="${y.toFixed(1)}" width="${barW}" height="${h.toFixed(1)}" fill="#2563eb" opacity=".75"/>`;
+      if (h >= 14) {
+        bars += `<text x="${xCenter.toFixed(1)}" y="${(y+h/2+3.5).toFixed(1)}" text-anchor="middle" font-size="9" fill="#fff" font-weight="700" font-family="'DM Mono',monospace" style="pointer-events:none">${(devH*devR).toFixed(0)} SP</text>`;
+      }
     }
     if (qaH > 0) {
       const yTop = scaleY(devH+qaH), h = scaleY(devH)-yTop;
       bars += `<rect x="${xBar}" y="${yTop.toFixed(1)}" width="${barW}" height="${Math.max(1,h).toFixed(1)}" fill="#0d9488" opacity=".8" rx="2"/>`;
+      if (h >= 14) {
+        bars += `<text x="${xCenter.toFixed(1)}" y="${(yTop+h/2+3.5).toFixed(1)}" text-anchor="middle" font-size="9" fill="#fff" font-weight="700" font-family="'DM Mono',monospace" style="pointer-events:none">${(qaH*qaR).toFixed(0)} SP</text>`;
+      }
     }
     // Transparent overlay rect — captures hover for the full bar height
     if (totalH > 0) {
@@ -2284,9 +2439,11 @@ function renderCapacityChart(iters, devHArr, qaHArr) {
   });
 
   // SP estimated — dashed amber line + filled circles
-  // Offset left by 8px so est and exec never share the same x when values are close
-  const estOff = hasExec ? -8 : 0;
-  const execOff = 8;
+  // Offset left/right so est/planned/exec never share the same x when values are close
+  let estOff = 0, plannedOff = 0, execOff = 0;
+  if (hasPlanned && hasExec)      { estOff = -10; plannedOff = 0; execOff = 10; }
+  else if (hasPlanned)            { estOff = -8;  plannedOff = 8; }
+  else if (hasExec)               { estOff = -8;  execOff = 8; }
   if (n > 1) {
     const pts = iters.map((_,idx) => {
       const xc = leftPad + idx*slotW + slotW/2 + estOff;
@@ -2300,6 +2457,28 @@ function renderCapacityChart(iters, devHArr, qaHArr) {
     spDots += `<circle cx="${xc.toFixed(1)}" cy="${y.toFixed(1)}" r="3.5" fill="#b45309" opacity=".9"/>`;
     spDots += `<text x="${xc.toFixed(1)}" y="${(y-7).toFixed(1)}" text-anchor="middle" font-size="9" fill="#b45309" font-weight="600" font-family="'DM Mono',monospace">${spEstArr[idx].toFixed(0)}</text>`;
   });
+
+  // SP planned (TFS) — solid green line + square markers
+  if (hasPlanned) {
+    const plannedPts = iters.map((_,idx) => {
+      const v = spPlannedArr[idx];
+      if (v == null) return null;
+      const xc = leftPad + idx*slotW + slotW/2 + plannedOff;
+      return `${xc.toFixed(1)},${spScaleY(v).toFixed(1)}`;
+    }).filter(Boolean);
+    if (plannedPts.length > 1) {
+      spLines += `<polyline points="${plannedPts.join(' ')}" fill="none" stroke="#16a34a" stroke-width="2" opacity=".75"/>`;
+    }
+    iters.forEach((_,idx) => {
+      const v = spPlannedArr[idx];
+      if (v == null) return;
+      const xc = leftPad + idx*slotW + slotW/2 + plannedOff;
+      const y = spScaleY(v);
+      const hs = 4;
+      spDots += `<rect x="${(xc-hs).toFixed(1)}" y="${(y-hs).toFixed(1)}" width="${hs*2}" height="${hs*2}" fill="#16a34a" opacity=".9"/>`;
+      spDots += `<text x="${xc.toFixed(1)}" y="${(y-hs-4).toFixed(1)}" text-anchor="middle" font-size="9" fill="#16a34a" font-weight="600" font-family="'DM Mono',monospace">${v.toFixed(0)}</text>`;
+    });
+  }
 
   // SP executed — solid purple line + diamond markers, offset right
   if (hasExec) {
@@ -2333,18 +2512,111 @@ function renderCapacityChart(iters, devHArr, qaHArr) {
   legend += `<line x1="${lx+118}" y1="${ly-3}" x2="${lx+131}" y2="${ly-3}" stroke="#b45309" stroke-width="1.5" stroke-dasharray="4,2" opacity=".7"/>`;
   legend += `<circle cx="${lx+124}" cy="${ly-3}" r="3.5" fill="#b45309" opacity=".9"/>`;
   legend += `<text   x="${lx+135}" y="${ly}"  font-size="9" fill="#b45309" font-family="'DM Sans',sans-serif">SP est.</text>`;
+  let legendX = lx + 180;
+  if (hasPlanned) {
+    // SP Sprint Planned (TFS): solid line + square swatch
+    legend += `<line x1="${legendX}" y1="${ly-3}" x2="${legendX+13}" y2="${ly-3}" stroke="#16a34a" stroke-width="2" opacity=".8"/>`;
+    const sx=legendX+6.5, sy=ly-3, hs=3.5;
+    legend += `<rect x="${(sx-hs).toFixed(1)}" y="${(sy-hs).toFixed(1)}" width="${hs*2}" height="${hs*2}" fill="#16a34a" opacity=".9"/>`;
+    legend += `<text x="${legendX+17}" y="${ly}" font-size="9" fill="#16a34a" font-family="'DM Sans',sans-serif">SP Sprint Planned (TFS)</text>`;
+    legendX += 150;
+  }
   if (hasExec) {
-    // SP exec: solid line + diamond swatch
-    legend += `<line x1="${lx+180}" y1="${ly-3}" x2="${lx+193}" y2="${ly-3}" stroke="#7c3aed" stroke-width="2" opacity=".75"/>`;
-    const dx=lx+186, dy=ly-3, ds=4;
+    // SP Sprint Exec: solid line + diamond swatch
+    legend += `<line x1="${legendX}" y1="${ly-3}" x2="${legendX+13}" y2="${ly-3}" stroke="#7c3aed" stroke-width="2" opacity=".75"/>`;
+    const dx=legendX+6.5, dy=ly-3, ds=4;
     legend += `<polygon points="${dx},${dy-ds} ${dx+ds},${dy} ${dx},${dy+ds} ${dx-ds},${dy}" fill="#7c3aed" opacity=".9"/>`;
-    legend += `<text x="${lx+197}" y="${ly}" font-size="9" fill="#7c3aed" font-family="'DM Sans',sans-serif">SP exec.</text>`;
+    legend += `<text x="${legendX+17}" y="${ly}" font-size="9" fill="#7c3aed" font-family="'DM Sans',sans-serif">SP Sprint Exec. (incl. Team)</text>`;
   }
 
   svg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
   svg.setAttribute('height', svgH);
   // Render in layers: grid → bars → lines → dots → labels
   svg.innerHTML = grid + bars + spLines + spDots + xLbls + legend;
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDER: VELOCITY TREND CHART (executed SP across PIs)
+// ══════════════════════════════════════════════════════════════
+
+// Cross-PI view, unlike the Capacity chart above (which is iteration-level,
+// one PI at a time) — plots Dev+QA+Team *executed* SP per PI so a long-run
+// trend/regression is visible without hopping between Historical cards.
+function renderVelocityTrendChart() {
+  const wrap = document.getElementById('velocity-chart-wrap');
+  const svg  = document.getElementById('velocity-chart-svg');
+  if (!wrap || !svg) return;
+
+  const pis = piList
+    .filter(p => p.status === 'historical' || p.status === 'current')
+    .sort((a, b) => a.id - b.id)
+    .map(p => {
+      const e = effectiveActual(p);
+      if (e.devSPexec == null && e.qaSPexec == null) return null;
+      return { id: p.id, devSP: e.devSPexec || 0, qaSP: e.qaSPexec || 0, teamSP: e.teamSPexec || 0 };
+    })
+    .filter(Boolean);
+
+  if (pis.length < 2) { wrap.style.display = 'none'; return; }
+  wrap.style.display = '';
+
+  const n = pis.length;
+  const chartH = 180, topPad = 24, leftPad = 36, rightPad = 16, labelH = 22;
+  const svgH = chartH + topPad + labelH;
+  const svgW = 800;
+  const slotW = (svgW - leftPad - rightPad) / n;
+  const barW = Math.min(64, slotW * 0.5);
+
+  const maxTotal = Math.max(...pis.map(p => p.devSP + p.qaSP + p.teamSP), 1);
+  const niceMax = Math.ceil(maxTotal / 20) * 20 || 20;
+  const scaleY = v => topPad + chartH - (v / niceMax) * chartH;
+  const baseY = scaleY(0);
+
+  let grid = '', bars = '', xLbls = '', legend = '';
+
+  for (let i = 0; i <= 4; i++) {
+    const v = (niceMax / 4) * i, y = scaleY(v);
+    grid += `<line x1="${leftPad}" y1="${y.toFixed(1)}" x2="${(svgW-rightPad).toFixed(1)}" y2="${y.toFixed(1)}" stroke="${i===0?'#cbd5e1':'#e2e8f0'}" stroke-width="1"/>`;
+    grid += `<text x="${(leftPad-6).toFixed(1)}" y="${(y+3.5).toFixed(1)}" text-anchor="end" font-size="9" fill="#94a3b8" font-family="'DM Mono',monospace">${Math.round(v)}</text>`;
+  }
+
+  // Draws one stacked segment: always gets a native <title> hover tooltip
+  // with the full "Dev: 69 SP" text (works even on a sliver too thin for
+  // its own label), plus a permanent white value label centered in the
+  // segment when there's enough room for it not to overflow.
+  const segment = (value, label, yTop, yBottom, fill, xCenter, xBar) => {
+    if (value <= 0) return '';
+    const h = Math.max(1, yBottom - yTop);
+    let s = `<rect x="${xBar}" y="${yTop.toFixed(1)}" width="${barW}" height="${h.toFixed(1)}" fill="${fill}" opacity=".85" rx="2"><title>${esc(label)}: ${Math.round(value)} SP</title></rect>`;
+    if (h >= 14) {
+      const midY = yTop + h / 2 + 3.5;
+      s += `<text x="${xCenter.toFixed(1)}" y="${midY.toFixed(1)}" text-anchor="middle" font-size="9" fill="#fff" font-weight="700" font-family="'DM Mono',monospace" style="pointer-events:none">${Math.round(value)}</text>`;
+    }
+    return s;
+  };
+
+  pis.forEach((p, idx) => {
+    const xCenter = leftPad + idx * slotW + slotW / 2;
+    const xBar = (xCenter - barW / 2).toFixed(1);
+
+    bars += segment(p.devSP,  'Dev',  scaleY(p.devSP), baseY, '#2563eb', xCenter, xBar);
+    bars += segment(p.qaSP,   'QA',   scaleY(p.devSP + p.qaSP), scaleY(p.devSP), '#0d9488', xCenter, xBar);
+    bars += segment(p.teamSP, 'Team', scaleY(p.devSP + p.qaSP + p.teamSP), scaleY(p.devSP + p.qaSP), '#7c3aed', xCenter, xBar);
+
+    const total = p.devSP + p.qaSP + p.teamSP;
+    const topY = scaleY(total);
+    bars += `<text x="${xCenter.toFixed(1)}" y="${(topY-6).toFixed(1)}" text-anchor="middle" font-size="10" fill="#334155" font-weight="700" font-family="'DM Mono',monospace">${total}</text>`;
+    xLbls += `<text x="${xCenter.toFixed(1)}" y="${(baseY+16).toFixed(1)}" text-anchor="middle" font-size="10" fill="#64748b" font-family="'DM Sans',sans-serif">PI ${esc(String(p.id))}</text>`;
+  });
+
+  const lx = leftPad, ly = topPad - 8;
+  legend += `<rect x="${lx}" y="${ly-7}" width="8" height="8" rx="1" fill="#2563eb" opacity=".8"/><text x="${lx+11}" y="${ly}" font-size="9" fill="#64748b" font-family="'DM Sans',sans-serif">Dev</text>`;
+  legend += `<rect x="${lx+45}" y="${ly-7}" width="8" height="8" rx="1" fill="#0d9488" opacity=".85"/><text x="${lx+56}" y="${ly}" font-size="9" fill="#64748b" font-family="'DM Sans',sans-serif">QA</text>`;
+  legend += `<rect x="${lx+83}" y="${ly-7}" width="8" height="8" rx="1" fill="#7c3aed" opacity=".85"/><text x="${lx+94}" y="${ly}" font-size="9" fill="#64748b" font-family="'DM Sans',sans-serif">Team</text>`;
+
+  svg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
+  svg.setAttribute('height', svgH);
+  svg.innerHTML = grid + bars + xLbls + legend;
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -2556,8 +2828,11 @@ function effectiveActual(pi) {
   const live = hasIterData ? projForPI(pi) : null;
 
   const iters      = pi.iterations || [];
-  const devExecArr = iters.map(it => it.devSPexec).filter(v => v != null);
-  const qaExecArr  = iters.map(it => it.qaSPexec).filter(v => v != null);
+  const devExecArr  = iters.map(it => it.devSPexec).filter(v => v != null);
+  const qaExecArr   = iters.map(it => it.qaSPexec).filter(v => v != null);
+  // Team SP only exists where a TFS "Pull Sprint Executed" was done — it's never
+  // hand-entered — so there's no `a.teamSPexec` fallback to a stored value.
+  const teamExecArr = iters.map(it => it.tfsExecuted ? (it.tfsExecuted.teamSP || 0) : null).filter(v => v != null);
 
   return {
     devH:           live ? live.devH  : (a.devH ?? 0),
@@ -2566,8 +2841,9 @@ function effectiveActual(pi) {
     qaSPest:        live ? live.qaSP  : (a.qaSPest  ?? 0),
     devRatioStored: live ? live.devR  : (a.devRatio ?? null),
     qaRatioStored:  live ? live.qaR   : (a.qaRatio  ?? null),
-    devSPexec: devExecArr.length ? devExecArr.reduce((s,v) => s+v, 0) : (a.devSPexec ?? null),
-    qaSPexec:  qaExecArr.length  ? qaExecArr.reduce((s,v) => s+v, 0)  : (a.qaSPexec  ?? null)
+    devSPexec:  devExecArr.length  ? devExecArr.reduce((s,v) => s+v, 0)  : (a.devSPexec ?? null),
+    qaSPexec:   qaExecArr.length   ? qaExecArr.reduce((s,v) => s+v, 0)   : (a.qaSPexec  ?? null),
+    teamSPexec: teamExecArr.length ? teamExecArr.reduce((s,v) => s+v, 0) : null
   };
 }
 
@@ -2575,6 +2851,8 @@ function renderHistoricalSection() {
   const eligible = piList.filter(p => p.status==='historical'||p.status==='current'||p.status==='future');
   const grid     = document.getElementById('hist-grid');
   const selBox   = document.getElementById('hist-pi-selector');
+
+  renderVelocityTrendChart();
 
   if (!eligible.length) {
     if (selBox) selBox.innerHTML = '';
@@ -2605,7 +2883,7 @@ function renderHistoricalSection() {
     '📈 Historical comparison — ' + display.map(p=>'PI'+p.id).join(' · ');
 
   function piTotalSP(p) {
-    if (p.actual) { const e = effectiveActual(p); return (e.devSPexec ?? e.devSPest) + (e.qaSPexec ?? e.qaSPest); }
+    if (p.actual) { const e = effectiveActual(p); return (e.devSPexec ?? e.devSPest) + (e.qaSPexec ?? e.qaSPest) + (e.teamSPexec || 0); }
     const q = projForPI(p); return q.devSP + q.qaSP;
   }
   function piHours(p) {
@@ -2647,11 +2925,13 @@ function renderHistoricalSection() {
         if (doneIts.length > 0) {
           const execDev   = doneIts.reduce((s,it) => s+(it.devSPexec||0), 0);
           const execQA    = doneIts.reduce((s,it) => s+(it.qaSPexec||0), 0);
-          const execTotal = execDev + execQA;
+          const execTeam  = doneIts.reduce((s,it) => s+(it.tfsExecuted ? (it.tfsExecuted.teamSP||0) : 0), 0);
+          const execTotal = execDev + execQA + execTeam;
           const progPct   = totalSP > 0 ? Math.round(execTotal / totalSP * 100) : 0;
           html += `<div class="hist-label" style="margin-top:8px">In progress (${doneIts.length}/${nIters} done)</div>`;
           html += hRow('DEV SP done', execDev, 'var(--blue-dark)');
           html += hRow('QA SP done', execQA, 'var(--teal)');
+          if (execTeam > 0) html += hRow('Team SP done', execTeam, 'var(--purple)');
           html += hRowHtml('SP delivered', `<strong style="color:var(--amber)">${execTotal} SP</strong>`);
           html += hRowHtml('Progress', `<span style="color:${progPct>=75?'var(--green)':progPct>=40?'var(--amber)':'var(--red)'};font-weight:600">${progPct}%</span>`);
         }
@@ -2711,8 +2991,10 @@ function renderHistoricalSection() {
         html += hRow('QA accuracy', Math.round(e.qaSPexec / e.qaSPest * 100) + '%');
       }
 
+      if (e.teamSPexec) html += hRow('Team SP executed', e.teamSPexec, 'var(--purple)');
+
       if (totalH > 0) html += hRow('Total hours', totalH.toFixed(0));
-      const totalSP = (e.devSPexec ?? e.devSPest) + (e.qaSPexec ?? e.qaSPest);
+      const totalSP = (e.devSPexec ?? e.devSPest) + (e.qaSPexec ?? e.qaSPest) + (e.teamSPexec || 0);
       if (totalSP > 0) {
         html += hRowHtml('Total SP', `<strong style="color:var(--amber)">${totalSP.toFixed(0)}</strong>`);
         if (totalH > 0) html += hRow('SP efficiency', (totalSP / totalH).toFixed(2)+' SP/h');
@@ -2785,6 +3067,20 @@ async function openTfsWorkItem(id) {
 
 const TFS_BUCKET_LABEL = { dev: 'Dev', qa: 'QA', team: 'Team' };
 
+// Reads as a progress gradient: New (not started, neutral) → Active (in
+// progress, amber) → Resolved (dev done, pending verification, teal) →
+// Closed (done, green). Any other/unknown state falls back to neutral.
+const STATE_BADGE_COLORS = {
+  New:      { fg: 'var(--slate-600)', bg: 'var(--slate-100)' },
+  Active:   { fg: 'var(--amber)',     bg: 'var(--amber-light)' },
+  Resolved: { fg: 'var(--teal)',      bg: 'var(--teal-light)' },
+  Closed:   { fg: 'var(--green)',     bg: 'var(--green-light)' }
+};
+function stateBadge(state) {
+  const c = STATE_BADGE_COLORS[state] || { fg: 'var(--slate-500)', bg: 'var(--slate-100)' };
+  return `<span style="color:${c.fg};background:${c.bg};font-weight:600;padding:1px 7px;border-radius:3px;white-space:nowrap;font-size:10px">${esc(state || '—')}</span>`;
+}
+
 // This team's title convention: User Stories are written starting with
 // "[Dev]", "[QA]", or "[SysMgm Team]". If that prefix doesn't match the
 // bucket the item actually landed in (via its DEV/QA tag), it's almost
@@ -2796,49 +3092,440 @@ function titlePrefixBucket(title) {
   const token = m[1].toLowerCase().replace(/\s+/g, ' ');
   return token === 'dev' ? 'dev' : token === 'qa' ? 'qa' : token === 'sysmgm team' ? 'team' : null;
 }
-function tfsTagMismatch(item) {
+// The real mismatch check, ignoring acknowledgment — used to know whether
+// an item WAS flagged (even if since accepted), as opposed to tfsTagMismatch()
+// below, which is acknowledgment-aware and is what everything else (red
+// highlighting, counts, text export) should treat as "is this still a problem".
+function rawTagMismatch(item) {
   if (item.type === 'Bug') return null;
   const expected = titlePrefixBucket(item.title);
   return (expected && expected !== item.bucket) ? expected : null;
 }
+function tfsTagMismatch(item) {
+  const expected = rawTagMismatch(item);
+  return (expected && !ackedTagMismatches.includes(item.id)) ? expected : null;
+}
 
-function tfsItemRow(item, showState) {
+function acknowledgeTagMismatch(itemId) {
+  if (!ackedTagMismatches.includes(itemId)) ackedTagMismatches.push(itemId);
+  showToast('Tag mismatch accepted for #' + itemId + ' — won\'t be flagged again');
+  refreshAfterTagAck();
+}
+function unacknowledgeTagMismatch(itemId) {
+  const idx = ackedTagMismatches.indexOf(itemId);
+  if (idx !== -1) ackedTagMismatches.splice(idx, 1);
+  showToast('Tag mismatch flag restored for #' + itemId);
+  refreshAfterTagAck();
+}
+// Re-renders everywhere a flagged/accepted item could currently be shown —
+// the Sprint Actuals table (via recalc) and, if open, the Sprint Report
+// modal, which isn't part of recalc()'s render chain since it only opens
+// on a button click.
+function refreshAfterTagAck() {
+  recalc();
+  scheduleSave();
+  const panel = document.getElementById('sprint-review-panel');
+  if (panel && panel.style.display === 'flex' && window._sprintReviewIterId) {
+    showSprintReviewPanel(window._sprintReviewIterId);
+  }
+}
+
+// `linkBase`, when given (e.g. "https://tfs/.../_workitems/edit/"), renders
+// the #id as a real <a href> instead of the live app's onclick+IPC handler —
+// used only for the exported standalone report, where a plain href is what
+// lets the TFS PDF/HTML preserve a clickable link (printToPDF keeps real
+// hyperlinks; an onclick handler does nothing once rendered to paper/image).
+// `compact` (used inside the Feature × Dev/QA/Team matrix, where each cell
+// is only ~a quarter of the table wide) wraps the row onto two lines — id +
+// title on the first, type/state/SP/flags on the second — instead of
+// squeezing everything onto one line, which left the title about one word
+// wide.
+function tfsItemRow(item, showState, linkBase, compact) {
   const expected = tfsTagMismatch(item);
+  const wasFlagged = rawTagMismatch(item);
+  const accepted = wasFlagged && !expected;
   const dim = item.counted === false ? 'opacity:0.55;' : '';
+  const wrap = compact ? 'flex-wrap:wrap;row-gap:3px;' : '';
+  // A plain bottom border between rows (and a touch more vertical padding)
+  // so a long list of items reads as a table instead of a wall of text —
+  // flagged rows keep their tinted background instead, which already does
+  // the job of separating them visually.
   const style = expected
-    ? `display:flex;gap:8px;align-items:baseline;font-size:11px;${dim}background:var(--red-light);border-radius:4px;padding:3px 6px;margin:1px 0`
-    : `display:flex;gap:8px;align-items:baseline;font-size:11px;${dim}padding:2px 0`;
+    ? `display:flex;gap:10px;align-items:baseline;font-size:11px;${wrap}${dim}background:var(--red-light);border-radius:4px;padding:5px 6px;margin:2px 0`
+    : `display:flex;gap:10px;align-items:baseline;font-size:11px;${wrap}${dim}padding:5px 2px;border-bottom:1px solid var(--slate-100)`;
   const tip = expected
     ? ` title="Title says [${TFS_BUCKET_LABEL[expected]}] but this item is classified as ${TFS_BUCKET_LABEL[item.bucket]} in TFS — check the DEV/QA tag"`
-    : '';
+    : accepted
+      ? ` title="Title says [${TFS_BUCKET_LABEL[wasFlagged]}] but tagged ${TFS_BUCKET_LABEL[item.bucket]} — marked as intentional"`
+      : '';
+  const idLink = linkBase
+    ? `<a href="${esc(linkBase)}${item.id}" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:underline;white-space:nowrap;display:inline-block;min-width:52px">#${item.id}</a>`
+    : `<a href="#" onclick="openTfsWorkItem(${item.id});return false;" style="color:var(--blue);text-decoration:underline;white-space:nowrap;display:inline-block;min-width:52px">#${item.id}</a>`;
   return `<div style="${style}"${tip}>
-    <a href="#" onclick="openTfsWorkItem(${item.id});return false;" style="color:var(--blue);text-decoration:underline;white-space:nowrap">#${item.id}</a>
-    <span style="flex:1;color:var(--slate-700)">${esc(item.title)}</span>
-    <span style="color:var(--slate-400);white-space:nowrap">${esc(item.type)}</span>
-    ${showState ? `<span style="color:var(--slate-400);white-space:nowrap">${esc(item.state)}${item.counted === false ? ' — not closed, excluded' : ''}</span>` : ''}
-    <strong style="white-space:nowrap">${item.sp} SP</strong>
-    ${expected ? '<span style="color:var(--red);font-weight:700;white-space:nowrap">⚠ check tag</span>' : ''}
+    ${idLink}
+    <span style="flex:${compact ? '1 1 calc(100% - 70px)' : '1'};color:var(--slate-700)">${esc(item.title)}</span>
+    <span style="color:var(--slate-400);white-space:nowrap;min-width:64px">${esc(item.type)}</span>
+    ${showState ? `<span style="white-space:nowrap;min-width:64px">${stateBadge(item.state)}${item.counted === false ? '<span style="color:var(--red);font-size:9px;margin-left:4px">not closed</span>' : ''}</span>` : ''}
+    <strong style="white-space:nowrap;min-width:38px;text-align:right">${item.sp} SP</strong>
+    ${expected ? `<span style="color:var(--red);font-weight:700;white-space:nowrap">⚠ check tag</span>${linkBase ? '' : ` <a href="#" onclick="acknowledgeTagMismatch(${item.id});return false;" style="color:var(--blue);font-size:10px;white-space:nowrap" title="This classification is correct on purpose — stop flagging it">✓ accept</a>`}` : ''}
+    ${accepted ? `<span style="color:var(--slate-400);font-size:10px;white-space:nowrap">✓ accepted</span>${linkBase ? '' : ` <a href="#" onclick="unacknowledgeTagMismatch(${item.id});return false;" style="color:var(--blue);font-size:10px;white-space:nowrap">undo</a>`}` : ''}
   </div>`;
 }
 
-// Per-item list grouped by bucket, so tag mistakes (wrong/missing DEV or QA
-// tag) are easy to spot at a glance and fixed with one click into TFS.
-function tfsItemsTable(items) {
-  const buckets = [
-    { key: 'dev',  label: 'Dev',  color: 'var(--blue-dark)' },
-    { key: 'qa',   label: 'QA',   color: 'var(--teal)' },
-    { key: 'team', label: 'Team', color: 'var(--purple)' }
-  ];
-  let html = '<div style="margin-top:4px;padding:8px 10px;background:#fff;border:1px solid var(--slate-200);border-radius:6px;max-width:760px">';
-  buckets.forEach(b => {
-    const bucketItems = items.filter(i => i.bucket === b.key).sort((a, c) => a.id - c.id);
-    if (!bucketItems.length) return;
-    const bucketSP = bucketItems.filter(i => i.counted !== false).reduce((s, i) => s + (i.sp || 0), 0);
-    html += `<div style="font-weight:600;color:${b.color};font-size:11px;margin:4px 0 2px">${b.label} — ${bucketItems.length} item${bucketItems.length !== 1 ? 's' : ''}, ${bucketSP} SP</div>`;
-    bucketItems.forEach(item => { html += tfsItemRow(item, true); });
+// Per-item list grouped by parent Feature first (matching how the work was
+// actually planned/presented — see the native TFS backlog layout), then by
+// Dev/QA/Team bucket within each feature, so tag mistakes (wrong/missing DEV
+// or QA tag) are still easy to spot at a glance and fixed with one click into TFS.
+// Items with no parent (or whose parent TFS didn't return) land in a final
+// "(No parent feature)" group rather than being dropped.
+const ITEM_BUCKETS = [
+  { key: 'dev',  label: 'Dev',  color: 'var(--blue-dark)' },
+  { key: 'qa',   label: 'QA',   color: 'var(--teal)' },
+  { key: 'team', label: 'Team', color: 'var(--purple)' }
+];
+
+// Shared by tfsItemsTable() (HTML) and buildWikiMarkdown() (Markdown) so the
+// two never drift apart on how items are grouped — only how a group's
+// rendered differs between the two output formats.
+// Groups are sorted by Epic first (so Features sharing an Epic sit next to
+// each other — the tables show an Epic column spanning them), then by
+// Feature, both in the PI's manual priority order (see orderComparators());
+// Features without an Epic come after all Epics, and items without a parent
+// Feature last. `epicId` is only present on pulls made since the sprint pull
+// started fetching the Feature's own parent. `order` defaults to the viewed
+// PI's.
+// ── Manual priority order (▲▼), one per PI, shared by every sprint table,
+// the PI Roadmap and both wiki pages: pi.order = { epics: [id…], features: [id…] }.
+// Ranked ids come first in list order; unranked ones follow by id; a missing
+// Epic / parent Feature (null) always sorts last.
+function orderComparators(order) {
+  order = order || {};
+  const rank = (list, id) => { const i = (list || []).indexOf(id); return i < 0 ? Number.MAX_SAFE_INTEGER : i; };
+  const cmp = (x, y) => x < y ? -1 : x > y ? 1 : 0;
+  const by = list => (a, b) => (a == null) - (b == null) || cmp(rank(list, a), rank(list, b)) || cmp(a, b);
+  return { epic: by(order.epics), feature: by(order.features) };
+}
+
+// Moves `id` one step up (dir -1) or down (+1) relative to its neighbour as
+// currently displayed (`visibleIds`, in display order). Visible ids not yet in
+// the stored list are appended first, in display order — which is exactly
+// where unranked ids were already displayed — so swapping in the list
+// matches what the user sees, and ids not shown keep their positions.
+function moveRank(kind, id, dir, visibleIds, target) {
+  const pi = getViewedPI();
+  if (!pi) return;
+  if (!pi.order) pi.order = { epics: [], features: [] };
+  const list = pi.order[kind === 'epic' ? 'epics' : 'features'];
+  visibleIds.forEach(v => { if (!list.includes(v)) list.push(v); });
+  const neighbour = visibleIds[visibleIds.indexOf(id) + dir];
+  if (neighbour == null) return;
+  const a = list.indexOf(id), b = list.indexOf(neighbour);
+  [list[a], list[b]] = [list[b], list[a]];
+  scheduleSave();
+  if (target === 'roadmap') renderPIRoadmap(); else showSprintReviewPanel(target);
+}
+
+function rankArrows(kind, id, visibleIds, target) {
+  const i = visibleIds.indexOf(id);
+  const btn = (dir, label, off) => off
+    ? `<span style="color:var(--slate-200)">${label}</span>`
+    : `<a href="#" onclick="moveRank('${kind}',${id},${dir},[${visibleIds.join(',')}],'${esc(target)}');return false;" style="text-decoration:none;color:var(--slate-500)" title="Move ${dir < 0 ? 'up' : 'down'}">${label}</a>`;
+  return `<span style="float:right;font-size:10px;margin-left:6px;white-space:nowrap">${btn(-1, '▲', i <= 0)} ${btn(1, '▼', i >= visibleIds.length - 1)}</span>`;
+}
+
+// ── Epic priority labels (High / Mid / Low), one set per PI like the ▲▼
+// order: pi.epicPriority = { epicId: 'High'|'Mid'|'Low' }. A label only —
+// it doesn't change the order, which stays manual.
+const EPIC_PRIORITIES = [
+  { key: 'High', color: 'var(--red)',   dot: '🔴' },
+  { key: 'Mid',  color: 'var(--amber)', dot: '🟠' },
+  { key: 'Low',  color: '#ca8a04',      dot: '🟡' }
+];
+
+function priorityBadge(level) {
+  const p = EPIC_PRIORITIES.find(x => x.key === level);
+  return p ? `<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:${p.color}"><span style="width:8px;height:8px;border-radius:50%;background:${p.color};display:inline-block"></span>${p.key.toUpperCase()}</span>` : '';
+}
+
+function prioritySelect(epicId, current, target) {
+  const opts = ['<option value="">Priority…</option>']
+    .concat(EPIC_PRIORITIES.map(p => `<option value="${p.key}"${current === p.key ? ' selected' : ''}>${p.key}</option>`)).join('');
+  return `<select style="font-size:10px;margin-bottom:4px" onchange="setEpicPriority(${epicId},this.value,'${esc(target)}')">${opts}</select>`;
+}
+
+function setEpicPriority(epicId, level, target) {
+  const pi = getViewedPI();
+  if (!pi) return;
+  if (!pi.epicPriority) pi.epicPriority = {};
+  if (level) pi.epicPriority[epicId] = level; else delete pi.epicPriority[epicId];
+  scheduleSave();
+  if (target === 'roadmap') renderPIRoadmap(); else showSprintReviewPanel(target);
+}
+
+// Wiki cell text: "🔴 HIGH" etc. (emoji dot, since Markdown has no colors).
+function priorityMd(level) {
+  const p = EPIC_PRIORITIES.find(x => x.key === level);
+  return p ? `${p.dot} ${p.key.toUpperCase()}` : '';
+}
+
+function groupItemsByFeature(items, order) {
+  const groups = new Map(); // parentId (or 'none') -> {id, title, state, epicId, epicTitle, epicState, items}
+  (items || []).forEach(i => {
+    const key = i.parentId != null ? i.parentId : 'none';
+    if (!groups.has(key)) groups.set(key, {
+      id: i.parentId != null ? i.parentId : null, title: i.parentTitle || '(No parent feature)', state: i.parentState || null,
+      epicId: i.parentEpicId != null ? i.parentEpicId : null, epicTitle: i.parentEpicTitle || null, epicState: i.parentEpicState || null,
+      items: []
+    });
+    groups.get(key).items.push(i);
   });
-  html += '</div>';
+  const c = orderComparators(order !== undefined ? order : (getViewedPI() || {}).order);
+  return [...groups.values()].sort((a, b) => c.epic(a.epicId, b.epicId) || c.feature(a.id, b.id));
+}
+
+// Consecutive groups sharing an Epic, for the merged Epic column — each run
+// is { epicId, epicTitle, epicState, groups: [...] }.
+function epicRuns(sortedGroups) {
+  const runs = [];
+  sortedGroups.forEach(g => {
+    const last = runs[runs.length - 1];
+    if (last && last.epicId === g.epicId) last.groups.push(g);
+    else runs.push({ epicId: g.epicId, epicTitle: g.epicTitle, epicState: g.epicState, groups: [g] });
+  });
+  return runs;
+}
+
+// Per-feature bucket SP totals (counted items only) — shared by the summary
+// table and the detailed breakdown below it, so the two can never disagree.
+function featureBucketSums(g) {
+  const sums = { dev: 0, qa: 0, team: 0 };
+  g.items.filter(i => i.counted !== false).forEach(i => { sums[i.bucket] = (sums[i.bucket] || 0) + (i.sp || 0); });
+  return sums;
+}
+
+// One row per Feature, one column per Dev/QA/Team — everything typed out
+// directly (title, state badge, SP, tag-mismatch controls) rather than
+// relying on TFS wiki's auto-expand mention or a collapsible <details> for
+// any of it. Both turned out to behave inconsistently depending on exactly
+// where a bare "#id" sat (a table cell was fine; a <summary> line wasn't),
+// which made the whole report fragile to reason about — a single flat
+// matrix table, fully self-contained, is simpler and never depends on how
+// any particular wiki build happens to render an embed.
+// `commentsCtx` ({ it, mode, editable }) adds the per-feature Comments column
+// — passed by the Sprint Report modal (editable) and its export (read-only),
+// not by Sprint Actuals' "View items".
+function tfsItemsTable(items, linkBase, commentsCtx) {
+  items = items || [];
+  if (!items.length) return '';
+  const sortedGroups = groupItemsByFeature(items);
+  const featureCell = g => {
+    const ref = g.id == null
+      ? esc(g.title)
+      : (linkBase
+          ? `<a href="${esc(linkBase)}${g.id}" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:underline">#${g.id}</a> ${esc(g.title)}`
+          : `<a href="#" onclick="openTfsWorkItem(${g.id});return false;" style="color:var(--blue);text-decoration:underline">#${g.id}</a> ${esc(g.title)}`);
+    const sums = featureBucketSums(g);
+    const total = sums.dev + sums.qa + sums.team;
+    return `<div style="font-weight:700;color:var(--slate-700)">${ref}${g.state ? ' ' + stateBadge(g.state) : ''}</div>
+      <div style="color:var(--slate-400);font-size:10px;margin-top:2px">${total} SP</div>`;
+  };
+  const bucketCell = (g, key) => g.items
+    .filter(i => i.bucket === key)
+    .sort((a, c) => a.id - c.id)
+    .map(i => tfsItemRow(i, true, linkBase, true))
+    .join('');
+
+  // Epic column: one cell per run of consecutive Features sharing an Epic,
+  // merged down across them (rowspan) — groupItemsByFeature() already sorted
+  // them so siblings are adjacent.
+  // Items pulled before the sprint pull fetched Epics don't have the
+  // `parentEpicId` field at all (vs. `null` = looked up, genuinely no Epic) —
+  // say so, rather than claiming the Features have no Epic.
+  const epicDataMissing = items.every(i => !('parentEpicId' in i));
+  const epicCell = run => {
+    if (run.epicId == null) return epicDataMissing
+      ? '<span style="color:var(--amber)" title="This pull was made before Epics were fetched — pull the sprint again (after a full app restart) to group by Epic">Re-pull to load Epic</span>'
+      : '<span style="color:var(--slate-400)">No Epic</span>';
+    const link = linkBase
+      ? `<a href="${esc(linkBase)}${run.epicId}" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:underline">#${run.epicId}</a>`
+      : `<a href="#" onclick="openTfsWorkItem(${run.epicId});return false;" style="color:var(--blue);text-decoration:underline">#${run.epicId}</a>`;
+    return `<div style="font-weight:700;color:var(--slate-700)">${link} ${esc(run.epicTitle || '')}${run.epicState ? ' ' + stateBadge(run.epicState) : ''}</div>`;
+  };
+
+  const cell = 'padding:6px 8px;border:1px solid var(--slate-200);vertical-align:top';
+  let html = '<table style="width:100%;border-collapse:collapse;table-layout:fixed;font-size:11px;margin:4px 0"><thead><tr>';
+  html += `<th style="${cell};text-align:left;width:14%">Epic</th>`;
+  html += `<th style="${cell};text-align:left;width:18%">Feature</th>`;
+  ITEM_BUCKETS.forEach(b => {
+    html += `<th style="${cell};text-align:left;color:${b.color}">${b.label}</th>`;
+  });
+  if (commentsCtx) html += `<th style="${cell};text-align:left;width:18%">Comments</th>`;
+  html += '</tr></thead><tbody>';
+  // ▲▼ ordering only in the editable Sprint Report modal
+  const arrowsTarget = commentsCtx && commentsCtx.editable ? commentsCtx.it.id : null;
+  const priorities = (getViewedPI() || {}).epicPriority || {};
+  const runs = epicRuns(sortedGroups);
+  const epicIds = runs.map(r => r.epicId).filter(id => id != null);
+  runs.forEach(run => {
+    const featureIds = run.groups.map(g => g.id).filter(id => id != null);
+    run.groups.forEach((g, idx) => {
+      html += '<tr>';
+      if (idx === 0) {
+        const level = run.epicId != null ? priorities[run.epicId] : null;
+        const prio = run.epicId == null ? ''
+          : arrowsTarget ? `<div>${prioritySelect(run.epicId, level, arrowsTarget)}</div>`
+          : level ? `<div style="margin-bottom:4px">${priorityBadge(level)}</div>` : '';
+        html += `<td style="${cell};background:var(--slate-50)" rowspan="${run.groups.length}">${
+          arrowsTarget && run.epicId != null ? rankArrows('epic', run.epicId, epicIds, arrowsTarget) : ''}${prio}${epicCell(run)}</td>`;
+      }
+      html += `<td style="${cell}">${arrowsTarget && g.id != null ? rankArrows('feature', g.id, featureIds, arrowsTarget) : ''}${featureCell(g)}</td>`;
+      ITEM_BUCKETS.forEach(b => {
+        html += `<td style="${cell}">${bucketCell(g, b.key)}</td>`;
+      });
+      if (commentsCtx) html += `<td style="${cell}">${commentCell(commentsCtx, featureKey(g))}</td>`;
+      html += '</tr>';
+    });
+  });
+  if (commentsCtx) html += topicRows(commentsCtx, cell) + orphanRows(commentsCtx, cell);
+  html += '</tbody></table>';
+  if (commentsCtx && commentsCtx.editable) {
+    html += `<button class="btn btn-sm" style="margin-top:6px" onclick="addTopic('${esc(commentsCtx.it.id)}','${commentsCtx.mode}')"
+      title="Add a placeholder row for a topic that isn't in the TFS backlog yet — remove it once it's created in TFS and re-pulled">+ Add new topic</button>`;
+  }
   return html;
+}
+
+// ── Comments whose Feature is no longer in the pull ──
+// A re-pull never deletes comments; but if a Feature was removed from the
+// sprint (or deleted) in TFS, its comment no longer has a row to sit on.
+// Those are listed at the bottom of the table so they're never silently
+// hidden — the user decides whether to delete them. Not published to the
+// wiki (the Feature isn't in the sprint anymore).
+const SNAPSHOT_KEY = { piplanned: 'tfsPIPlanned', planned: 'tfsPlanned', executed: 'tfsExecuted' };
+
+function orphanCommentKeys(it, mode) {
+  const snap = it[SNAPSHOT_KEY[mode]];
+  if (!snap) return [];
+  const present = new Set(groupItemsByFeature(snap.items || []).map(featureKey));
+  return Object.entries((it.comments || {})[mode] || {})
+    .filter(([key, c]) => (c.text || '').trim() && !present.has(key))
+    .map(([key]) => key);
+}
+
+function orphanRows(ctx, cell) {
+  // Only in the live app (where they can be dealt with) — like the wiki, the
+  // PDF/image export leaves them out.
+  if (!ctx.editable) return '';
+  const comments = (ctx.it.comments || {})[ctx.mode] || {};
+  return orphanCommentKeys(ctx.it, ctx.mode).map(key => {
+    const c = comments[key];
+    const ref = key === 'none' ? 'Items without a parent Feature'
+      : `<a href="#" onclick="openTfsWorkItem(${Number(key)});return false;" style="color:var(--blue);text-decoration:underline">#${esc(key)}</a> ${esc(c.title || '')}`;
+    return `<tr style="background:var(--red-light)">
+      <td style="${cell}"><div style="color:var(--red);font-weight:700">⚠ No longer in this pull</div>
+        <div style="font-size:10px;color:var(--slate-500)">removed from the sprint or deleted in TFS — not published to the wiki</div>
+        ${ctx.editable ? `<a href="#" onclick="deleteFeatureComment('${esc(ctx.it.id)}','${ctx.mode}','${esc(key)}');return false;" style="color:var(--red);font-size:10px">🗑 Delete comment</a>` : ''}</td>
+      <td style="${cell}">${ref}</td>
+      ${ITEM_BUCKETS.map(() => `<td style="${cell}"></td>`).join('')}
+      <td style="${cell}">${commentCell(ctx, key)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function deleteFeatureComment(iterId, mode, key) {
+  const pi = getViewedPI();
+  const it = pi && pi.iterations.find(i => i.id === iterId);
+  if (!it || !((it.comments || {})[mode] || {})[key]) return;
+  if (!confirm('Delete this comment? This cannot be undone.')) return;
+  delete it.comments[mode][key];
+  scheduleSave();
+  showSprintReviewPanel(iterId);
+}
+
+// ── New-topic placeholder rows (stakeholder ideas not yet in the backlog) ──
+// Per iteration, per pull, like comments: it.topics[mode] = [{ id, title,
+// dev, qa, team, comment }] — all free text. Shown after the TFS rows; the
+// user removes one by hand once it exists in TFS and the sprint is re-pulled.
+function topicRows(ctx, cell) {
+  const topics = ((ctx.it.topics || {})[ctx.mode]) || [];
+  const iid = esc(ctx.it.id), m = ctx.mode;
+  const field = (t, f, ph) => ctx.editable
+    ? `<textarea rows="2" class="free-text" placeholder="${ph}"
+        oninput="autoGrow(this);updateTopic('${iid}','${m}','${t.id}','${f}',this.value)">${esc(t[f] || '')}</textarea>`
+    : `<div style="white-space:pre-wrap;color:var(--slate-700)">${esc(t[f] || '')}</div>`;
+  return topics.map(t => `<tr style="background:#fffbeb">
+      <td style="${cell}"><div style="color:var(--amber);font-weight:700">📝 Not in backlog</div>
+        ${ctx.editable ? `<a href="#" onclick="removeTopic('${iid}','${m}','${t.id}');return false;" style="color:var(--red);font-size:10px">✕ Remove</a>` : ''}</td>
+      <td style="${cell}">${field(t, 'title', 'Topic…')}</td>
+      ${ITEM_BUCKETS.map(b => `<td style="${cell}">${field(t, b.key, b.label + ' notes…')}</td>`).join('')}
+      <td style="${cell}">${field(t, 'comment', 'Comments…')}</td>
+    </tr>`).join('');
+}
+
+function iterationTopics(iterId, mode) {
+  const pi = getViewedPI();
+  const it = pi && pi.iterations.find(i => i.id === iterId);
+  if (!it) return null;
+  if (!it.topics) it.topics = {};
+  if (!it.topics[mode]) it.topics[mode] = [];
+  return it.topics[mode];
+}
+
+function addTopic(iterId, mode) {
+  const list = iterationTopics(iterId, mode);
+  if (!list) return;
+  list.push({ id: 't' + Date.now(), title: '', dev: '', qa: '', team: '', comment: '' });
+  scheduleSave();
+  showSprintReviewPanel(iterId);
+}
+
+// No re-render — keeps focus in the textarea while typing.
+function updateTopic(iterId, mode, topicId, field, value) {
+  const t = (iterationTopics(iterId, mode) || []).find(x => x.id === topicId);
+  if (!t) return;
+  t[field] = value;
+  scheduleSave();
+}
+
+function removeTopic(iterId, mode, topicId) {
+  const list = iterationTopics(iterId, mode);
+  const idx = list ? list.findIndex(x => x.id === topicId) : -1;
+  if (idx < 0 || !confirm('Remove this new-topic row?')) return;
+  list.splice(idx, 1);
+  scheduleSave();
+  showSprintReviewPanel(iterId);
+}
+
+// ── Per-feature comments on a sprint's work items tables ──
+// Free text, stored per iteration, per pull, per feature row:
+// it.comments[mode][featureKey] = { text },
+// mode = 'piplanned' | 'planned' | 'executed' (separate notes per pull —
+// planning notes vs review/demo notes). Images and videos are linked from
+// the text (SharePoint/Teams URLs), not uploaded.
+function featureKey(g) { return g.id != null ? String(g.id) : 'none'; }
+
+function featureCommentText(it, mode, key) {
+  return ((((it.comments || {})[mode] || {})[key]) || {}).text || '';
+}
+
+// Live modal: editable textarea; export: read-only text.
+function commentCell(ctx, key) {
+  const text = featureCommentText(ctx.it, ctx.mode, key);
+  if (!ctx.editable) return `<div style="white-space:pre-wrap;color:var(--slate-700)">${esc(text)}</div>`;
+  return `<textarea rows="3" class="free-text" placeholder="Comments… (paste SharePoint/Teams links for images or videos)"
+      oninput="autoGrow(this);updateFeatureComment('${esc(ctx.it.id)}','${ctx.mode}','${key}',this.value)">${esc(text)}</textarea>`;
+}
+
+// No re-render here — that would steal focus from the textarea mid-typing.
+function updateFeatureComment(iterId, mode, key, text) {
+  const pi = getViewedPI();
+  const it = pi && pi.iterations.find(i => i.id === iterId);
+  if (!it) return;
+  if (!it.comments) it.comments = {};
+  if (!it.comments[mode]) it.comments[mode] = {};
+  // Keep other fields (e.g. the remembered Feature `title`) — only text changes.
+  it.comments[mode][key] = Object.assign(it.comments[mode][key] || {}, { text });
+  scheduleSave();
 }
 
 // Compares a Planned snapshot's items against an Executed snapshot's items
@@ -2881,20 +3568,769 @@ function tfsDiffPanel(diff) {
   return html;
 }
 
-function tfsDiffSection(it) {
-  const diff = tfsDiff(it.tfsPlanned.items || [], it.tfsExecuted.items || []);
-  const key = it.id + ':diff';
+// Generalized so it can compare any two of a sprint's pulled snapshots — the
+// existing Planned-vs-Executed comparison, and the new PI-Planned-vs-Planned
+// one (how much scope drifted between PI planning and this sprint's own
+// sprint-planning ceremony). `diffKey` keys this toggle's expand state
+// separately from the other diff (both live in the same iteration's row).
+function tfsDiffSection(it, fromKey, toKey, label, diffKey) {
+  const diff = tfsDiff(it[fromKey].items || [], it[toKey].items || []);
+  const key = it.id + ':' + diffKey;
   const open = _tfsDetailsOpen.has(key);
   const changeCount = diff.added.length + diff.removed.length + diff.bucketChanged.length;
   const summary = changeCount
     ? `${diff.added.length} added · ${diff.removed.length} removed · ${diff.bucketChanged.length} bucket changed`
     : 'no differences';
-  let html = `<div style="margin-top:2px"><a href="#" onclick="toggleTfsDetails('${it.id}','diff');return false;" style="font-size:11px;color:var(--blue)">${open ? '▾ Hide' : '▸ Compare'} Planned vs Executed <span style="color:var(--slate-400)">(${summary})</span></a></div>`;
+  let html = `<div style="margin-top:2px"><a href="#" onclick="toggleTfsDetails('${it.id}','${diffKey}');return false;" style="font-size:11px;color:var(--blue)">${open ? '▾ Hide' : '▸ Compare'} ${esc(label)} <span style="color:var(--slate-400)">(${summary})</span></a></div>`;
   if (open) html += tfsDiffPanel(diff);
   return html;
 }
 
-// Lets a mis-click (e.g. "Pull Executed" clicked when "Pull Planned" was meant)
+// Modeled capacity for one iteration (hours × ratio) — the same numbers
+// shown in the Capacity-per-iteration table and Sprint Actuals' est. columns.
+// Pulled out as a shared helper so the Sprint Report panel can compute it
+// on demand without duplicating the loop in renderSprintActuals()/recalc().
+function iterCapacityEstimate(it) {
+  const devR = spDev(), qaR = spQa();
+  let devH = 0, qaH = 0;
+  team.forEach(m => {
+    if (m.activeIter.includes(it.id)) {
+      const h = memberFocusInIteration(m, it);
+      if (m.role === 'Dev') devH += h; else qaH += h;
+    }
+  });
+  return { devH, qaH, devSPest: devH * devR, qaSPest: qaH * qaR };
+}
+
+// Churn/drift between two of a sprint's pulled snapshots (matched by item
+// id). Union-based so the percentage is bounded 0–100%: dividing by just
+// `fromItems`'s own count alone can blow up to absurd percentages (e.g.
+// 1700%) whenever it was pulled very early with only a couple of items
+// staged and the rest loaded afterward. Shared by buildSprintReviewSections()
+// (PI Planned vs Sprint Planned "Drift", Sprint Planned vs Sprint Executed
+// "Churn") and buildWikiMarkdown().
+function churnRow(fromItems, toItems) {
+  const diff = tfsDiff(fromItems, toItems);
+  const unionSize = fromItems.length + diff.added.length;
+  const changedCount = diff.added.length + diff.removed.length;
+  const churnPct = unionSize > 0 ? Math.round(changedCount / unionSize * 100) : 0;
+  return { diff, unionSize, changedCount, churnPct };
+}
+
+// Bug vs User Story split of a pull's counted items — a quick quality
+// signal (a high Bug SP share usually means rework, not new delivery).
+function bugStorySplit(items) {
+  let bugSP = 0, storySP = 0, bugCount = 0, storyCount = 0;
+  (items || []).forEach(i => {
+    if (i.counted === false) return;
+    if (i.type === 'Bug') { bugSP += i.sp || 0; bugCount++; }
+    else { storySP += i.sp || 0; storyCount++; }
+  });
+  return { bugSP, storySP, bugCount, storyCount };
+}
+
+// ── Sprint Report: everything checked before presenting a sprint,
+// assembled from data already pulled from TFS — nothing hand-typed. Works
+// as either a pre-sprint planning snapshot (only Planned pulled) or a full
+// review (Executed also pulled); which one it is shows up in the content
+// itself (the Executed section below says so when it's missing) rather
+// than in the title or a banner, since the same report serves both. ──
+// Returns { planning, review } — two separate section lists, not one flat
+// list — so the renderer/text/export builders below can each slot the
+// Work Items — Planned table between them: Planning (Team, Capacity, Time
+// Off, Planned stats, Work Items — Planned) fully first, THEN Review
+// (Executed stats or its "not pulled yet" placeholder, the Planned vs
+// Executed diff/churn, Work Items — Executed). A single flat section list
+// couldn't do this, since the item tables aren't simple label/value rows.
+// Who's actually on this sprint — a member's `tag` (e.g. "PO") shows as
+// ROLE/TAG so someone wearing two hats (QA who's also the PO) reads as
+// "QA/PO" rather than losing one of the two, and a reader outside the team
+// can see at a glance who's who without asking. Returns `null` when no one's
+// active in this iteration (vs. an empty section). Shared by
+// buildSprintReviewSections() and buildWikiMarkdown() so the Sprint Report
+// and the Wiki publish never show a different team for the same sprint.
+function buildTeamSection(it) {
+  const activeMembers = team.filter(m => m.activeIter.includes(it.id));
+  if (!activeMembers.length) return null;
+  return { heading: 'Team', rows: activeMembers.map(m => [m.name, m.role + (m.tag ? '/' + m.tag : '')]) };
+}
+
+// Shared/public holidays (`it.holidays`) plus each active member's personal
+// days off for this iteration — the direct explanation for why modeled
+// capacity is lower than a "full" sprint would suggest, so it's meant to sit
+// right next to Capacity wherever it's shown.
+function buildTimeOffSection(it) {
+  const holidays = it.holidays || [];
+  const memberDaysOff = team
+    .filter(m => m.activeIter.includes(it.id) && m.daysOff && m.daysOff[it.id] > 0)
+    .map(m => ({ name: m.name, role: m.role + (m.tag ? '/' + m.tag : ''), days: m.daysOff[it.id] }));
+  const rows = [];
+  holidays.forEach(h => rows.push([h.name || 'Shared event', `${h.days} day${h.days !== 1 ? 's' : ''} (whole team)`]));
+  memberDaysOff.forEach(m => rows.push([`${m.name} (${m.role})`, `${m.days} day${m.days !== 1 ? 's' : ''} off`]));
+  return { heading: 'Time Off', rows: rows.length ? rows : [['Time off', 'None recorded for this sprint']] };
+}
+
+// Sprint dates and length — first card of the report and the wiki page (as
+// on the team's Confluence iteration pages). Working days are the sprint's
+// length minus whole-team holidays; personal days off are in Time Off.
+function buildSprintDatesSection(it) {
+  const days = it.days || DAYS;
+  const holidays = iterHolidayDays(it);
+  const rows = [['Dates', it.dates || 'Not set']];
+  rows.push(['Working days', holidays
+    ? `${days - holidays} (${days} − ${holidays} holiday${holidays !== 1 ? 's' : ''})`
+    : String(days)]);
+  return { heading: 'Sprint', rows };
+}
+
+function buildSprintReviewSections(it) {
+  const cap = iterCapacityEstimate(it);
+  const planning = [buildSprintDatesSection(it)];
+  const review = [];
+
+  const teamSection = buildTeamSection(it);
+  if (teamSection) planning.push(teamSection);
+
+  planning.push({
+    heading: 'Capacity',
+    rows: [
+      ['Dev', cap.devSPest.toFixed(0) + ' SP'],
+      ['QA', cap.qaSPest.toFixed(0) + ' SP'],
+      ['Total', (cap.devSPest + cap.qaSPest).toFixed(0) + ' SP']
+    ]
+  });
+
+  planning.push(buildTimeOffSection(it));
+
+  // Builds a PI Planned, Planned, or Executed stat section into the given list.
+  function pullSection(key, into) {
+    const result = it[key];
+    const label = key === 'tfsPIPlanned' ? 'PI Planned' : key === 'tfsPlanned' ? 'Sprint Planned' : 'Sprint Executed';
+    if (!result) {
+      // Flagged specifically for Executed, not Planned — a Planned-only
+      // report is simply incomplete-looking, but calling something a
+      // sprint report with the execution part silently missing invites it
+      // to be mistaken for a finished review when it's really a planning
+      // snapshot. Planned missing (Executed-only) doesn't get this note:
+      // it's the rarer case and self-evident from the Planned row's absence.
+      if (key === 'tfsExecuted') {
+        // `note` (a full-width line, not a label/value row) — this sentence
+        // is too long to sit next to a "Status" label without the wrapped
+        // text visually colliding with it, so it's rendered separately by
+        // every consumer below instead of squeezed into the rows format.
+        into.push({
+          heading: 'Sprint Executed',
+          note: '⏳ Not pulled yet — this is still a planning snapshot, not a completed review.',
+          rows: []
+        });
+      }
+      return;
+    }
+    const devPct = cap.devSPest ? Math.round(result.devSP / cap.devSPest * 100) : null;
+    const qaPct  = cap.qaSPest  ? Math.round(result.qaSP  / cap.qaSPest  * 100) : null;
+    const rows = [
+      ['Dev', `${result.devSP} SP${devPct != null ? ` (${devPct}% of capacity)` : ''}`],
+      ['QA',  `${result.qaSP} SP${qaPct  != null ? ` (${qaPct}% of capacity)`  : ''}`],
+      ['Team', `${result.teamSP} SP`],
+      ['Total', `${result.totalSP} SP`],
+      ['Items', `${result.itemCount}`]
+    ];
+    if (key === 'tfsExecuted') {
+      const spillover = (result.items || []).filter(i => i.counted === false);
+      const spilloverSP = spillover.reduce((s, i) => s + (i.sp || 0), 0);
+      if (spillover.length) rows.push(['Spillover', `${spillover.length} item(s), ${spilloverSP} SP — not Closed`]);
+      const bs = bugStorySplit(result.items);
+      if (bs.bugCount || bs.storyCount) {
+        rows.push(['Bug vs Story', `${bs.bugSP} SP bugs (${bs.bugCount}) · ${bs.storySP} SP stories (${bs.storyCount})`]);
+      }
+    }
+    into.push({ heading: label, rows });
+  }
+
+  pullSection('tfsPIPlanned', planning);
+  pullSection('tfsPlanned', planning);
+  pullSection('tfsExecuted', review);
+
+  if (it.tfsPIPlanned && it.tfsPlanned) {
+    const c = churnRow(it.tfsPIPlanned.items || [], it.tfsPlanned.items || []);
+    planning.push({
+      heading: 'PI Planned vs Sprint Planned',
+      rows: [
+        ['Added after PI planning', String(c.diff.added.length)],
+        ['Removed / descoped', String(c.diff.removed.length)],
+        ['Bucket changed', String(c.diff.bucketChanged.length)],
+        ['Drift', `${c.churnPct}% (${c.changedCount} of ${c.unionSize} total items differ between the two pulls)`]
+      ]
+    });
+  }
+
+  if (it.tfsPlanned && it.tfsExecuted) {
+    const c = churnRow(it.tfsPlanned.items || [], it.tfsExecuted.items || []);
+    review.push({
+      heading: 'Sprint Planned vs Sprint Executed',
+      rows: [
+        ['Added mid-sprint', String(c.diff.added.length)],
+        ['Removed / descoped', String(c.diff.removed.length)],
+        ['Bucket changed', String(c.diff.bucketChanged.length)],
+        ['Churn', `${c.churnPct}% (${c.changedCount} of ${c.unionSize} total items differ between the two pulls)`]
+      ]
+    });
+  }
+
+  return { planning, review };
+}
+
+// Compact grouped-bar chart: Capacity / PI Planned / Planned / Executed per
+// Dev/QA/Team. Pure static SVG (no live JS needed to render it) so the exact
+// same markup works in the on-screen modal AND in the offscreen export
+// window used for PDF/image generation.
+function buildReportChartSvg(cap, piPlanned, planned, executed) {
+  const cats = [
+    { label: 'Dev',  capacity: cap.devSPest, piPlanned: piPlanned ? piPlanned.devSP  : null, planned: planned ? planned.devSP  : null, executed: executed ? executed.devSP  : null },
+    { label: 'QA',   capacity: cap.qaSPest,  piPlanned: piPlanned ? piPlanned.qaSP   : null, planned: planned ? planned.qaSP   : null, executed: executed ? executed.qaSP   : null },
+    { label: 'Team', capacity: null,         piPlanned: piPlanned ? piPlanned.teamSP : null, planned: planned ? planned.teamSP : null, executed: executed ? executed.teamSP : null }
+  ];
+  const seriesColors = { capacity: '#94a3b8', piPlanned: '#2563eb', planned: '#b45309', executed: '#7c3aed' };
+  const seriesKeys = ['capacity', 'piPlanned', 'planned', 'executed'];
+  const allVals = [];
+  cats.forEach(c => seriesKeys.forEach(k => { if (c[k] != null) allVals.push(c[k]); }));
+  if (!allVals.length) return '';
+  const niceMax = Math.ceil(Math.max(...allVals, 1) / 10) * 10 || 10;
+
+  const chartH = 130, topPad = 16, leftPad = 30, rightPad = 10;
+  const groupW = 104, barW = 20, barGap = 4, catGap = 22;
+  const svgW = leftPad + rightPad + cats.length * (groupW + catGap);
+  const svgH = chartH + topPad + 34;
+  const scaleY = v => topPad + chartH - (v / niceMax) * chartH;
+  const baseY = scaleY(0);
+
+  let grid = '', bars = '', xLbls = '';
+  for (let i = 0; i <= 4; i++) {
+    const v = (niceMax / 4) * i, y = scaleY(v);
+    grid += `<line x1="${leftPad}" y1="${y.toFixed(1)}" x2="${(svgW-rightPad).toFixed(1)}" y2="${y.toFixed(1)}" stroke="${i===0?'#cbd5e1':'#e2e8f0'}" stroke-width="1"/>`;
+    grid += `<text x="${(leftPad-6).toFixed(1)}" y="${(y+3.5).toFixed(1)}" text-anchor="end" font-size="9" fill="#94a3b8" font-family="monospace">${Math.round(v)}</text>`;
+  }
+
+  cats.forEach((c, idx) => {
+    const groupX = leftPad + idx * (groupW + catGap);
+    let barIdx = 0;
+    seriesKeys.forEach(k => {
+      if (c[k] == null) return;
+      const x = groupX + barIdx * (barW + barGap);
+      const y = scaleY(c[k]), h = Math.max(0, baseY - y);
+      bars += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW}" height="${h.toFixed(1)}" fill="${seriesColors[k]}" opacity=".85" rx="2"/>`;
+      bars += `<text x="${(x+barW/2).toFixed(1)}" y="${(y-4).toFixed(1)}" text-anchor="middle" font-size="9" fill="#334155" font-family="monospace">${Math.round(c[k])}</text>`;
+      barIdx++;
+    });
+    xLbls += `<text x="${(groupX+groupW/2).toFixed(1)}" y="${(baseY+16).toFixed(1)}" text-anchor="middle" font-size="10" fill="#475569" font-weight="600" font-family="sans-serif">${esc(c.label)}</text>`;
+  });
+
+  let legend = '', lx = leftPad;
+  [['Capacity','#94a3b8'],['PI Planned','#2563eb'],['Sprint Planned','#b45309'],['Sprint Executed','#7c3aed']].forEach(([label,color]) => {
+    legend += `<rect x="${lx}" y="${svgH-14}" width="8" height="8" fill="${color}" rx="1"/><text x="${lx+11}" y="${svgH-7}" font-size="9" fill="#64748b" font-family="sans-serif">${label}</text>`;
+    lx += 80;
+  });
+
+  return `<svg viewBox="0 0 ${svgW} ${svgH}" width="100%" style="max-width:380px;display:block;margin:4px 0 8px">${grid}${bars}${xLbls}${legend}</svg>`;
+}
+
+// Plain-text item list, grouped by bucket — used by both the clipboard
+// export and (indirectly, via the same bucket grouping) the on-screen
+// Work Items tables (tfsItemsTable), so counts always match.
+function itemsAsText(items) {
+  const buckets = [{ key: 'dev', label: 'Dev' }, { key: 'qa', label: 'QA' }, { key: 'team', label: 'Team' }];
+  let out = '';
+  buckets.forEach(b => {
+    const bucketItems = (items || []).filter(i => i.bucket === b.key).sort((a, c) => a.id - c.id);
+    if (!bucketItems.length) return;
+    const sp = bucketItems.filter(i => i.counted !== false).reduce((s, i) => s + (i.sp || 0), 0);
+    out += `  ${b.label} — ${bucketItems.length} item(s), ${sp} SP\n`;
+    bucketItems.forEach(i => {
+      const flag  = tfsTagMismatch(i) ? '  [check tag]' : '';
+      const state = i.counted === false ? `  — ${i.state}, excluded` : '';
+      out += `    #${i.id}  ${i.title}  [${i.type}, ${i.sp} SP]${state}${flag}\n`;
+    });
+  });
+  return out || '  (no items)\n';
+}
+
+// App-wide zoom lives in main.js (saved in config.json); this only keeps the
+// header's % label in sync, whichever way the zoom changed.
+if (window.electronAPI && window.electronAPI.onAppZoomChanged) {
+  window.electronAPI.onAppZoomChanged(z => {
+    const el = document.getElementById('app-zoom-label');
+    if (el) el.textContent = Math.round(z * 100) + '%';
+  });
+}
+
+// Esc closes whichever popup is open.
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  document.querySelectorAll('.history-overlay').forEach(o => { if (o.style.display === 'flex') o.style.display = 'none'; });
+});
+
+// Sprint Report view settings (per-viewer convenience, so localStorage):
+// text zoom of the report content, and whether the popup fills the window.
+// CSS `zoom` on an auto-width wrapper makes the content re-flow to the
+// popup's width rather than overflow it.
+const _srView = (() => {
+  try { return Object.assign({ zoom: 1, full: false }, JSON.parse(localStorage.getItem('sprintReviewView') || '{}')); }
+  catch { return { zoom: 1, full: false }; }
+})();
+
+function applySprintReviewView() {
+  const box = document.getElementById('sprint-review-box');
+  const content = document.getElementById('sprint-review-content');
+  if (!box || !content) return;
+  content.style.zoom = String(_srView.zoom);
+  Object.assign(box.style, { boxSizing: 'border-box' }, _srView.full
+    ? { width: '100vw', height: '100vh', maxHeight: '100vh', borderRadius: '0' }
+    : { width: '96vw', height: '', maxHeight: '94vh', borderRadius: '' });
+  const btn = document.getElementById('sprint-review-full-btn');
+  if (btn) btn.textContent = _srView.full ? '🗗 Exit full screen' : '⛶ Full screen';
+  const label = document.getElementById('sprint-review-zoom-label');
+  if (label) label.textContent = Math.round(_srView.zoom * 100) + '%';
+  try { localStorage.setItem('sprintReviewView', JSON.stringify(_srView)); } catch {}
+  autoGrowAll(content); // text size / width changes re-wrap the text
+}
+
+// Grow a free-text box to fit all its text, so nothing hides below a
+// scrollbar. Only measurable while visible (a hidden box reports 0).
+function autoGrow(el) {
+  if (!el || !el.offsetParent) return;
+  el.style.height = 'auto';
+  el.style.height = (el.scrollHeight + 2) + 'px';
+}
+function autoGrowAll(root) {
+  (root || document).querySelectorAll('textarea.free-text').forEach(autoGrow);
+}
+window.addEventListener('resize', () => autoGrowAll(document.getElementById('sprint-review-body')));
+
+function adjustSprintReviewZoom(delta) {
+  _srView.zoom = Math.min(2, Math.max(0.7, Math.round((_srView.zoom + delta) * 10) / 10));
+  applySprintReviewView();
+}
+
+function toggleSprintReviewFull() {
+  _srView.full = !_srView.full;
+  applySprintReviewView();
+}
+
+function showSprintReviewPanel(iterId) {
+  const pi = getViewedPI();
+  if (!pi) return;
+  const it = pi.iterations.find(i => i.id === iterId);
+  if (!it) return;
+
+  try {
+    window._sprintReviewIterId = iterId;
+
+    document.getElementById('sprint-review-title').textContent = `${productName ? productName + ' — ' : ''}${it.label || it.id}`;
+    const cap = iterCapacityEstimate(it);
+    const { planning, review } = buildSprintReviewSections(it);
+    // Each section is its own bordered card, laid out in a responsive grid —
+    // in the wide modal, full-width label/value rows put labels and values
+    // ~1300px apart and every section ran into the next one.
+    const cardTitle = text => `<div style="font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--slate-700);padding:8px 12px;background:var(--slate-50);border-bottom:1px solid var(--slate-200)">${esc(text)}</div>`;
+    const renderSections = arr => arr.length ? `
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-top:14px;align-items:start">
+        ${arr.map(s => `
+          <div style="border:1px solid var(--slate-200);border-radius:8px;overflow:hidden;background:#fff">
+            ${cardTitle(s.heading)}
+            <div style="padding:4px 12px 8px">
+              ${s.note ? `<div style="font-size:12px;color:var(--slate-500);padding:6px 0">${esc(s.note)}</div>` : ''}
+              ${s.rows.map(([label, val]) => hRowHtml(label, val)).join('')}
+            </div>
+          </div>`).join('')}
+      </div>` : '';
+    const itemsBlock = (label, items, mode) => `
+      <div style="margin-top:14px;border:1px solid var(--slate-200);border-radius:8px;overflow:hidden">
+        ${cardTitle('Work Items — ' + label)}
+        <div style="padding:8px 12px">${tfsItemsTable(items, null, { it, mode, editable: true })}</div>
+      </div>`;
+    let html = buildReportChartSvg(cap, it.tfsPIPlanned, it.tfsPlanned, it.tfsExecuted);
+    html += renderSections(planning);
+    if (it.tfsPIPlanned) html += itemsBlock('PI Planned', it.tfsPIPlanned.items, 'piplanned');
+    if (it.tfsPlanned)  html += itemsBlock('Sprint Planned', it.tfsPlanned.items, 'planned');
+    html += renderSections(review);
+    if (it.tfsExecuted) html += itemsBlock('Sprint Executed', it.tfsExecuted.items, 'executed');
+    document.getElementById('sprint-review-body').innerHTML = html;
+
+    // Publish-to-Wiki controls — a checkbox per pulled section (checked by
+    // default, since re-publishing is a full overwrite of the page with
+    // exactly what's checked, not an accumulating history), disabled with a
+    // tooltip when nothing's been pulled at all yet.
+    const noWikiUrl = !pi.wikiUrl;
+    const chk = (key, label, has) => has
+      ? `<label style="font-size:12px;display:flex;align-items:center;gap:4px"><input type="checkbox" id="wiki-chk-${key}" checked> ${esc(label)}</label>`
+      : '';
+    const anyPulled = it.tfsPIPlanned || it.tfsPlanned || it.tfsExecuted;
+    document.getElementById('sprint-review-wiki-row').innerHTML = anyPulled ? `
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--slate-100);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <span style="font-size:11px;font-weight:600;color:var(--slate-500)">Publish to Wiki:</span>
+        ${chk('piplanned', 'PI Planned', it.tfsPIPlanned)}
+        ${chk('planned', 'Sprint Planned', it.tfsPlanned)}
+        ${chk('executed', 'Sprint Executed', it.tfsExecuted)}
+        <button class="btn btn-sm" ${noWikiUrl ? 'disabled' : ''} title="${noWikiUrl ? 'Set this PI\'s wiki page URL above Sprint Actuals first' : ''}" onclick="publishSprintReviewToWiki()">📤 Publish</button>
+      </div>` : '';
+
+    applySprintReviewView();
+    document.getElementById('sprint-review-panel').style.display = 'flex';
+    autoGrowAll(document.getElementById('sprint-review-body'));
+  } catch (e) {
+    // Never fail silently — a build/render bug here used to leave the button
+    // looking like it did nothing, with the real error only visible in DevTools.
+    console.error('Sprint Report failed to render:', e);
+    showToast('Could not open Sprint Report: ' + e.message, 'error');
+  }
+}
+function hideSprintReviewPanel() { document.getElementById('sprint-review-panel').style.display = 'none'; }
+
+function buildSprintReviewText(it) {
+  const { planning, review } = buildSprintReviewSections(it);
+  let out = `${productName ? productName + ' — ' : ''}${it.label || it.id}\n`;
+  out += `Generated ${new Date().toLocaleString()}\n`;
+  const appendSections = arr => arr.forEach(s => {
+    out += `\n${s.heading}\n`;
+    if (s.note) out += `  ${s.note}\n`;
+    s.rows.forEach(([label, val]) => { out += `  ${label}: ${val}\n`; });
+  });
+  appendSections(planning);
+  if (it.tfsPIPlanned) { out += `\nWork Items — PI Planned\n` + itemsAsText(it.tfsPIPlanned.items); }
+  if (it.tfsPlanned)  { out += `\nWork Items — Sprint Planned\n`  + itemsAsText(it.tfsPlanned.items); }
+  appendSections(review);
+  if (it.tfsExecuted) { out += `\nWork Items — Sprint Executed\n` + itemsAsText(it.tfsExecuted.items); }
+  return out;
+}
+
+// Self-contained HTML document (own <style>, no reliance on the live app's
+// stylesheet) used for PDF/image export — rendered in a hidden offscreen
+// window by main.js, not the live app window, so it needs its own color
+// tokens (copied from :root below) for tfsItemsTable()'s inline var(...) styles.
+function buildSprintReviewExportHtml(it, collectionUrl, project) {
+  const cap = iterCapacityEstimate(it);
+  const chartSvg = buildReportChartSvg(cap, it.tfsPIPlanned, it.tfsPlanned, it.tfsExecuted);
+  const { planning, review } = buildSprintReviewSections(it);
+  // Real clickable links (not the live app's onclick+IPC handler, which
+  // does nothing once rendered to a PDF/image) — only possible when TFS
+  // Settings has a Collection URL + Project configured.
+  const linkBase = (collectionUrl && project) ? `${collectionUrl}/${project}/_workitems/edit/` : null;
+  // Same card layout as the in-app Sprint Report: summary sections as a grid
+  // of bordered cards, each Work Items table in its own titled card.
+  const renderSections = arr => arr.length ? `
+    <div class="cards">${arr.map(s => `
+      <div class="card">
+        <div class="card-title">${esc(s.heading)}</div>
+        <div class="card-body">
+          ${s.note ? `<div class="note">${esc(s.note)}</div>` : ''}
+          ${s.rows.map(([l, v]) => `<div class="kv"><span>${esc(l)}</span><b>${esc(String(v))}</b></div>`).join('')}
+        </div>
+      </div>`).join('')}
+    </div>` : '';
+  const itemsSection = (label, items, mode) => items
+    ? `<div class="card items"><div class="card-title">Work Items — ${esc(label)}</div>
+        <div class="card-body">${tfsItemsTable(items, linkBase, { it, mode, editable: false })}</div></div>`
+    : '';
+  return `<!doctype html>
+<html><head><meta charset="utf-8"><title>${productName ? esc(productName) + ' — ' : ''}${esc(it.label || it.id)}</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --blue:#2563eb;--blue-light:#dbeafe;--blue-dark:#1d4ed8;
+    --teal:#0d9488;--teal-light:#ccfbf1;
+    --amber:#b45309;--amber-light:#fef3c7;
+    --red:#dc2626;--red-light:#fee2e2;
+    --green:#16a34a;--green-light:#dcfce7;
+    --purple:#7c3aed;--purple-light:#ede9fe;
+    --slate-50:#f8fafc;--slate-100:#f1f5f9;--slate-200:#e2e8f0;
+    --slate-400:#94a3b8;--slate-500:#64748b;--slate-600:#475569;
+    --slate-700:#334155;--slate-800:#1e293b;
+  }
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-family:'Segoe UI',Arial,sans-serif;color:#1e293b;margin:24px;background:#fff;font-size:13px}
+  h1{font-size:20px;margin:0 0 2px}
+  .sub{font-size:11px;color:#94a3b8;margin-bottom:14px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-top:14px;align-items:start}
+  .card{border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;background:#fff;break-inside:avoid;page-break-inside:avoid}
+  .card.items{margin-top:14px;break-inside:auto;page-break-inside:auto}
+  .card-title{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#334155;padding:8px 12px;background:#f8fafc;border-bottom:1px solid #e2e8f0}
+  .card-body{padding:6px 12px 10px}
+  .card.items .card-body{padding:8px 12px}
+  .note{font-size:12px;color:#64748b;padding:6px 0}
+  .kv{display:flex;justify-content:space-between;gap:16px;font-size:12px;padding:5px 0;border-bottom:1px solid #f1f5f9}
+  .kv:last-child{border-bottom:none}
+  .kv span{color:#64748b}
+  .kv b{font-weight:600;text-align:right}
+  tr{break-inside:avoid;page-break-inside:avoid}
+  thead{display:table-header-group}
+</style></head>
+<body>
+  <h1>${productName ? esc(productName) + ' — ' : ''}${esc(it.label || it.id)}</h1>
+  <div class="sub">Generated ${esc(new Date().toLocaleString())} · Team Capacity Calculator</div>
+  ${chartSvg}
+  ${renderSections(planning)}
+  ${itemsSection('PI Planned', it.tfsPIPlanned && it.tfsPIPlanned.items, 'piplanned')}
+  ${itemsSection('Sprint Planned', it.tfsPlanned && it.tfsPlanned.items, 'planned')}
+  ${renderSections(review)}
+  ${itemsSection('Sprint Executed', it.tfsExecuted && it.tfsExecuted.items, 'executed')}
+</body></html>`;
+}
+
+async function exportSprintReview(format) {
+  const pi = getViewedPI();
+  const it = pi && pi.iterations.find(i => i.id === window._sprintReviewIterId);
+  if (!it) return;
+  try {
+    const tfsSettings = await window.electronAPI.getTfsSettings();
+    const html = buildSprintReviewExportHtml(it, tfsSettings && tfsSettings.collectionUrl, tfsSettings && tfsSettings.project);
+    showToast('Generating ' + (format === 'pdf' ? 'PDF' : 'image') + '…');
+    const res = await window.electronAPI.exportReport({ html, format, suggestedName: `sprint-report-${it.id}` });
+    if (res && res.ok) showToast((format === 'pdf' ? 'PDF' : 'Image') + ' saved: ' + res.path);
+    else if (!res || !res.canceled) showToast('Export failed' + (res && res.error ? ': ' + res.error : ''), 'error');
+  } catch (e) {
+    console.error('Sprint Report export failed:', e);
+    showToast('Export failed: ' + e.message, 'error');
+  }
+}
+
+async function copySprintReview() {
+  const pi = getViewedPI();
+  const it = pi && pi.iterations.find(i => i.id === window._sprintReviewIterId);
+  if (!it) return;
+  try {
+    const text = buildSprintReviewText(it);
+    const res = await window.electronAPI.copyToClipboard(text);
+    if (res && res.ok) showToast('Sprint report copied to clipboard');
+    else showToast('Could not copy to clipboard', 'error');
+  } catch (e) {
+    console.error('Sprint Report copy failed:', e);
+    showToast('Could not copy to clipboard: ' + e.message, 'error');
+  }
+}
+
+// ── Publish to TFS Wiki ──
+// Markdown build-out of exactly the sections the user checked in the Sprint
+// Report modal — not the whole report regardless of selection, since a
+// re-publish is meant to fully replace the page with only what's currently
+// checked (confirmed behavior, not an accumulating history).
+// A literal "|" inside a Markdown table cell is read as a new column
+// boundary, not literal text — and this team's Feature titles follow a
+// convention that always includes one (e.g. "Achieve QG4 Release Approval |
+// System Manager 3.1.0"). Unescaped, that split a title's own row in half,
+// spilling its second half into the next cell over (confirmed from a real
+// published page: the Dev column showed a fragment of the title instead of
+// a number). Every cell value is escaped before being placed in a table.
+function mdEscapeCell(s) {
+  return String(s).replace(/\|/g, '\\|');
+}
+
+function mdTable(rows) {
+  let md = '| | |\n|---|---|\n';
+  rows.forEach(([label, val]) => { md += `| ${mdEscapeCell(label)} | ${mdEscapeCell(val)} |\n`; });
+  return md + '\n';
+}
+
+// Small summary tables side by side, like the cards in the app's Sprint
+// Report. Markdown has no way to place tables next to each other, so this is
+// plain HTML: an outer one-row table whose cells each hold a heading and a
+// small inner table. Markdown isn't parsed inside HTML blocks, so the inner
+// tables are HTML too, and the whole block contains no blank lines, because
+// a blank line ends an HTML block in Markdown. `cards` is [{title, rows}],
+// with rows in the same [label, value] shape as mdTable.
+function htmlCardRow(cards) {
+  cards = cards.filter(Boolean);
+  if (!cards.length) return '';
+  const inner = rows => '<table>' + rows.map(([l, v]) =>
+    `<tr><td>${esc(l)}</td><td>${esc(v)}</td></tr>`).join('') + '</table>';
+  return '<table><tr>' + cards.map(c =>
+    `<td valign="top" style="vertical-align:top;padding-right:24px"><h2>${esc(c.title)}</h2>${inner(c.rows)}</td>`
+  ).join('') + '</tr></table>\n\n';
+}
+
+// One row per Feature, one column per Dev/QA/Team. Every reference is a
+// bare "#id" — the TFS wiki fills in each work item's icon, title and state
+// itself. Every "<br>" between items has a space on both sides: a published
+// page with "<br>" glued directly to an id ("#507528<br>…" and
+// "…<br>#507825") left those ids as plain text, while ids with whitespace
+// around them expanded — so the wiki appears to need whitespace on both
+// sides of "#id" to recognize it. ("\n" can't be used instead of "<br>": a
+// Markdown table row must stay on one line.)
+// Free text for a wiki table cell. Long SharePoint/Teams URLs (how images and
+// videos are shared) each become a short "🔗 link" instead of stretching the
+// column; only the non-URL text is cell-escaped, and in the URL itself "|"
+// and ")" are percent-encoded so they can't break the cell or the link.
+function mdFreeText(text) {
+  return (text || '').trim()
+    .split(/(https?:\/\/\S+)/g)
+    .map((part, i) => i % 2
+      ? `[🔗 link](${part.replace(/\|/g, '%7C').replace(/\)/g, '%29')})`
+      : mdEscapeCell(part))
+    .join('')
+    .replace(/\r?\n/g, ' <br> ');
+}
+
+// `comments` is it.comments[mode] (featureKey -> {text}). The Comments column
+// is always present, empty where a row has no text — it used to be added only
+// when some row had text, which made the column vanish from the wiki whenever
+// the published pull's comments were all blank.
+function mdItemsList(items, comments, topics) {
+  const sortedGroups = groupItemsByFeature(items);
+  if (!sortedGroups.length) return '_No items._\n\n';
+  comments = comments || {};
+  const hasContent = c => c && (c.text || '').trim();
+  const commentCellMd = g => {
+    const c = comments[featureKey(g)];
+    return hasContent(c) ? mdFreeText(c.text) : '';
+  };
+
+  const itemLine = i => {
+    const flag = i.counted === false ? ' _(not closed)_' : '';
+    const tagFlag = tfsTagMismatch(i) ? ' **[check tag]**' : '';
+    return `#${i.id}${flag}${tagFlag}`;
+  };
+  const bucketCell = (g, key) => g.items
+    .filter(i => i.bucket === key)
+    .sort((a, c) => a.id - c.id)
+    .map(itemLine)
+    .join(' <br> ');
+  const featureCell = g => g.id != null ? `#${g.id}` : `**${mdEscapeCell(g.title)}**`;
+
+  // Markdown can't merge cells, so the Epic (bare "#id", expanded by the
+  // wiki) is shown on the first row of each run of Features sharing it, and
+  // left blank on the rows below.
+  // Priority gets its own column (as on the team's hand-written PI pages)
+  // rather than sharing the Epic cell, so the Epic's bare "#id" stays alone
+  // in its cell and keeps expanding into the wiki's card.
+  const priorities = (getViewedPI() || {}).epicPriority || {};
+  let md = '| Priority | Epic | Feature | Dev | QA | Team | Comments |\n|---|---|---|---|---|---|---|\n';
+  epicRuns(sortedGroups).forEach(run => {
+    run.groups.forEach((g, idx) => {
+      const first = idx === 0;
+      const prio = first && run.epicId != null ? priorityMd(priorities[run.epicId]) : '';
+      const epic = !first ? '' : (run.epicId != null ? `#${run.epicId}` : '_No Epic_');
+      md += `| ${prio} | ${epic} | ${featureCell(g)} | ${bucketCell(g, 'dev')} | ${bucketCell(g, 'qa')} | ${bucketCell(g, 'team')} | ${commentCellMd(g)} |\n`;
+    });
+  });
+  // New-topic placeholder rows (not in TFS yet) after the TFS rows; ones
+  // left completely empty aren't published.
+  (topics || []).filter(t => ['title', 'dev', 'qa', 'team', 'comment'].some(f => (t[f] || '').trim())).forEach(t => {
+    const title = (t.title || '').trim() ? `**${mdFreeText(t.title)}**` : '**(untitled topic)**';
+    md += `|  | 📝 _Not in backlog_ | ${title} | ${mdFreeText(t.dev)} | ${mdFreeText(t.qa)} | ${mdFreeText(t.team)} | ${mdFreeText(t.comment)} |\n`;
+  });
+  md += '\n';
+  return md;
+}
+
+// `selected` is `{piplanned, planned, executed}` booleans — a diff/drift
+// section only appears when BOTH of its two inputs are selected, matching
+// the "exactly what's checked" semantics (e.g. checking only Sprint Executed
+// omits the Churn comparison against Sprint Planned, since that pull isn't
+// part of this publish).
+function buildWikiMarkdown(it, selected) {
+  const cap = iterCapacityEstimate(it);
+  let md = `# ${productName ? productName + ' — ' : ''}${it.label || it.id}\n\n`;
+  md += `_Generated ${new Date().toLocaleString()}_\n\n`;
+
+  // Row 1: Sprint | Team | Capacity | Time Off, side by side.
+  const teamSection = buildTeamSection(it);
+  const sprintSection = buildSprintDatesSection(it);
+  md += htmlCardRow([
+    { title: sprintSection.heading, rows: sprintSection.rows },
+    teamSection && { title: 'Team', rows: teamSection.rows },
+    { title: 'Capacity', rows: [
+      ['Dev', cap.devSPest.toFixed(0) + ' SP'],
+      ['QA', cap.qaSPest.toFixed(0) + ' SP'],
+      ['Total', (cap.devSPest + cap.qaSPest).toFixed(0) + ' SP']
+    ] },
+    { title: 'Time Off', rows: buildTimeOffSection(it).rows }
+  ]);
+
+  // Row 2: one totals card per selected pull, in timeline order, with each
+  // comparison card right after the two pulls it compares. The full Work
+  // Items tables are too wide to sit side by side, so they follow below.
+  const pulls = [
+    selected.piplanned && it.tfsPIPlanned && ['tfsPIPlanned', 'PI Planned'],
+    selected.planned && it.tfsPlanned && ['tfsPlanned', 'Sprint Planned'],
+    selected.executed && it.tfsExecuted && ['tfsExecuted', 'Sprint Executed']
+  ].filter(Boolean);
+
+  const pullCard = (key, label) => {
+    const result = it[key];
+    const devPct = cap.devSPest ? Math.round(result.devSP / cap.devSPest * 100) : null;
+    const qaPct  = cap.qaSPest  ? Math.round(result.qaSP  / cap.qaSPest  * 100) : null;
+    return { title: label, rows: [
+      ['Dev', `${result.devSP} SP${devPct != null ? ` (${devPct}% of capacity)` : ''}`],
+      ['QA',  `${result.qaSP} SP${qaPct  != null ? ` (${qaPct}% of capacity)`  : ''}`],
+      ['Team', `${result.teamSP} SP`],
+      ['Total', `${result.totalSP} SP`],
+      ['Items', `${result.itemCount}`]
+    ] };
+  };
+  const has = key => pulls.some(p => p[0] === key);
+  const cards = [];
+  if (has('tfsPIPlanned')) cards.push(pullCard('tfsPIPlanned', 'PI Planned'));
+  if (has('tfsPlanned'))   cards.push(pullCard('tfsPlanned', 'Sprint Planned'));
+  if (has('tfsPIPlanned') && has('tfsPlanned')) {
+    const c = churnRow(it.tfsPIPlanned.items || [], it.tfsPlanned.items || []);
+    cards.push({ title: 'PI Planned vs Sprint Planned', rows: [
+      ['Added after PI planning', String(c.diff.added.length)],
+      ['Removed / descoped', String(c.diff.removed.length)],
+      ['Bucket changed', String(c.diff.bucketChanged.length)],
+      ['Drift', `${c.churnPct}% (${c.changedCount} of ${c.unionSize} items differ)`]
+    ] });
+  }
+  if (has('tfsExecuted')) cards.push(pullCard('tfsExecuted', 'Sprint Executed'));
+  if (has('tfsPlanned') && has('tfsExecuted')) {
+    const c = churnRow(it.tfsPlanned.items || [], it.tfsExecuted.items || []);
+    cards.push({ title: 'Sprint Planned vs Sprint Executed', rows: [
+      ['Added mid-sprint', String(c.diff.added.length)],
+      ['Removed / descoped', String(c.diff.removed.length)],
+      ['Bucket changed', String(c.diff.bucketChanged.length)],
+      ['Churn', `${c.churnPct}% (${c.changedCount} of ${c.unionSize} items differ)`]
+    ] });
+  }
+  md += htmlCardRow(cards);
+
+  pulls.forEach(([key, label]) => {
+    const mode = { tfsPIPlanned: 'piplanned', tfsPlanned: 'planned', tfsExecuted: 'executed' }[key];
+    md += `# Work Items — ${label}\n\n` + mdItemsList(it[key].items, (it.comments || {})[mode], (it.topics || {})[mode]);
+  });
+  return md;
+}
+
+async function publishSprintReviewToWiki() {
+  const pi = getViewedPI();
+  const it = pi && pi.iterations.find(i => i.id === window._sprintReviewIterId);
+  if (!it) return;
+  if (!pi.wikiUrl) { showToast('Set this PI\'s wiki page URL above Sprint Actuals first', 'error'); return; }
+
+  const selected = {
+    piplanned: !!document.getElementById('wiki-chk-piplanned')?.checked,
+    planned:   !!document.getElementById('wiki-chk-planned')?.checked,
+    executed:  !!document.getElementById('wiki-chk-executed')?.checked
+  };
+  if (!selected.piplanned && !selected.planned && !selected.executed) {
+    showToast('Check at least one section to publish', 'error');
+    return;
+  }
+
+  try {
+    const content = buildWikiMarkdown(it, selected);
+    const subPath = `Sprint ${it.id}`;
+    showToast('Publishing to wiki…');
+    const res = await window.electronAPI.publishWikiPage({ wikiUrl: pi.wikiUrl, subPath, content });
+    const heldBack = Object.keys(selected).filter(m => selected[m]).reduce((n, m) => n + orphanCommentKeys(it, m).length, 0);
+    if (res && res.ok) showToast('Published to wiki: ' + res.path + (heldBack
+      ? ` · ${heldBack} comment${heldBack !== 1 ? 's' : ''} on Features no longer in the pull not published (still kept in the app)`
+      : ''));
+    else showToast('Wiki publish failed' + (res && res.error ? ': ' + res.error : ''), 'error');
+  } catch (e) {
+    console.error('Wiki publish failed:', e);
+    showToast('Wiki publish failed: ' + e.message, 'error');
+  }
+}
+
+// Lets a mis-click (e.g. "Pull Sprint Executed" clicked when "Pull Sprint Planned" was meant)
 // be undone: wipes the stored snapshot so the correct button can be pulled
 // again. Clearing an Executed snapshot also resets devSPexec/qaSPexec, since
 // those were written FROM that pull — leaving them would silently keep the
@@ -2904,12 +4340,14 @@ function clearTfsPull(iterId, mode) {
   if (!pi) return;
   const it = pi.iterations.find(i => i.id === iterId);
   if (!it) return;
-  const label = mode === 'planned' ? 'Planned' : 'Executed';
+  const label = mode === 'piplanned' ? 'PI Planned' : mode === 'planned' ? 'Sprint Planned' : 'Sprint Executed';
   let msg = `Clear the ${label} TFS pull for ${iterId}? You can pull again afterwards.`;
   if (mode === 'executed') msg += '\n\nThis also resets the DEV/QA executed SP fields (filled in from this pull) back to empty.';
   if (!confirm(msg)) return;
 
-  if (mode === 'planned') {
+  if (mode === 'piplanned') {
+    it.tfsPIPlanned = null;
+  } else if (mode === 'planned') {
     it.tfsPlanned = null;
   } else {
     it.tfsExecuted = null;
@@ -2918,22 +4356,48 @@ function clearTfsPull(iterId, mode) {
   }
   _tfsDetailsOpen.delete(iterId + ':' + mode);
   _tfsDetailsOpen.delete(iterId + ':diff');
+  _tfsDetailsOpen.delete(iterId + ':diff-pi');
   recalc();
   scheduleSave();
   showToast(`${label} TFS pull cleared`);
 }
 
-function tfsBreakdownLine(result, label, iterId, mode) {
+// Compares a pulled SP figure against this iteration's modeled capacity
+// (hours × ratio — the same numbers shown in the Capacity-per-iteration
+// table above) so over/under-commitment is visible right where the pull
+// lands, without having to scroll up and cross-reference that table.
+function capacityFlag(pulledSP, capacitySP) {
+  if (!capacitySP) return '';
+  const pct = Math.round((pulledSP / capacitySP) * 100);
+  let color, arrow;
+  if (pct > 115)      { color = 'var(--red)';   arrow = '▲'; }
+  else if (pct > 105) { color = 'var(--amber)'; arrow = '▲'; }
+  else if (pct >= 85) { color = 'var(--green)'; arrow = '●'; }
+  else if (pct >= 70) { color = 'var(--amber)'; arrow = '▼'; }
+  else                { color = 'var(--red)';   arrow = '▼'; }
+  return ` <span style="color:${color};font-weight:700;font-size:10px;white-space:nowrap" title="${pulledSP} SP pulled vs ${capacitySP.toFixed(0)} SP modeled capacity for this iteration (${pct}%)">${arrow} ${pct}%</span>`;
+}
+
+function tfsBreakdownLine(result, label, iterId, mode, devCap, qaCap) {
   const when = result.pulledAt ? new Date(result.pulledAt).toLocaleString() : '';
   const items = result.items || [];
   const key = iterId + ':' + mode;
   const open = _tfsDetailsOpen.has(key);
+  // "Spillover" = still in the sprint but not Closed at the moment of an
+  // Executed pull — i.e. work that didn't finish. Only meaningful for
+  // 'executed' (a 'planned' pull never excludes anything, so counted is
+  // always true there).
+  const spillover = mode === 'executed' ? items.filter(i => i.counted === false) : [];
+  const spilloverSP = spillover.reduce((s, i) => s + (i.sp || 0), 0);
+  const spilloverHtml = spillover.length
+    ? ` <span style="color:var(--red);font-weight:700" title="${spillover.length} item(s) still open (not Closed) when Executed was pulled">⚠ ${spillover.length} spilled over (${spilloverSP} SP)</span>`
+    : '';
   let html = `<span style="font-size:11px;color:var(--slate-600)"><strong>${label}:</strong>
-    <span style="color:var(--blue-dark)">Dev ${result.devSP}</span> ·
-    <span style="color:var(--teal)">QA ${result.qaSP}</span> ·
+    <span style="color:var(--blue-dark)">Dev ${result.devSP}</span>${capacityFlag(result.devSP, devCap)} ·
+    <span style="color:var(--teal)">QA ${result.qaSP}</span>${capacityFlag(result.qaSP, qaCap)} ·
     <span style="color:var(--purple)">Team ${result.teamSP}</span> ·
     <strong>Total ${result.totalSP}</strong>
-    <span style="color:var(--slate-400)"> (${result.itemCount} item${result.itemCount !== 1 ? 's' : ''}, ${when})</span>
+    <span style="color:var(--slate-400)"> (${result.itemCount} item${result.itemCount !== 1 ? 's' : ''}, ${when})</span>${spilloverHtml}
     ${items.length ? `<a href="#" onclick="toggleTfsDetails('${iterId}','${mode}');return false;" style="margin-left:6px;color:var(--blue)">${open ? '▾ Hide items' : '▸ View items'}</a>` : ''}
     <a href="#" onclick="clearTfsPull('${iterId}','${mode}');return false;" style="margin-left:8px;color:var(--red)" title="Delete this pull so you can redo it">🗑 Clear</a>
   </span>`;
@@ -2941,6 +4405,15 @@ function tfsBreakdownLine(result, label, iterId, mode) {
   return html;
 }
 
+// `mode` is one of 'piplanned' | 'planned' | 'executed' — the first two pull
+// the exact same (non-recursive) query against the sprint's own tfsUrl, just
+// at different moments: 'piplanned' is meant to be clicked once during PI
+// planning (before any sprint starts — work is already assigned to its
+// target sprint's iteration path at that point), 'planned' again at that
+// sprint's own sprint-planning ceremony, and 'executed' at sprint end. TFS
+// itself only knows 'planned'/'executed' (no state filter vs Closed-only),
+// so 'piplanned' is translated to a 'planned'-mode IPC call and just stored
+// in a separate field locally.
 async function pullTfsSprint(iterId, mode) {
   const pi = getViewedPI();
   if (!pi) return;
@@ -2951,8 +4424,9 @@ async function pullTfsSprint(iterId, mode) {
   const prevText = btn ? btn.textContent : '';
   if (btn) { btn.disabled = true; btn.textContent = 'Pulling…'; }
 
+  const tfsMode = mode === 'piplanned' ? 'planned' : mode;
   let res;
-  try { res = await window.electronAPI.fetchTfsSprint({ tfsUrl: it.tfsUrl, mode }); }
+  try { res = await window.electronAPI.fetchTfsSprint({ tfsUrl: it.tfsUrl, mode: tfsMode }); }
   catch (e) { res = { ok: false, error: e.message }; }
 
   if (!res || !res.ok) {
@@ -2962,7 +4436,20 @@ async function pullTfsSprint(iterId, mode) {
   }
 
   const result = { devSP: res.devSP, qaSP: res.qaSP, teamSP: res.teamSP, totalSP: res.totalSP, itemCount: res.itemCount, items: res.items || [], pulledAt: res.pulledAt };
-  if (mode === 'planned') {
+  // Comments and new-topic rows are stored apart from the pulled snapshot
+  // (it.comments / it.topics), so replacing the snapshot never touches them.
+  // Before replacing it, remember each commented Feature's title, so a
+  // comment whose Feature drops out of the new pull can still say what it
+  // was about (see orphanCommentKeys()).
+  const previous = it[SNAPSHOT_KEY[mode]];
+  const modeComments = (it.comments || {})[mode] || {};
+  if (previous) groupItemsByFeature(previous.items || []).forEach(g => {
+    const c = modeComments[featureKey(g)];
+    if (c) c.title = g.title;
+  });
+  if (mode === 'piplanned') {
+    it.tfsPIPlanned = result;
+  } else if (mode === 'planned') {
     it.tfsPlanned = result;
   } else {
     it.tfsExecuted = result;
@@ -2971,7 +4458,264 @@ async function pullTfsSprint(iterId, mode) {
   }
   recalc();        // also re-renders Sprint Actuals (line ~2171)
   scheduleSave();
-  showToast(`TFS ${mode} load pulled — ${res.itemCount} item${res.itemCount !== 1 ? 's' : ''}`);
+  const orphans = orphanCommentKeys(it, mode).length;
+  showToast(`TFS ${mode} load pulled — ${res.itemCount} item${res.itemCount !== 1 ? 's' : ''}` + (orphans
+    ? ` · ⚠ ${orphans} comment${orphans !== 1 ? 's' : ''} belong${orphans === 1 ? 's' : ''} to Features no longer in this pull — kept at the bottom of the Sprint Report table`
+    : ''), orphans ? 'error' : undefined);
+}
+
+function updatePIField(piId, field, value) {
+  const pi = piList.find(p => p.id === piId);
+  if (!pi) return;
+  pi[field] = value;
+  scheduleSave();
+}
+
+function renderPIWikiUrl() {
+  const wrap = document.getElementById('pi-wiki-url-wrap');
+  if (!wrap) return;
+  const pi = getViewedPI();
+  if (!pi) { wrap.innerHTML = ''; return; }
+  wrap.innerHTML = `<input type="text" id="pi-wiki-url-${pi.id}" value="${esc(pi.wikiUrl||'')}"
+    placeholder="TFS wiki page URL for this PI (e.g. .../_wiki/wikis/System Manager/9699/PI-20)"
+    style="width:100%;max-width:640px;font-size:11px;box-sizing:border-box"
+    oninput="updatePIField(${pi.id},'wikiUrl',this.value)">`;
+}
+
+// ── PI roadmap (§6g): the Features on the PI's Delivery Plan, snapshotted
+// twice — `roadmapPlanned` at PI planning, `roadmapExecuted` at PI end —
+// each `{ source: 'plan'|'query', features: [{id,title,state,iterationPath}], pulledAt }`.
+async function pullRoadmap(piId, mode) {
+  const pi = piList.find(p => p.id === piId);
+  if (!pi || !pi.roadmapUrl) { showToast('Paste the Delivery Plan URL for this PI first', 'error'); return; }
+  const range = piDateRange(pi);
+  const btn = document.getElementById(`roadmap-pull-${piId}-${mode}`);
+  const prevText = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = 'Pulling…'; }
+
+  let res;
+  try { res = await window.electronAPI.fetchTfsRoadmap({ url: pi.roadmapUrl, startDate: range && range.start, endDate: range && range.end }); }
+  catch (e) { res = { ok: false, error: e.message }; }
+
+  if (!res || !res.ok) {
+    showToast('Roadmap pull failed: ' + (res && res.error ? res.error : 'unknown error'), 'error');
+    if (btn) { btn.disabled = false; btn.textContent = prevText; }
+    return;
+  }
+  const snapshot = { source: res.source, features: res.features || [], pulledAt: res.pulledAt };
+  if (mode === 'planned') pi.roadmapPlanned = snapshot; else pi.roadmapExecuted = snapshot;
+  renderPIRoadmap();
+  scheduleSave();
+  showToast(`PI ${mode === 'planned' ? 'Planned' : 'Executed'} pulled — ${snapshot.features.length} feature${snapshot.features.length !== 1 ? 's' : ''}`);
+}
+
+function clearRoadmap(piId, mode) {
+  const pi = piList.find(p => p.id === piId);
+  if (!pi) return;
+  const label = mode === 'planned' ? 'PI Planned' : 'PI Executed';
+  if (!confirm(`Clear the ${label} roadmap pull for PI ${piId}? You can pull again afterwards.`)) return;
+  if (mode === 'planned') pi.roadmapPlanned = null; else pi.roadmapExecuted = null;
+  renderPIRoadmap();
+  scheduleSave();
+}
+
+// Features grouped under their parent Epic (from the pull; `epicId` is null
+// for a Feature without one — those land in a final "No Epic" group).
+// Epic groups and the Features within them, both in the PI's manual
+// priority order (orderComparators()).
+function groupFeaturesByEpic(features, order) {
+  const c = orderComparators(order);
+  const groups = new Map();
+  features.forEach(f => {
+    const key = f.epicId != null ? f.epicId : 'none';
+    if (!groups.has(key)) groups.set(key, { id: f.epicId, title: f.epicTitle || 'No Epic', features: [] });
+    groups.get(key).features.push(f);
+  });
+  const sorted = [...groups.values()].sort((a, b) => c.epic(a.id, b.id));
+  sorted.forEach(g => g.features.sort((a, b) => c.feature(a.id, b.id)));
+  return sorted;
+}
+
+function roadmapFeatureList(features, pi) {
+  const groups = groupFeaturesByEpic(features, pi.order);
+  const epicIds = groups.map(g => g.id).filter(id => id != null);
+  return groups.map(g => {
+    const featureIds = g.features.map(f => f.id);
+    return `
+    <div style="font-size:11px;font-weight:700;color:var(--slate-700);margin:8px 0 2px;max-width:1100px">
+      ${g.id != null ? rankArrows('epic', g.id, epicIds, 'roadmap') : ''}
+      ${g.id != null ? prioritySelect(g.id, (pi.epicPriority || {})[g.id], 'roadmap') + ' ' : ''}
+      ${g.id != null ? `<a href="#" onclick="openTfsWorkItem(${g.id});return false;" style="color:var(--blue);text-decoration:underline">#${g.id}</a> ` : ''}${esc(g.title)}
+    </div>
+    ${g.features.map(f => `<div style="display:flex;gap:10px;align-items:baseline;font-size:11px;padding:4px 2px 4px 16px;border-bottom:1px solid var(--slate-100)">
+      <a href="#" onclick="openTfsWorkItem(${f.id});return false;" style="color:var(--blue);text-decoration:underline;min-width:52px">#${f.id}</a>
+      <span style="flex:1;color:var(--slate-700)">${esc(f.title)}</span>
+      <span style="color:var(--slate-400);white-space:nowrap">${esc(f.iterationPath.split('\\').pop())}</span>
+      <span style="min-width:64px">${stateBadge(f.state)}</span>
+      ${rankArrows('feature', f.id, featureIds, 'roadmap')}
+    </div>`).join('')}`;
+  }).join('');
+}
+
+// Delivery Plan screenshot for one pull: uploaded straight to the wiki as an
+// attachment; only its wiki path is kept (pi.roadmapImages[mode]), so the
+// save file stays small and a later publish can re-embed it.
+async function attachRoadmapImage(piId, mode) {
+  const pi = piList.find(p => p.id === piId);
+  if (!pi) return;
+  if (!pi.wikiUrl) { showToast('Set this PI\'s wiki page URL first — the screenshot is uploaded to that wiki', 'error'); return; }
+  showToast('Choose the Delivery Plan screenshot…');
+  const res = await window.electronAPI.attachWikiImage({ wikiUrl: pi.wikiUrl, baseName: `PI${piId}-delivery-plan-${mode}` });
+  if (!res || res.canceled) return;
+  if (!res.ok) { showToast('Screenshot upload failed: ' + (res.error || 'unknown error'), 'error'); return; }
+  pi.roadmapImages[mode] = { path: res.path, fileName: res.fileName };
+  renderPIRoadmap();
+  scheduleSave();
+  showToast('Screenshot uploaded to the wiki — it will be included on the next publish');
+}
+
+function removeRoadmapImage(piId, mode) {
+  const pi = piList.find(p => p.id === piId);
+  if (!pi || !confirm('Stop including this screenshot in the PI summary? (It stays in the wiki\'s attachments.)')) return;
+  delete pi.roadmapImages[mode];
+  renderPIRoadmap();
+  scheduleSave();
+}
+
+// Which roadmap feature lists are expanded — UI-only, so a re-render (e.g.
+// after a ▲▼ click) doesn't collapse the list being reordered.
+const _roadmapOpen = {};
+
+function roadmapLine(snapshot, label, piId, mode) {
+  const closed = snapshot.features.filter(f => f.state === 'Closed').length;
+  const when = new Date(snapshot.pulledAt).toLocaleString();
+  const img = piList.find(p => p.id === piId).roadmapImages[mode];
+  const imgCtl = img
+    ? `<span style="margin-left:8px;color:var(--slate-500)">🖼 ${esc(img.fileName || 'screenshot')}</span>
+       <a href="#" onclick="event.preventDefault();attachRoadmapImage(${piId},'${mode}')" style="margin-left:4px;color:var(--blue)">Replace</a>
+       <a href="#" onclick="event.preventDefault();removeRoadmapImage(${piId},'${mode}')" style="margin-left:4px;color:var(--red)">Remove</a>`
+    : `<a href="#" onclick="event.preventDefault();attachRoadmapImage(${piId},'${mode}')" style="margin-left:8px;color:var(--blue)">🖼 Attach plan screenshot</a>`;
+  return `<details style="margin:4px 0"${_roadmapOpen[mode] ? ' open' : ''} ontoggle="_roadmapOpen['${mode}']=this.open">
+    <summary style="cursor:pointer;font-size:11px;color:var(--slate-600)"><strong>${label}:</strong> ${snapshot.features.length} feature${snapshot.features.length !== 1 ? 's' : ''} · ${closed} closed
+      <span style="color:var(--slate-400)">(from ${snapshot.source === 'plan' ? 'Delivery Plan' : 'saved query'}, ${when})</span>
+      <a href="#" onclick="event.preventDefault();clearRoadmap(${piId},'${mode}')" style="margin-left:8px;color:var(--red)">🗑 Clear</a>
+      ${imgCtl}</summary>
+    <div style="max-width:1100px;margin-top:4px">${roadmapFeatureList(snapshot.features, piList.find(p => p.id === piId))}</div>
+  </details>`;
+}
+
+function renderPIRoadmap() {
+  const wrap = document.getElementById('pi-roadmap-wrap');
+  if (!wrap) return;
+  const pi = getViewedPI();
+  if (!pi) { wrap.innerHTML = ''; return; }
+  const dis = pi.roadmapUrl ? '' : 'disabled title="Paste the Delivery Plan URL first"';
+  let html = `<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px">
+    <input type="text" value="${esc(pi.roadmapUrl||'')}" placeholder="Delivery Plan URL (e.g. .../_deliveryplans/plan/{id}) or saved query URL"
+      style="flex:1;min-width:320px;max-width:640px;font-size:11px;box-sizing:border-box"
+      oninput="updatePIField(${pi.id},'roadmapUrl',this.value)" onchange="renderPIRoadmap()">
+    <button class="btn btn-sm" id="roadmap-pull-${pi.id}-planned" ${dis} onclick="pullRoadmap(${pi.id},'planned')">⬇ Pull PI Planned</button>
+    <button class="btn btn-sm" id="roadmap-pull-${pi.id}-executed" ${dis} onclick="pullRoadmap(${pi.id},'executed')">⬇ Pull PI Executed</button>
+  </div>`;
+  if (pi.roadmapPlanned)  html += roadmapLine(pi.roadmapPlanned, 'PI Planned', pi.id, 'planned');
+  if (pi.roadmapExecuted) html += roadmapLine(pi.roadmapExecuted, 'PI Executed', pi.id, 'executed');
+  if (pi.roadmapPlanned && pi.roadmapExecuted) {
+    const plannedIds = new Set(pi.roadmapPlanned.features.map(f => f.id));
+    const executedIds = new Set(pi.roadmapExecuted.features.map(f => f.id));
+    const added = pi.roadmapExecuted.features.filter(f => !plannedIds.has(f.id)).length;
+    const removed = pi.roadmapPlanned.features.filter(f => !executedIds.has(f.id)).length;
+    html += `<div style="font-size:11px;color:var(--slate-600);margin-top:4px"><strong>PI Planned vs PI Executed:</strong> ${added} added · ${removed} removed during the PI</div>`;
+  }
+
+  html += `<div style="margin-top:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+    <span style="font-size:11px;font-weight:600;color:var(--slate-600)">Planning meetings:</span>
+    <input type="text" value="${esc(pi.planningMeetings||'')}" placeholder="e.g. 12/03/2026 > 13/03/2026" style="width:240px;font-size:11px"
+      oninput="updatePIField(${pi.id},'planningMeetings',this.value)">
+  </div>`;
+
+  // Publish the PI summary to the PI's own wiki page
+  const chk = (key, label, has) => has ? `<label style="font-size:11px;display:flex;align-items:center;gap:4px"><input type="checkbox" id="pi-wiki-chk-${key}" checked> ${label}</label>` : '';
+  if (pi.roadmapPlanned || pi.roadmapExecuted) {
+    html += `<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--slate-100);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <span style="font-size:11px;font-weight:600;color:var(--slate-500)">Publish PI summary to Wiki:</span>
+      ${chk('planned', 'PI Planned', pi.roadmapPlanned)}
+      ${chk('executed', 'PI Executed', pi.roadmapExecuted)}
+      <button class="btn btn-sm" ${pi.wikiUrl ? '' : 'disabled title="Set this PI\'s wiki page URL above first"'} onclick="publishPISummaryToWiki(${pi.id})">📤 Publish</button>
+    </div>`;
+  }
+  wrap.innerHTML = html;
+}
+
+function fmtDmy(iso) {
+  if (!iso) return '';
+  const [y, m, d] = iso.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+// One row per Epic, its Features as Items — all bare "#id"s so the wiki
+// fills in name + status (space on both sides of each "<br>", see
+// mdItemsList()). Features without an Epic get a final "No Epic" row.
+function mdEpicsTable(features, order, priorities) {
+  priorities = priorities || {};
+  let md = '| Priority | Epic | Features |\n|---|---|---|\n';
+  groupFeaturesByEpic(features, order).forEach(g => {
+    md += `| ${g.id != null ? priorityMd(priorities[g.id]) : ''} | ${g.id != null ? `#${g.id}` : '_No Epic_'} | ${g.features.map(f => `#${f.id}`).join(' <br> ')} |\n`;
+  });
+  return md + '\n';
+}
+
+// PI summary in the layout of the team's hand-written PI pages (Planning,
+// Iterations, Epics with their Features), with the selected pulls and —
+// when both are selected — what changed between them.
+function buildPIWikiMarkdown(pi, selected) {
+  const range = piDateRange(pi);
+  let md = `# ${productName ? productName + ' — ' : ''}PI ${pi.id}\n\n_Generated ${new Date().toLocaleString()}_\n\n`;
+  md += `# Planning\n\n| Start | End | Planning Meetings |\n|---|---|---|\n| ${range ? fmtDmy(range.start) : ''} | ${range ? fmtDmy(range.end) : ''} | ${mdEscapeCell(pi.planningMeetings || '')} |\n\n`;
+  md += `# Iterations\n\n| Iteration | Start | End |\n|---|---|---|\n`;
+  (pi.iterations || []).forEach(it => { md += `| ${mdEscapeCell(it.label || it.id)} | ${fmtDmy(it.dateStart)} | ${fmtDmy(it.dateEnd)} |\n`; });
+  md += '\n';
+
+  const P = selected.planned && pi.roadmapPlanned;
+  const E = selected.executed && pi.roadmapExecuted;
+  const planImage = (mode, label) => pi.roadmapImages[mode]
+    ? `## Delivery Plan — ${label}\n\n![Delivery Plan — ${label}](${pi.roadmapImages[mode].path})\n\n`
+    : '';
+  if (P) md += `# PI Planned\n\n` + mdEpicsTable(pi.roadmapPlanned.features, pi.order, pi.epicPriority) + planImage('planned', 'PI Planned');
+  if (E) md += `# PI Executed\n\n` + mdEpicsTable(pi.roadmapExecuted.features, pi.order, pi.epicPriority) + planImage('executed', 'PI Executed');
+  if (P && E) {
+    const planned = pi.roadmapPlanned.features, executed = pi.roadmapExecuted.features;
+    const pIds = new Set(planned.map(f => f.id)), eById = new Map(executed.map(f => [f.id, f]));
+    const added = executed.filter(f => !pIds.has(f.id));
+    const removed = planned.filter(f => !eById.has(f.id));
+    const delivered = planned.filter(f => eById.has(f.id) && eById.get(f.id).state === 'Closed').length;
+    const list = fs => fs.length ? fs.map(f => `#${f.id}`).join(' <br> ') : '—';
+    md += `# PI Planned vs PI Executed\n\n| | |\n|---|---|\n`;
+    md += `| Planned features closed | ${delivered} of ${planned.length} |\n`;
+    md += `| Added during the PI | ${list(added)} |\n`;
+    md += `| Removed during the PI | ${list(removed)} |\n\n`;
+  }
+  return md;
+}
+
+async function publishPISummaryToWiki(piId) {
+  const pi = piList.find(p => p.id === piId);
+  if (!pi) return;
+  if (!pi.wikiUrl) { showToast('Set this PI\'s wiki page URL first', 'error'); return; }
+  const selected = {
+    planned:  !!document.getElementById('pi-wiki-chk-planned')?.checked,
+    executed: !!document.getElementById('pi-wiki-chk-executed')?.checked
+  };
+  if (!selected.planned && !selected.executed) { showToast('Check at least one pull to publish', 'error'); return; }
+  if (!confirm(`This replaces the whole content of the PI ${pi.id} wiki page with the generated summary. Sprint report child pages are not affected. Continue?`)) return;
+  try {
+    showToast('Publishing PI summary to wiki…');
+    const res = await window.electronAPI.publishWikiPage({ wikiUrl: pi.wikiUrl, subPath: '', content: buildPIWikiMarkdown(pi, selected) });
+    if (res && res.ok) showToast('Published to wiki: ' + res.path);
+    else showToast('Wiki publish failed' + (res && res.error ? ': ' + res.error : ''), 'error');
+  } catch (e) {
+    console.error('PI wiki publish failed:', e);
+    showToast('Wiki publish failed: ' + e.message, 'error');
+  }
 }
 
 function renderSprintActuals() {
@@ -3007,7 +4751,7 @@ function renderSprintActuals() {
 
   const fmt1 = v => v.toFixed(1);
 
-  let totDevH=0, totQaH=0, totDevEst=0, totQaEst=0, totDevExec=0, totQaExec=0;
+  let totDevH=0, totQaH=0, totDevEst=0, totQaEst=0, totDevExec=0, totQaExec=0, totTeamExec=0;
   let execDevCount=0, execQaCount=0;
 
   iterData.forEach(d => {
@@ -3015,9 +4759,11 @@ function renderSprintActuals() {
     totDevEst += d.devSPest; totQaEst += d.qaSPest;
     if (d.it.devSPexec != null) { totDevExec += d.it.devSPexec; execDevCount++; }
     if (d.it.qaSPexec  != null) { totQaExec  += d.it.qaSPexec;  execQaCount++; }
+    if (d.it.tfsExecuted) totTeamExec += (d.it.tfsExecuted.teamSP || 0);
   });
 
   const hasAny = execDevCount > 0 || execQaCount > 0;
+  const anyTfsUrl = iters.some(it => it.tfsUrl);
 
   const deltaHtml = (exec, est) => {
     if (exec == null) return '<span style="color:var(--slate-300)">—</span>';
@@ -3039,7 +4785,16 @@ function renderSprintActuals() {
     return `<div class="accuracy-bar-wrap"><div class="accuracy-bar" style="width:${pct}%;background:${color}"></div></div>`;
   };
 
-  let html = `<div style="overflow-x:auto">
+  let html = '';
+  if (anyTfsUrl) {
+    html += `<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:8px;font-size:11px;color:var(--slate-500)">
+      <span><strong>Flags</strong> on a pull compare Dev/QA SP to this iteration's modeled capacity (hours × ratio, same as the table above):</span>
+      <span><span style="color:var(--green);font-weight:700">● 85–105%</span> on target</span>
+      <span><span style="color:var(--amber);font-weight:700">▲▼ 70–85% / 105–115%</span> moderate over/under</span>
+      <span><span style="color:var(--red);font-weight:700">▲▼ &lt;70% / &gt;115%</span> significant over/under</span>
+    </div>`;
+  }
+  html += `<div style="overflow-x:auto">
   <table class="actuals-table">
     <thead>
       <tr>
@@ -3052,7 +4807,8 @@ function renderSprintActuals() {
         <th class="num" style="color:var(--teal)">QA exec. SP</th>
         <th class="num">Δ QA</th>
         <th class="num">QA ratio</th>
-        <th class="num" style="color:var(--amber)">Total exec.</th>
+        <th class="num" style="color:var(--purple)" title="Pulled from TFS Pull Sprint Executed — Team-bucket items (no DEV/QA tag, or both), informational only">TEAM exec. SP</th>
+        <th class="num" style="color:var(--amber)" title="Dev + QA + Team executed — what to show at sprint review">Total exec.</th>
       </tr>
     </thead>
     <tbody>`;
@@ -3060,7 +4816,8 @@ function renderSprintActuals() {
   iterData.forEach(({it, devH, qaH, devSPest, qaSPest}) => {
     const devExec  = it.devSPexec;
     const qaExec   = it.qaSPexec;
-    const totExec  = (devExec != null || qaExec != null) ? (devExec||0) + (qaExec||0) : null;
+    const teamExec = it.tfsExecuted ? (it.tfsExecuted.teamSP || 0) : null;
+    const totExec  = (devExec != null || qaExec != null) ? (devExec||0) + (qaExec||0) + (teamExec||0) : null;
     const devHasVal = devExec != null ? ' has-val' : '';
     const qaHasVal  = qaExec  != null ? ' has-val' : '';
 
@@ -3091,6 +4848,9 @@ function renderSprintActuals() {
       </td>
       <td>${deltaHtml(qaExec, qaSPest)}</td>
       <td>${ratioHtml(qaExec, qaH, 'ratio-actual-qa')}</td>
+      <td style="color:var(--purple);font-weight:600">
+        ${teamExec != null ? teamExec : '<span style="color:var(--slate-300)">—</span>'}
+      </td>
       <td style="color:var(--amber);font-weight:600">
         ${totExec != null ? totExec : '<span style="color:var(--slate-300)">—</span>'}
       </td>
@@ -3099,14 +4859,18 @@ function renderSprintActuals() {
     const noUrl = !it.tfsUrl;
     const disAttr = noUrl ? 'disabled title="Set a TFS sprint URL for this iteration in PI Management first"' : '';
     html += `<tr class="tfs-row">
-      <td colspan="10" style="text-align:left;padding:6px 10px;background:var(--slate-50)">
+      <td colspan="11" style="text-align:left;padding:6px 10px;background:var(--slate-50)">
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px">
-          <button class="btn btn-sm" id="tfs-pull-${it.id}-planned" ${disAttr} onclick="pullTfsSprint('${it.id}','planned')">⬇ Pull Planned</button>
-          <button class="btn btn-sm" id="tfs-pull-${it.id}-executed" ${disAttr} onclick="pullTfsSprint('${it.id}','executed')">⬇ Pull Executed</button>
+          <button class="btn btn-sm" id="tfs-pull-${it.id}-piplanned" ${disAttr} title="Click once during PI planning, before any sprint starts — captures what was scoped for this sprint at that point" onclick="pullTfsSprint('${it.id}','piplanned')">⬇ Pull PI Planned</button>
+          <button class="btn btn-sm" id="tfs-pull-${it.id}-planned" ${disAttr} onclick="pullTfsSprint('${it.id}','planned')">⬇ Pull Sprint Planned</button>
+          <button class="btn btn-sm" id="tfs-pull-${it.id}-executed" ${disAttr} onclick="pullTfsSprint('${it.id}','executed')">⬇ Pull Sprint Executed</button>
+          ${(it.tfsPIPlanned || it.tfsPlanned || it.tfsExecuted) ? `<button class="btn btn-sm" onclick="showSprintReviewPanel('${it.id}')">📋 Sprint Report</button>` : ''}
         </div>
-        ${it.tfsPlanned  ? `<div style="margin-bottom:4px">${tfsBreakdownLine(it.tfsPlanned,  'Planned',  it.id, 'planned')}</div>`  : ''}
-        ${it.tfsExecuted ? `<div>${tfsBreakdownLine(it.tfsExecuted, 'Executed', it.id, 'executed')}</div>` : ''}
-        ${(it.tfsPlanned && it.tfsExecuted) ? tfsDiffSection(it) : ''}
+        ${it.tfsPIPlanned ? `<div style="margin-bottom:4px">${tfsBreakdownLine(it.tfsPIPlanned, 'PI Planned', it.id, 'piplanned', devSPest, qaSPest)}</div>` : ''}
+        ${it.tfsPlanned  ? `<div style="margin-bottom:4px">${tfsBreakdownLine(it.tfsPlanned,  'Sprint Planned',  it.id, 'planned', devSPest, qaSPest)}</div>`  : ''}
+        ${it.tfsExecuted ? `<div>${tfsBreakdownLine(it.tfsExecuted, 'Sprint Executed', it.id, 'executed', devSPest, qaSPest)}</div>` : ''}
+        ${(it.tfsPIPlanned && it.tfsPlanned) ? tfsDiffSection(it, 'tfsPIPlanned', 'tfsPlanned', 'PI Planned vs Sprint Planned', 'diff-pi') : ''}
+        ${(it.tfsPlanned && it.tfsExecuted) ? tfsDiffSection(it, 'tfsPlanned', 'tfsExecuted', 'Sprint Planned vs Sprint Executed', 'diff') : ''}
       </td>
     </tr>`;
   });
@@ -3123,7 +4887,8 @@ function renderSprintActuals() {
       <td class="cell-qa"><strong>${hasAny ? totQaExec : '—'}</strong></td>
       <td>${deltaHtml(execQaCount > 0 ? totQaExec : null, totQaEst)}</td>
       <td>${ratioHtml(execQaCount > 0 ? totQaExec : null, totQaH, 'ratio-actual-qa')}</td>
-      <td class="cell-sp"><strong>${hasAny ? totDevExec + totQaExec : '—'}</strong></td>
+      <td style="color:var(--purple)"><strong>${totTeamExec > 0 ? totTeamExec : '—'}</strong></td>
+      <td class="cell-sp"><strong>${hasAny ? totDevExec + totQaExec + totTeamExec : '—'}</strong></td>
     </tr>
   </tfoot>
   </table></div>`;
@@ -3336,9 +5101,16 @@ function restoreSectionState() {
 // RENDER ALL
 // ══════════════════════════════════════════════════════════════
 
+function updateProductName(val) {
+  productName = val;
+  scheduleSave();
+}
+
 function renderAll() {
   team     = getViewedPI()?.team     || getCurrentPI()?.team     || [];
   overhead = getViewedPI()?.overhead || getCurrentPI()?.overhead || [];
+  const pnEl = document.getElementById('product-name-input');
+  if (pnEl && document.activeElement !== pnEl) pnEl.value = productName || '';
   syncRatiosFromPi();
   renderPISwitcher();
   renderGlobalPIPanel();
